@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectStreams xmlns="urn:mtconnect.com:MTConnectError:0.9" xmlns:m="urn:mtconnect.com:MTConnectStreams:0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mtconnect.com:MTConnectStreams:0.9 /schemas/MTConnectStreams.xsd">
+  <Header creationTime="2009-02-24T21:05:02+00:00" sender="localhost" bufferSize="100000" nextSequence="1294058395" instanceId="1230621586" version="0.9" firstSequence="1293958394" lastSequence="1294058394"/>
+  <Streams>
+    <DeviceStream uuid="linux-01" name="LinuxCNC">
+      <ComponentStream component="Linear" componentId="5" name="Y">
+        <Samples>
+          <Position dataItemId="14" timestamp="2009-02-24T21:04:55.684596" subType="ACTUAL" name="Yact" sequence="1294058392">1.2873075008</Position>
+          <Position dataItemId="15" timestamp="2009-02-24T21:04:55.684596" subType="COMMANDED" name="Ycom" sequence="1294058393">1.2874730549</Position>
+        </Samples>
+      </ComponentStream>
+      <ComponentStream component="Linear" componentId="6" name="Z">
+        <Samples>
+          <Position dataItemId="16" timestamp="2009-02-24T21:02:29.260252" subType="ACTUAL" name="Zact" sequence="1294014915">-0.1000000015</Position>
+          <Position dataItemId="17" timestamp="2009-02-24T21:02:29.248251" subType="COMMANDED" name="Zcom" sequence="1294014910">-0.1</Position>
+        </Samples>
+      </ComponentStream>
+      <ComponentStream component="Spindle" componentId="7" name="S">
+        <Samples>
+          <SpindleSpeed dataItemId="18" timestamp="2009-02-24T21:02:24.687991" subType="ACTUAL" name="Sspeed" sequence="1294013862">3400.0</SpindleSpeed>
+        </Samples>
+      </ComponentStream>
+      <ComponentStream component="Power" componentId="2" name="power">
+        <Events>
+          <PowerStatus dataItemId="9" timestamp="2009-02-17T15:39:19.212845" name="power" sequence="1131126024">ON</PowerStatus>
+        </Events>
+      </ComponentStream>
+      <ComponentStream component="Controller" componentId="8" name="Controller">
+        <Events>
+          <Execution dataItemId="22" timestamp="2009-02-24T21:02:25.156018" name="execution" sequence="1294014018">ACTIVE</Execution>
+          <Line dataItemId="19" timestamp="2009-02-24T21:04:55.408581" subType="ACTUAL" name="line" sequence="1294058318">363</Line>
+          <ControllerMode dataItemId="20" timestamp="2009-02-17T15:39:19.212845" name="mode" sequence="1131126023">AUTOMATIC</ControllerMode>
+          <Block dataItemId="23" timestamp="2009-02-24T21:04:55.408581" name="block" sequence="1294058322">x0.003412 y1.287995</Block>
+          <Program dataItemId="21" timestamp="2009-02-17T15:39:19.212845" name="program" sequence="1131126026">/home/mtconnect/emc2/nc_files/examples/spiral.ngc</Program>
+        </Events>
+      </ComponentStream>
+      <ComponentStream component="Linear" componentId="4" name="X">
+        <Samples>
+          <Position dataItemId="12" timestamp="2009-02-24T21:04:55.684596" subType="ACTUAL" name="Xact" sequence="1294058394">-0.0181695819</Position>
+          <Position dataItemId="13" timestamp="2009-02-24T21:04:55.684596" subType="COMMANDED" name="Xcom" sequence="1294058391">-0.0129722177</Position>
+        </Samples>
+      </ComponentStream>
+    </DeviceStream>
+  </Streams>
+</MTConnectStreams>
