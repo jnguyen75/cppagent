@@ -42,8 +42,10 @@ ComponentEvent::ComponentEvent(const char * item, unsigned int sequence, std::st
   else*/ if (item == "line")
   {
     mItem = new IntEvent(item);
+    
     int valueToSet = *((int *) value);
     (dynamic_cast<IntEvent *>(mItem))->setValue(valueToSet);
+    mValue = (void *) new int(valueToSet);
   }
   else if (item == "power")
   {
@@ -77,15 +79,17 @@ ComponentEvent::~ComponentEvent()
 template <class T>
 T ComponentEvent::getValue()
 {
-  return (dynamic_cast<IntEvent *>(mItem))->getValue();
+  return *(static_cast<int *>(mValue));
 }
 
 /* ComponentEvent protected methods */
 void ComponentEvent::convertValue()
 {
-  if (false) // TODO if data type is Alarm
+  // Check if the Device is an alarm first
+  if (dynamic_cast<Alarm *>(mItem))
   {
-  
+    // TODO: Map values to upper case..?
+    return;
   }
   else
   {
@@ -93,7 +97,8 @@ void ComponentEvent::convertValue()
   }
 }
 
-/*int main ()
+// ##### TODO: REMOVE ME #####
+int main ()
 {
   int value = 352;
   ComponentEvent * test = new ComponentEvent("line", 1, "today", &value);
@@ -101,4 +106,4 @@ void ComponentEvent::convertValue()
   std::cout << test->getValue<int>() << std::endl;
 
   return 0;
-}*/
+}

@@ -31,43 +31,31 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef COMPONENT_EVENT_HPP
-#define COMPONENT_EVENT_HPP
+#ifndef XML_PARSER_HPP
+#define XML_PARSER_HPP
 
-#include "device_datum.hpp"
-#include <string>
 #include <iostream>
 
-/* Component Event */
-class ComponentEvent
+// Include the LibXML Library
+#include <libxml++/libxml++.h>
+
+class XmlParser
 {
 protected:
-  /* Holds the data item from the device */
-  DeviceDatum * mItem;
-  
-  /* Sequence number of the event */
-  unsigned int mSequence;
-  
-  /* Timestamp of the event's occurence */
-  std::string mTime;
-  
-  /* The value of the event */
-  void * mValue;
-
-protected:
-  /* Convert the value to the agent unit standards */
-  void convertValue();
+  /* LibXML++ XML DOM Parser */
+  xmlpp::DomParser * mParser;
   
 public:
-  /* Initialize the ComponentEvent with the type of event, sequence number, time and value */
-  ComponentEvent(const char * item, unsigned int sequence, std::string time, void * value);
+  /* Constructor to set the open the correct file */
+  XmlParser(std::string xmlPath);
   
   /* Virtual destructor */
-  virtual ~ComponentEvent();
+  virtual ~XmlParser();
   
-  /* Get value, whatever the value may be*/
-  template <class T>
-  T getValue();
+  /* Getter method that simply returns a pointer to the root node of the document */
+  xmlpp::Node * getRootNode();
+  
+  void parse(const xmlpp::Node* node);
 };
 
 #endif
