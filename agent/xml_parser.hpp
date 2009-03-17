@@ -55,7 +55,11 @@ public:
   /* Getter method that simply returns a pointer to the root node of the document */
   xmlpp::Node * getRootNode();
   
-  void parse(const xmlpp::Node* node);
+  void parse(const xmlpp::Node * node);
+  
+  std::map<std::string, std::string> getAttributes(const xmlpp::Node * node);
+  
+  //virtual void handleTag(std::string tag) = 0;
 };
 
 #endif

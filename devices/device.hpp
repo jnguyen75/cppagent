@@ -1,11 +1,20 @@
+
+
 #include "component.hpp"
 
-class Device : public Component {
+class Device : public Component
+{ 
 protected:
-  /*unsigned int mId;*/
+  /* Protected member variables */
+  float mSampleRate;
+  
+  unsigned int mIso841Class;
+  
+  std::string mUuid;
   
 public:
-  Device(unsigned int id);
+  Device(std::map<std::string, std::string> attributes);
   
-  int getId() { return mId; }
+public:
+  static bool hasDeviceSpecs(std::map<std::string, std::string> attributes);
 };

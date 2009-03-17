@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<m:MTConnectDevices xmlns="urn:mtconnect.com:MTConnectError:0.9" xsi:schemaLocation="urn:mtconnect.com:MTConnectDevices:0.9 /schemas/MTConnectDevices.xsd" xmlns:m="urn:mtconnect.com:MTConnectDevices:0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<MTConnectDevices>
   <Header creationTime="2009-03-10T21:37:26+00:00" sender="localhost" instanceId="1235613755" bufferSize="100000" version="0.9"/>
   <Devices>
     <Device sampleRate="100.0" iso841Class="6" uuid="linux-01" name="LinuxCNC" id="1">
@@ -57,4 +57,4 @@
       </Components>
     </Device>
   </Devices>
-</m:MTConnectDevices>
+</MTConnectDevices>

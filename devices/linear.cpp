@@ -1,3 +1,4 @@
+
 /*
 * Copyright (c) 2008, AMT – The Association For Manufacturing Technology (“AMT”)
 * All rights reserved.
@@ -31,47 +32,13 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef COMPONENT_EVENT_HPP
-#define COMPONENT_EVENT_HPP
+#include "linear.hpp"
 
-#include "../devices/data_item.hpp"
-
-#include <string>
-#include <iostream>
-
-/* Component Event */
-class ComponentEvent
+/* Spindle public methods */
+Linear::Linear(std::map<std::string, std::string> attributes)
+: Component(attributes)
 {
-protected:
-  /* Holds the data item from the device */
-  DataItem * mDataItem;
-  
-  /* Sequence number of the event */
-  unsigned int mSequence;
-  
-  /* Timestamp of the event's occurence */
-  std::string mTime;
-  
-  /* The value of the event */
-  std::string mValue;
 
-protected:
-  /* Convert the value to the agent unit standards */
-  void convertValue();
-  
-  /* Convert a simple value from native units to MTConnect units */
-  //void
-  
-public:
-  /* Initialize the ComponentEvent with the type of event, sequence number, time and value */
-  ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value);
-  
-  /* Virtual destructor */
-  ~ComponentEvent();
-  
-  /* Get value, whatever the value may be*/
-  template <class T>
-  T getValue();
-};
+}
 
-#endif
+

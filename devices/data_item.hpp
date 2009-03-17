@@ -31,47 +31,38 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef COMPONENT_EVENT_HPP
-#define COMPONENT_EVENT_HPP
+#ifndef DATA_ITEM_HPP
+#define DATA_ITEM_HPP
 
-#include "../devices/data_item.hpp"
-
-#include <string>
+#include <map>
 #include <iostream>
 
-/* Component Event */
-class ComponentEvent
+class DataItem
 {
-protected:
-  /* Holds the data item from the device */
-  DataItem * mDataItem;
+public:
+  /* Unique ID for each component */
+  unsigned int mId;
   
-  /* Sequence number of the event */
-  unsigned int mSequence;
+  /* Name for itself */
+  std::string mName;
   
-  /* Timestamp of the event's occurence */
-  std::string mTime;
+  std::string mType;
   
-  /* The value of the event */
-  std::string mValue;
-
-protected:
-  /* Convert the value to the agent unit standards */
-  void convertValue();
+  std::string mSubType;
   
-  /* Convert a simple value from native units to MTConnect units */
-  //void
+  std::string mCategory;
+  std::string mNativeUnits;
+  std::string mUnits;
+  std::string mNativeScale;
+  std::string mSignificantDigits;
+  std::string mCoordinateSystem;
+  
+  std::string mSource;
   
 public:
-  /* Initialize the ComponentEvent with the type of event, sequence number, time and value */
-  ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value);
+  DataItem(std::map<std::string, std::string> attributes);
   
-  /* Virtual destructor */
-  ~ComponentEvent();
-  
-  /* Get value, whatever the value may be*/
-  template <class T>
-  T getValue();
+  std::string getName();
 };
 
 #endif

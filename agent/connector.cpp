@@ -93,7 +93,7 @@ void Connector::connect()
         
         while (stream.getline(buf, LINE_BUFFER_SIZE))
         {
-          processLine(buf);
+          processData(buf);
         }
         
         // Clear buffer/insert overflow data

@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-using namespace std;
+//using namespace std;
 
 class TestConnector : public Connector
 {
@@ -16,34 +16,34 @@ public:
   
   void processLine(std::string line)
   {
-    istringstream toParse(line);
-    string token;
+    std::istringstream toParse(line);
+    std::string token;
     
     getline(toParse, token, '|');
-    string time = token;
+    std::string time = token;
     
-    cout << "Time = " << time << endl;
+    std::cout << "Time = " << time << std::endl;
     
     getline(toParse, token, '|');
-    string type = token;
+    std::string type = token;
     
     if (type == "Alarm")
     {
-      cout << "Alarm!" << endl;
+      std::cout << "Alarm!" << std::endl;
     }
     else // Key -> Value Pairings
     {
-      string token2;
+      std::string token2;
       getline(toParse, token2, '|');
       
-      cout << "Key = " << token << endl;
-      cout << "Value = " << token2 << endl;
+      std::cout << "Key = " << token << std::endl;
+      std::cout << "Value = " << token2 << std::endl;
       
       // Will be bypassed by single "Time|Item|Value" event
       while (getline(toParse, token, '|') && getline(toParse, token2, '|'))
       {
-        cout << "Key = " << token << endl;
-        cout << "Value = " << token2 << endl;
+        std::cout << "Key = " << token << std::endl;
+        std::cout << "Value = " << token2 << std::endl;
       }
     }
   }

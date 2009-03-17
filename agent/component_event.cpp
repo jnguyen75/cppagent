@@ -33,42 +33,14 @@
 
 #include "component_event.hpp"
 
-ComponentEvent::ComponentEvent(const char * item, unsigned int sequence, std::string time, void * value)
+ComponentEvent::ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value)
 {
-  /*if (item == "Alarm") // TODO
-  {
-    mItem = new Alarm(item);
-  }
-  else*/ if (item == "line")
-  {
-    mItem = new IntEvent(item);
-    
-    int valueToSet = *((int *) value);
-    (dynamic_cast<IntEvent *>(mItem))->setValue(valueToSet);
-    mValue = (void *) new int(valueToSet);
-  }
-  else if (item == "power")
-  {
-    mItem = new Power(item);
-  }
-  else if (item == "execution")
-  {
-    mItem = new Execution(item);
-  }
-  else if (item == "mode")
-  {
-    mItem = new ControllerMode(item);
-  }
-  else
-  {
-    mItem = new Event(item);
-  }
-  
-  
+  mDataItem = dataItem;
   mSequence = sequence;
   mTime = time;
   
-  convertValue();
+  mValue = value;
+  //convertValue();
 }
 
 ComponentEvent::~ComponentEvent()
