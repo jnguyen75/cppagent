@@ -33,19 +33,47 @@
 
 #include "component_event.hpp"
 
+/* ComponentEvent public static constants*/
+const std::string ComponentEvent::SSimpleUnits[NumSimpleUnits] = {
+  "INCH",
+  "FOOT",
+  "CENTIMETER",
+  "DECIMETER",
+  "METER",
+  "FAHRENHEIT",
+  "POUND",
+  "GRAM",
+  "RADIAN",
+  "MINUTE",
+  "HOUR",
+  "SECOND",
+  "MILLIMETER",
+  "LITER",
+  "DEGREE",
+  "KILOGRAM",
+  "NEWTON",
+  "CELSIUS",
+  "REVOLUTION",
+  "STATUS",
+  "PERCENT",
+  "NEWTON_MILLIMETER",
+  "HERTZ"
+};
+/* ComponentEvent public methods */
 ComponentEvent::ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value)
 {
   mDataItem = dataItem;
   mSequence = sequence;
   mTime = time;
   
-  mValue = value;
-  //convertValue();
+  convertValue(value);
+  std::cout << "Type: " << mDataItem->getType() << std::endl;
+  std::cout << "Previous: " << value << std::endl;
+  std::cout << "Converted: " << mValue << std::endl;
 }
 
 ComponentEvent::~ComponentEvent()
 {
-  delete mItem;
 }
 
 template <class T>
@@ -55,27 +83,111 @@ T ComponentEvent::getValue()
 }
 
 /* ComponentEvent protected methods */
-void ComponentEvent::convertValue()
+void ComponentEvent::convertValue(std::string value)
 {
-  // Check if the Device is an alarm first
-  if (dynamic_cast<Alarm *>(mItem))
+  // Check if the type is an alarm first
+  if (mDataItem->getType() == "ALARM")
   {
-    // TODO: Map values to upper case..?
+    // TODO: Convert to upper case, split into array
+  }
+  else if (mDataItem->getNativeUnits().empty())
+  {
     return;
   }
   else
   {
+    std::string units = mDataItem->getNativeUnits();
+    std::string::size_type slashLoc = units.find('/');
     
+    if (slashLoc == std::string::npos)
+    {
+      mValue = convertSimple(units, atof(value.c_str()));
+    }
+    else if (units == "REVOLUTIONS/MINUTE")
+    {
+      mValue = atof(value.c_str());
+    }
+    else
+    {
+      std::string numerator = units.substr(0, slashLoc);
+      std::string denominator = units.substr(slashLoc+1);
+      
+      std::string::size_type carotLoc = denominator.find('^');
+      
+      if (numerator == "REVOLUTION" and denominator == "SECOND")
+      {
+        mValue = atof(value.c_str()) * 60.0f;
+      }
+      else if (carotLoc == std::string::npos)
+      {
+        mValue = convertSimple(numerator, atof(value.c_str())) / convertSimple(denominator, 1.0);
+      }
+      else
+      {
+        std::string unit = units.substr(0, carotLoc);
+        std::string power = units.substr(carotLoc+1);
+        
+        float div = pow(convertSimple(unit, atof(value.c_str())), atof(power.c_str()));
+        mValue = convertSimple(numerator, atof(value.c_str())) / div;
+      }
+    }
   }
 }
 
-// ##### TODO: REMOVE ME #####
-int main ()
+float ComponentEvent::convertSimple(std::string units, float v)
 {
-  int value = 352;
-  ComponentEvent * test = new ComponentEvent("line", 1, "today", &value);
-  
-  std::cout << test->getValue<int>() << std::endl;
+  switch(getSimpleUnitsEnum(units))
+  {
+    case INCH:
+      return v * 25.4f;
+    case FOOT:
+      return v * 304.8f;
+    case CENTIMETER:
+      return v * 10.0f;
+    case DECIMETER:
+      return v * 100.0f;
+    case METER:
+      return v * 1000.0f;
+    case FAHRENHEIT:
+      return (v - 32.0f) * (5.0f / 9.0f);
+    case POUND:
+      return v * 0.45359237f;
+    case GRAM:
+      return v / 1000.0f;
+    case RADIAN:
+      return v * 57.2957795f;
+    case MINUTE:
+      return v * 60.0f;
+    case HOUR:
+      return v * 3600.0f;
+    
+    case SECOND:
+    case MILLIMETER:
+    case LITER:
+    case DEGREE:
+    case KILOGRAM:
+    case NEWTON:
+    case CELSIUS:
+    case REVOLUTION:
+    case STATUS:
+    case PERCENT:
+    case NEWTON_MILLIMETER:
+    case HERTZ:
+    default:
+      // or return value..?
+      return v;
+  }
+}
 
-  return 0;
+ComponentEvent::ESimpleUnits ComponentEvent::getSimpleUnitsEnum(std::string name)
+{
+  for (unsigned int i=0; i<ComponentEvent::NumSimpleUnits; i++)
+  {
+    if (name == ComponentEvent::SSimpleUnits[i])
+    {
+       return (ComponentEvent::ESimpleUnits) i;
+    }
+  }
+  
+  // TODO: THROW
 }

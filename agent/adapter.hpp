@@ -34,12 +34,12 @@
 #ifndef ADAPTER_HPP
 #define ADAPTER_HPP
 
-#include "xml_parser.hpp"
-
 #include <iostream>
 
 #include <map>
 #include <vector>
+
+#include "xml_parser.hpp"
 
 #include "../lib/dlib/sockets.h"
 #include "../lib/dlib/sliding_buffer.h"
@@ -64,8 +64,6 @@ protected:
   /* Keep the configuration information stored */
   XmlParser * mConfig;
   
-  /* */
-  unsigned int mSequence;
   
   
   /* Array to keep track of all devices */
@@ -77,10 +75,16 @@ protected:
   std::vector<Power *> mPowers;
   std::vector<Spindle *> mSpindles;
   
+  
+  /* */
+  unsigned int mSequence;
+  
   dlib::sliding_buffer_kernel_1<ComponentEvent *> * mSlidingBuffer;
   
+  dlib::mutex * mSequenceLock;
+  
 protected:
-  /* Initial method called to call the Devices/* path and begin loading */
+  /* Initial method called to call the //Devices/  path and begin loading */
   void loadDevices();
   
   /* Main method to process the nodes and return the objects */
@@ -90,14 +94,14 @@ protected:
   Component * loadComponent(xmlpp::Node * component, Component::EComponentSpecs spec);
   
   /* Load the data items */
-  void loadDataItems(xmlpp::Node * dataItems);
+  void loadDataItem(xmlpp::Node * dataItems);
   
-  DataItem * getDataItemByName(std::string name);
+  DataItem & getDataItemByName(std::string name) throw (std::string);
   
   /* Helper method to perform loading on children and set up relationships */
   void handleChildren(xmlpp::Node * components, Component * parent = NULL);
   
-  void addToBuffer(ComponentEvent * event);
+  void addToBuffer(std::string time, std::string key, std::string value);
   
 public:
   /* Load the adapter with the .xml file */

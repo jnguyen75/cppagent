@@ -63,6 +63,14 @@ public:
   DataItem(std::map<std::string, std::string> attributes);
   
   std::string getName();
+  
+  bool hasName(std::string name);
+  
+  std::string getType();
+  
+  std::string getNativeUnits();
+  
+  void addSource(std::string source);
 };
 
 #endif

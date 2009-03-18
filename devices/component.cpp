@@ -111,13 +111,15 @@ Component * Component::findById(unsigned int id)
 /* Component public static methods */
 Component::EComponentSpecs Component::getComponentEnum(std::string name)
 {
-  for (int i=0; i<Component::NumComponentSpecs; i++)
+  for (unsigned int i=0; i<Component::NumComponentSpecs; i++)
   {
     if (name == Component::SComponentSpecs[i])
     {
        return (Component::EComponentSpecs) i;
     }
   }
+  
+  // TODO: Error/exception
 }
 
 bool Component::hasNameAndId(std::map<std::string, std::string> attributes)

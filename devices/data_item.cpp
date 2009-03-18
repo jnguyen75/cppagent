@@ -39,7 +39,27 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
   }
 }
 
-std::string Adapter::getName()
+std::string DataItem::getName()
 {
   return mName;
+}
+
+bool DataItem::hasName(std::string name)
+{
+  return mName == name || (!mSource.empty() && mSource == name);
+}
+
+std::string DataItem::getType()
+{
+  return mType;
+}
+
+std::string DataItem::getNativeUnits()
+{
+  return mNativeUnits;
+}
+
+void DataItem::addSource(std::string source)
+{
+  mSource = source;
 }

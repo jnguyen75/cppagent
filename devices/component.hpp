@@ -41,7 +41,8 @@
 
 #include <iostream>
 
-class Component {
+class Component
+{
 public:
   
   enum EComponentSpecs {

@@ -66,8 +66,8 @@ void Connector::connect()
       sockBuf[status] = '\0';
       
       // ### TAKE ME OUT ###
-      std::cout << "Received: " << sockBuf << std::endl;
-      ::sleep(1);
+      //std::cout << "Received: " << sockBuf << std::endl;
+      //::sleep(1);
       
       // Append the temporary buffer to the socket buffer
       mBuffer += sockBuf;
