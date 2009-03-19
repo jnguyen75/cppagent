@@ -34,7 +34,6 @@
 #ifndef COMPONENT_HPP
 #define COMPONENT_HPP
 
-//#include <iostream>
 #include <list>
 #include <map>
 #include <string>
@@ -45,7 +44,9 @@ class Component
 {
 public:
   
-  enum EComponentSpecs {
+  /* String enumeration for component parts and details */
+  enum EComponentSpecs
+  {
     // Component parts
     AXES,
     CONTROLLER,
@@ -65,14 +66,6 @@ public:
   static const unsigned int NumComponentSpecs = 12;
   static const std::string SComponentSpecs[];
   
-  enum EDescriptions {
-    MANUFACTURER,
-    SERIAL_NUMBER
-  };
-  
-  static const unsigned int NumDescriptions = 2;
-  static const std::string SDescriptions[];
-  
 protected:
   /* Unique ID for each component */
   unsigned int mId;
@@ -80,12 +73,8 @@ protected:
   /* Name for itself */
   std::string mName;
   
-  /* Keep track of host/port for each */
-  std::string mHost;
-  unsigned int mPort;
-  
-  /* The ID of the parent */
-  unsigned int mParentId;
+  /* Pointer to the parent component */
+  Component * mParent;
   
   /* Each component keeps track of it's children in a list */
   std::list<Component *> mChildren;
@@ -96,30 +85,47 @@ protected:
   std::string mStation;
 
 public:
+  /* Take in mapping of attributes */
   Component(std::map<std::string, std::string> attributes);
   
+  /* Get the component ID */
   unsigned int getId();
   
-  unsigned int getParentId();
-  
+  /* Get the component name */
   std::string getName();
   
+  /* Get the component's parent component */
+  Component * getParent();
+  
+  /* Get the component manufacturer */
   std::string getManufacturer();
   
+  /* Get the component serial number */
+  std::string getSerialNumber();
+  
+  /* Get the component station */
+  std::string getStation();
+  
+  /* Get the component's list of children */
   std::list<Component *> getChildren();
   
+  /* Add a child to component's list of children */
   void addChild(Component * child);
   
-  void setParentId(unsigned int id);
+  /* Set the component's parent */
+  void setParent(Component * parent);
   
+  /* Add a description specifications from an attribute map */
   void addDescription(std::map<std::string, std::string> attributes);
   
-  Component * findById(unsigned int id);
-  
 public:
+  /* Get the enumeration corresponding to the string */
   static Component::EComponentSpecs getComponentEnum(std::string name);
   
+  /* Error checking to check attributes if there is a name & ID keys */
   static bool hasNameAndId(std::map<std::string, std::string> attributes);
 };
 
 #endif
+
+

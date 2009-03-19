@@ -37,40 +37,79 @@
 #include <map>
 #include <iostream>
 
+#include "component.hpp"
+
 class DataItem
 {
-public:
+protected:
   /* Unique ID for each component */
   unsigned int mId;
   
   /* Name for itself */
   std::string mName;
   
+  /* Type of data item */
   std::string mType;
   
+  /* Subtype of data item */
   std::string mSubType;
   
+  /* Category of data item */
   std::string mCategory;
+  
+  /* Native units of data item */
   std::string mNativeUnits;
+  
+  /* Units of data item */
   std::string mUnits;
-  std::string mNativeScale;
+  
+  /* Native scale of data item */
+  float mNativeScale;
+  
+  /* Sig figs of data item */
   std::string mSignificantDigits;
+  
+  /* Coordinate system of data item */
   std::string mCoordinateSystem;
   
+  /* Extra source information of data item */
   std::string mSource;
   
+  /* Component that data item is associated with */  
+  Component * mComponent;
+  
 public:
+  /* Construct a data item with appropriate attributes mapping */
   DataItem(std::map<std::string, std::string> attributes);
   
+  /* Get ID of data item */
+  unsigned int getId();
+  
+  /* Get name of data item */
   std::string getName();
   
+  /* Returns if data item has this name (or source name) */
   bool hasName(std::string name);
   
+  /* Get type of data item */
   std::string getType();
   
+  /* Get native units of data item */
   std::string getNativeUnits();
   
+  /* Get native scale of data item */
+  float getNativeScale();
+  
+  /* Add a source (extra information) to data item */
   void addSource(std::string source);
+  
+  /* Get source (extra information) of data item */
+  std::string getSource();
+  
+  /* Set component that data item is associated with */
+  void setComponent(Component * component);
 };
 
 #endif
+
+

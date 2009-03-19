@@ -64,16 +64,9 @@ protected:
   /* Keep the configuration information stored */
   XmlParser * mConfig;
   
-  
-  
   /* Array to keep track of all devices */
-  std::vector<Axes *> mAxes;
-  std::vector<Controller *> mControllers;
   std::vector<Device *> mDevices;
   std::vector<DataItem *> mDataItems;
-  std::vector<Linear *> mLinears;
-  std::vector<Power *> mPowers;
-  std::vector<Spindle *> mSpindles;
   
   
   /* */
@@ -94,13 +87,15 @@ protected:
   Component * loadComponent(xmlpp::Node * component, Component::EComponentSpecs spec);
   
   /* Load the data items */
-  void loadDataItem(xmlpp::Node * dataItems);
+  void loadDataItem(xmlpp::Node * dataItems, Component * component);
   
+  /* Find a DataItem by name, throw an exception */
   DataItem & getDataItemByName(std::string name) throw (std::string);
   
   /* Helper method to perform loading on children and set up relationships */
   void handleChildren(xmlpp::Node * components, Component * parent = NULL);
   
+  /* Add ComponentEvent and specs to the SlidingBuffer */
   void addToBuffer(std::string time, std::string key, std::string value);
   
 public:
@@ -109,6 +104,8 @@ public:
   
   /* Destructor */
   ~Adapter();
+  
+  void current(std::string path);
   
   /* Method used to search data for a unique ID */
   Component * searchDevicesForId(unsigned int id);

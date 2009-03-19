@@ -89,48 +89,54 @@ void ComponentEvent::convertValue(std::string value)
   if (mDataItem->getType() == "ALARM")
   {
     // TODO: Convert to upper case, split into array
+    return;
   }
   else if (mDataItem->getNativeUnits().empty())
   {
     return;
   }
+  
+  // Else
+  
+  std::string units = mDataItem->getNativeUnits();
+  std::string::size_type slashLoc = units.find('/');
+  
+  if (slashLoc == std::string::npos)
+  {
+    mValue = convertSimple(units, atof(value.c_str()));
+  }
+  else if (units == "REVOLUTIONS/MINUTE")
+  {
+    mValue = atof(value.c_str());
+  }
   else
   {
-    std::string units = mDataItem->getNativeUnits();
-    std::string::size_type slashLoc = units.find('/');
+    std::string numerator = units.substr(0, slashLoc);
+    std::string denominator = units.substr(slashLoc+1);
     
-    if (slashLoc == std::string::npos)
+    std::string::size_type carotLoc = denominator.find('^');
+    
+    if (numerator == "REVOLUTION" and denominator == "SECOND")
     {
-      mValue = convertSimple(units, atof(value.c_str()));
+      mValue = atof(value.c_str()) * 60.0f;
     }
-    else if (units == "REVOLUTIONS/MINUTE")
+    else if (carotLoc == std::string::npos)
     {
-      mValue = atof(value.c_str());
+      mValue = convertSimple(numerator, atof(value.c_str())) / convertSimple(denominator, 1.0);
     }
     else
     {
-      std::string numerator = units.substr(0, slashLoc);
-      std::string denominator = units.substr(slashLoc+1);
+      std::string unit = units.substr(0, carotLoc);
+      std::string power = units.substr(carotLoc+1);
       
-      std::string::size_type carotLoc = denominator.find('^');
-      
-      if (numerator == "REVOLUTION" and denominator == "SECOND")
-      {
-        mValue = atof(value.c_str()) * 60.0f;
-      }
-      else if (carotLoc == std::string::npos)
-      {
-        mValue = convertSimple(numerator, atof(value.c_str())) / convertSimple(denominator, 1.0);
-      }
-      else
-      {
-        std::string unit = units.substr(0, carotLoc);
-        std::string power = units.substr(carotLoc+1);
-        
-        float div = pow(convertSimple(unit, atof(value.c_str())), atof(power.c_str()));
-        mValue = convertSimple(numerator, atof(value.c_str())) / div;
-      }
+      float div = pow(convertSimple(unit, atof(value.c_str())), atof(power.c_str()));
+      mValue = convertSimple(numerator, atof(value.c_str())) / div;
     }
+  }
+  
+  if (mDataItem->getNativeScale() != 0.0f)
+  {
+    mValue /= mDataItem->getNativeScale();
   }
 }
 

@@ -1,3 +1,36 @@
+/*
+* Copyright (c) 2008, AMT – The Association For Manufacturing Technology (“AMT”)
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*     * Redistributions of source code must retain the above copyright
+*       notice, this list of conditions and the following disclaimer.
+*     * Redistributions in binary form must reproduce the above copyright
+*       notice, this list of conditions and the following disclaimer in the
+*       documentation and/or other materials provided with the distribution.
+*     * Neither the name of the AMT nor the
+*       names of its contributors may be used to endorse or promote products
+*       derived from this software without specific prior written permission.
+*
+* DISCLAIMER OF WARRANTY. ALL MTCONNECT MATERIALS AND SPECIFICATIONS PROVIDED
+* BY AMT, MTCONNECT OR ANY PARTICIPANT TO YOU OR ANY PARTY ARE PROVIDED "AS IS"
+* AND WITHOUT ANY WARRANTY OF ANY KIND. AMT, MTCONNECT, AND EACH OF THEIR
+* RESPECTIVE MEMBERS, OFFICERS, DIRECTORS, AFFILIATES, SPONSORS, AND AGENTS
+* (COLLECTIVELY, THE "AMT PARTIES") AND PARTICIPANTS MAKE NO REPRESENTATION OR
+* WARRANTY OF ANY KIND WHATSOEVER RELATING TO THESE MATERIALS, INCLUDING, WITHOUT
+* LIMITATION, ANY EXPRESS OR IMPLIED WARRANTY OF NONINFRINGEMENT,
+* MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. 
+
+* LIMITATION OF LIABILITY. IN NO EVENT SHALL AMT, MTCONNECT, ANY OTHER AMT
+* PARTY, OR ANY PARTICIPANT BE LIABLE FOR THE COST OF PROCURING SUBSTITUTE GOODS
+* OR SERVICES, LOST PROFITS, LOSS OF USE, LOSS OF DATA OR ANY INCIDENTAL,
+* CONSEQUENTIAL, INDIRECT, SPECIAL OR PUNITIVE DAMAGES OR OTHER DIRECT DAMAGES,
+* WHETHER UNDER CONTRACT, TORT, WARRANTY OR OTHERWISE, ARISING IN ANY WAY OUT OF
+* THIS AGREEMENT, USE OR INABILITY TO USE MTCONNECT MATERIALS, WHETHER OR NOT
+* SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
+*/
+
 #include "component.hpp"
 
 const std::string Component::SComponentSpecs[NumComponentSpecs] = {
@@ -17,17 +50,14 @@ const std::string Component::SComponentSpecs[NumComponentSpecs] = {
   "text"
 };
 
-const std::string Component::SDescriptions[NumDescriptions] = {
-  "manufacturer",
-  "serialNumber"
-};
-
 /* Component public methods */
 Component::Component(std::map<std::string, std::string> attributes)
 {
   // Error checking..?
   mId = atoi(attributes["id"].c_str());
   mName = attributes["name"];
+  
+  mParent = NULL;
 }
 
 unsigned int Component::getId()
@@ -35,19 +65,29 @@ unsigned int Component::getId()
   return mId;
 }
 
-unsigned int Component::getParentId()
-{
-  return mParentId;
-}
-
 std::string Component::getName()
 {
   return mName;
 }
 
+Component * Component::getParent()
+{
+  return mParent;
+}
+
 std::string Component::getManufacturer()
 {
   return mManufacturer;
+}
+
+std::string Component::getSerialNumber()
+{
+  return mSerialNumber;
+}
+
+std::string Component::getStation()
+{
+  return mStation;
 }
 
 std::list<Component *> Component::getChildren()
@@ -60,9 +100,9 @@ void Component::addChild(Component * child)
   mChildren.push_back(child);
 }
 
-void Component::setParentId(unsigned int id)
+void Component::setParent(Component * parent)
 {
-  mParentId = id;
+  mParent = parent;
 }
 
 void Component::addDescription(std::map<std::string, std::string> attributes)
@@ -82,30 +122,6 @@ void Component::addDescription(std::map<std::string, std::string> attributes)
     mStation = attributes["station"];
   }
   
-}
-
-Component * Component::findById(unsigned int id)
-{
-  std::cout << "Mine: " << mId << std::endl;
-  std::cout << "Looking for: " << id << std::endl;
-  if (getId() == id)
-  {
-    return this;
-  }
-  else
-  {
-    std::list<Component *> children = getChildren();
-    
-    for (std::list<Component *>::iterator it = children.begin(); it != children.end(); ++it)
-    {
-      Component * toFind = findById(id);
-      if (toFind != NULL)
-      {
-        return toFind;
-      }
-    }
-    return NULL;
-  }
 }
 
 /* Component public static methods */
