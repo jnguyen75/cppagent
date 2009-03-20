@@ -104,14 +104,9 @@ void HTTP::on_request (
   }
 }
 
-void HTTP::terminateServer()
+void HTTP::addAdapter(std::string server, unsigned int port, std::string configXmlPath)
 {
-  // FIXME: Wait for user to close server
-  std::cout << "Press enter at anytime to terminate web server" << std::endl;
-  std::cin.get();
-
-  // Shut down server by unblocking HTTP::start()
-  clear();
+  mAdapters.push_back(new Adapter(server, port, configXmlPath));
 }
 
 /* HTTP protected methods */
@@ -185,19 +180,37 @@ void HTTP::printError(std::string errorCode, std::string text)
   xmlStream << "</m:MTConnectStreams>" << std::endl;
 }
 
+/***** Procedural Code *****/
+void terminateServerThread(HTTP * server)
+{
+  // FIXME: Wait for user to close server
+  std::cout << "Press enter at anytime to terminate web server" << std::endl;
+  std::cin.get();
+
+  // Shut down server by unblocking HTTP::start()
+  server->clear();
+  delete server;
+}
+
 int main()
 {
   try
   {
-    // Create a thread that will listen for the user to end this program
-    thread_function t(serverExitThread);
+    HTTP * webServer = new HTTP();
     
-    // Start web server listen on specified port
-    webServer.set_listening_port(SERVER_PORT);
-    webServer.start();
+    // create a thread that will listen for the user to end this program
+    thread_function t(terminateServerThread, webServer);
+    
+    webServer->addAdapter("agent.mtconnect.org", 7878, "../include/config_no_namespace.xml");
+
+    // make it listen on port 5000
+    webServer->set_listening_port(5000);
+    webServer->start();
   }
-  catch (std::exception& e)
+  catch (std::exception & e)
   {
     std::cout << e.what() << std::endl;
   }
+  
+  return 0;
 }

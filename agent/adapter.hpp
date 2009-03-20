@@ -44,6 +44,7 @@
 
 #include "dlib/sockets.h"
 #include "dlib/sliding_buffer.h"
+#include "dlib/threads.h"
 
 #include "connector.hpp"
 #include "component_event.hpp"
@@ -61,8 +62,11 @@
 
 using namespace dlib;
 
-class Adapter : public Connector
+class Adapter : public Connector, public threaded_object
 {
+private:
+  void thread();
+
 protected:
   /* Keep the configuration information stored */
   XmlParser * mConfig;
@@ -108,7 +112,12 @@ public:
   /* Destructor */
   virtual ~Adapter();
   
-  void current(std::string path);
+  std::vector<ComponentEvent *> current(
+    unsigned int * seq,
+    unsigned int * firstSeq,
+    unsigned int * lastSeq,
+    std::string path = ""
+  );
   
   void sample(unsigned int start, unsigned int count, std::string path = "");
   

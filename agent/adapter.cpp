@@ -50,23 +50,38 @@ Adapter::Adapter(std::string server, unsigned int port, std::string configXml)
   
   // Mutex used for synchronized access to sliding buffer and sequence number
   mSequenceLock = new dlib::mutex;
+  
+  start();
 }
 
 Adapter::~Adapter()
 {
+  stop();
+  wait();
+  
   delete mConfig;
   delete mSlidingBuffer;
   delete mSequenceLock;
 }
 
-void Adapter::current(std::string path)
+void Adapter::thread()
+{
+  connect();
+}
+
+std::vector<ComponentEvent *> Adapter::current(
+  unsigned int * seq,
+  unsigned int * firstSeq,
+  unsigned int * lastSeq,
+  std::string path)
 {
   //results = []
   //sequence, first_seq, last_seq = nil
   mSequenceLock->lock();
   
-  unsigned int firstSequence = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
-  unsigned int lastSequence = mSequence - 1;
+  *seq = mSequence;
+  *firstSeq = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
+  *lastSeq = mSequence - 1;
   
   std::vector<ComponentEvent *> results;
   
@@ -344,14 +359,4 @@ void Adapter::addToBuffer(std::string time, std::string key, std::string value)
   }
 }
 
-/***** Procedural Code *****/
-int main ()
-{
-  Adapter * adapter = new Adapter("agent.mtconnect.org", 7878, "../include/config_no_namespace.xml");
-  
-  //adapter->printComponents();
-  //adapter->printDataItems();
-  adapter->connect();
-  
-  return 0;
-}
+

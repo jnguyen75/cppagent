@@ -39,9 +39,11 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 // External libraries
 #include "dlib/server.h"
+#include "adapter.hpp"
 
 #include "xml_printer.hpp"
 
@@ -75,6 +77,8 @@ protected:
   /* Class string stream to return XML on requests */
   std::ostringstream xmlStream;
   
+  std::vector<Adapter *> mAdapters;
+  
 public:
   void on_request (
         const std::string& path,
@@ -90,8 +94,9 @@ public:
         unsigned short local_port
     );
   
-  void terminateServer();
+  void addAdapter(std::string server, unsigned int port, std::string configXmlPath);
 };
+
 
 #endif
 

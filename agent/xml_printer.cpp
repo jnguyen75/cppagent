@@ -151,11 +151,4 @@ void XmlPrinter::printIndentation(unsigned int indentation)
   }
 }
 
-int main()
-{
-  std::ostringstream sout;
-  XmlPrinter xmlPrinter("../include/current.xml", &sout);
-  //xmlPrinter.printNode(xmlPrinter.getRootNode(), 0);
-  xmlPrinter.printPath("MTConnectStreams");
-  std::cout << sout.str();
-}
+

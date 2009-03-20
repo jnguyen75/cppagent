@@ -15,6 +15,7 @@ vpath %.hpp ../devices
 vpath %.cpp ../devices
 
 SOURCES= \
+http.cpp \
 adapter.cpp \
 component_event.cpp \
 connector.cpp \
@@ -27,6 +28,7 @@ spindle.cpp \
 linear.cpp \
 controller.cpp \
 power.cpp \
+xml_printer.cpp \
 dlib.cpp
 
 OBJS=$(SOURCES:%.cpp=%.o)
@@ -43,5 +45,5 @@ agent: $(OBJS)
 %.o: %.cpp %.hpp
 	g++ -c ${CXXFLAGS} $< 
 
-adapter.o: connector.hpp component_event.hpp axes.hpp controller.hpp device.hpp \
-	data_item.hpp linear.hpp power.hpp spindle.hpp
+http.o: adapter.hpp connector.hpp component_event.hpp axes.hpp controller.hpp device.hpp \
+	data_item.hpp linear.hpp power.hpp spindle.hpp xml_printer.hpp
