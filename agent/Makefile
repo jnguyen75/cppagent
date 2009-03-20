@@ -42,3 +42,6 @@ agent: $(OBJS)
 
 %.o: %.cpp %.hpp
 	g++ -c ${CXXFLAGS} $< 
+
+adapter.o: connector.hpp component_event.hpp axes.hpp controller.hpp device.hpp \
+	data_item.hpp linear.hpp power.hpp spindle.hpp

@@ -41,6 +41,11 @@ Connector::Connector(std::string server, unsigned int port)
   //mBuffer;
 }
 
+Connector::~Connector()
+{
+}
+
+
 void Connector::connect()
 {
   try
