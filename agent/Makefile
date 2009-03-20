@@ -6,7 +6,7 @@ INCLUDE_DIRECTORIES=/opt/local/include/libxml++-2.6 \
 	/opt/local/include/glib-2.0 /opt/local/lib/glib-2.0/include \
 	/opt/local/include ../lib ../devices
 
-CXXFLAGS = -g -Wall $(INCLUDE_DIRECTORIES:%=-I%)
+CXXFLAGS = -g -Wall $(INCLUDE_DIRECTORIES:%=-I%) -DDLIB_NO_GUI_SUPPORT
 LDFLAGS = -L/opt/local/lib
 LIBRARIES=  xml++-2.6 xml2 pthread z m glibmm-2.4 gobject-2.0 sigc-2.0 glib-2.0 intl iconv 
 
@@ -17,11 +17,7 @@ SOURCES= \
 adapter.cpp \
 component_event.cpp \
 connector.cpp \
-http.cpp \
-test_connector.cpp \
-units.cpp \
 xml_parser.cpp \
-xml_printer.cpp \
 component.cpp \
 device.cpp \
 data_item.cpp \
@@ -29,7 +25,8 @@ axes.cpp \
 spindle.cpp \
 linear.cpp \
 controller.cpp \
-power.cpp
+power.cpp \
+dlib.cpp
 
 
 OBJS=$(SOURCES:%.cpp=%.o)
@@ -37,15 +34,13 @@ LIBS=$(LIBRARIES:%=-l%)
 
 all: agent
 
+clean:
+	rm *.o
+
 agent: $(OBJS)
 	g++ ${CXXFLAGS} ${LDFLAGS} -o agent $+ ${LIBS}
 
 .cpp.o: 
 	g++ -c ${CXXFLAGS} $< 
 
-adapter.o: adapter.hpp
-component_event.o: component_event.hpp
-connector.o: connector.hpp
-http.o: http.hpp
-xml_parser.o: xml_parser.hpp
-xml_printer.o: xml_printer.hpp
+%.o: %.cpp %.hpp

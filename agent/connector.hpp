@@ -74,7 +74,5 @@ public:
   virtual void processData(std::string line) = 0;
 };
 
-#include "connector.cpp"
-
 #endif
 

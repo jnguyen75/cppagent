@@ -72,16 +72,16 @@ void Adapter::current(std::string path)
   
   for (int i=firstSequence; i<=lastSequence; i++)
   {
-    if ((*mSequenceBuffer)[i]->getValue() != 0.0f)
+    if ((*mSlidingBuffer)[i]->getValue() != 0.0f)
     {
-      results.push_back((*mSequenceBuffer)[i]);
+      results.push_back((*mSlidingBuffer)[i]);
     }
   }
   
   mSequenceLock->unlock();
 
   //[results, sequence, first_seq, last_seq]
-  return results;
+  //return results;
 }
 
 void Adapter::sample(unsigned int start, unsigned int count, std::string path)
