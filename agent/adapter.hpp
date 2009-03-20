@@ -116,7 +116,6 @@ public:
   std::vector<ComponentEvent *> current(
     unsigned int * seq,
     unsigned int * firstSeq,
-    unsigned int * lastSeq,
     std::string path = ""
   );
   
@@ -136,6 +135,9 @@ public:
   void printComponents();
   void printNodesAndChildren(Component * component);
   void printDataItems();
+
+public:
+  static const unsigned int SlidingBufferSize = 131072;
 };
 
 #endif

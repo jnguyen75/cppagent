@@ -34,7 +34,14 @@
 #ifndef XML_PRINTER_HPP
 #define XML_PRINTER_HPP
 
+#define TIME_BUFFER_SIZE 80
+
+#define MTCONNECT_XML_VERS "1.0"
+
 #include <iostream>
+#include <ctime>
+#include <stdio.h>
+#include <stdlib.h>
 
 // Include the LibXML Library
 #include <libxml++/libxml++.h>
@@ -42,18 +49,28 @@
 class XmlPrinter
 {
 protected:
-  /* Simple helper function to put indentations into the XML stream */
-  void printIndentation(unsigned int indentation);
-  
   /* Pointer to the stream to write to XML */
   std::ostringstream * mXmlStream;
   
   /* LibXML++ XML DOM Parser */
   xmlpp::DomParser * mParser;
   
+  
+  xmlpp::Document * mErrorXml;
+  
+protected:
+  void initErrorXml();
+  
+  /* Simple helper function to put indentations into the XML stream */
+  void printIndentation(unsigned int indentation);
+  
+  void getCurrentTime(char buffer[]);
+  
+  std::string intToString(unsigned int i);
+  
 public:
   /* Constructor to set the pointer to the correct stringstream */
-  XmlPrinter(std::string xmlPath, std::ostringstream * xmlStream);
+  XmlPrinter(std::ostringstream * xmlStream);
   
   /* Virtual destructor */
   virtual ~XmlPrinter();
@@ -66,6 +83,14 @@ public:
   
   /* Output XML based on path parameter given */
   void printPath(std::string path);
+  
+  void printError(
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    std::string errorCode,
+    std::string errorText
+  );
 };
 
 #endif

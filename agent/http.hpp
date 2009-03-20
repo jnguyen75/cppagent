@@ -74,12 +74,19 @@ protected:
   /* Output an XML Error */
   void printError(std::string errorCode, std::string text);
   
+protected:
   /* Class string stream to return XML on requests */
-  std::ostringstream xmlStream;
+  std::ostringstream mXmlStream;
+  
+  XmlPrinter * mXmlPrinter;
   
   std::vector<Adapter *> mAdapters;
   
 public:
+  HTTP();
+  
+  virtual ~HTTP();
+  
   void on_request (
         const std::string& path,
         std::string& result,

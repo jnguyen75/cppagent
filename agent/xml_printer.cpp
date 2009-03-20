@@ -34,7 +34,7 @@
 #include "xml_printer.hpp"
 
 /* XmlPrinter public methods */
-XmlPrinter::XmlPrinter(std::string xmlPath, std::ostringstream * xmlStream)
+XmlPrinter::XmlPrinter(std::ostringstream * xmlStream)
 {
   mXmlStream = xmlStream;
   try
@@ -45,7 +45,10 @@ XmlPrinter::XmlPrinter(std::string xmlPath, std::ostringstream * xmlStream)
     mParser->set_validate(false);
     // We just want the text to be resolved/unescaped automatically.
     mParser->set_substitute_entities();
-    mParser->parse_file(xmlPath);
+    
+    initErrorXml();
+    
+    //mParser->parse_file(xmlPath);
   }
   catch (std::exception & e)
   {
@@ -56,8 +59,11 @@ XmlPrinter::XmlPrinter(std::string xmlPath, std::ostringstream * xmlStream)
 XmlPrinter::~XmlPrinter()
 {
   delete mParser;
+  
+  delete mErrorXml;
 }
 
+// TODO 
 xmlpp::Node * XmlPrinter::getRootNode()
 {
   return mParser->get_document()->get_root_node();
@@ -72,16 +78,19 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
     const xmlpp::ContentNode* nodeContent = dynamic_cast<const xmlpp::ContentNode*>(node);
     const xmlpp::TextNode* nodeText = dynamic_cast<const xmlpp::TextNode*>(node);
     const xmlpp::CommentNode* nodeComment = dynamic_cast<const xmlpp::CommentNode*>(node);
+    const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node);
 
     // Ignore empty whitespace
-    if (nodeText && nodeText->is_white_space())
+    if (nodeText and nodeText->is_white_space())
+    {
       return;
+    }
     
     Glib::ustring nodename = node->get_name();
     
     // Node name tag: i.e. "<tag"
     // Leave ">" out in case there are other attributes
-    if (!nodeText && !nodeComment && !nodename.empty())
+    if (!nodeText and !nodeComment and !nodename.empty())
     {
       printIndentation(indentation);
       *mXmlStream << "<" << nodename;
@@ -93,7 +102,7 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
       printIndentation(indentation);
       *mXmlStream << nodeText->get_content() << std::endl;
     }
-    else if (const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node))
+    else if (nodeElement)
     {
       // Print attributes for the element
       // i.e. ...attribute1="value1" attribute2="value2"...
@@ -104,7 +113,11 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
         *mXmlStream << " " << attribute->get_name() << "=\"" << attribute->get_value() << "\"";
       }
       
-      *mXmlStream << ">" << std::endl;
+      std::string endTag = (nodeElement->has_child_text() or indentation == 0) ? ">" : " />";
+      
+      std::cout << indentation << std::endl;
+      
+      *mXmlStream << endTag << std::endl;
     }
     
     // If node does NOT have content, then it may have children, so perform print on children
@@ -119,7 +132,7 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
     }
     
     // Close off xml tag, i.e. </tag>
-    if (!nodeText && !nodeComment && !nodename.empty())
+    if ((!nodeText and !nodeComment and !nodename.empty() and nodeElement->has_child_text()) or indentation == 0)
     {
       printIndentation(indentation);
       *mXmlStream << "</" << nodename << ">" << std::endl;
@@ -136,13 +149,56 @@ void XmlPrinter::printPath(std::string path)
   
   //printNode(getRootNode(), 0);
   
-  for (int i=0; i<results.size(); i++)
+  for (unsigned int i=0; i<results.size(); i++)
   {
     printNode(results[i], 0);
   }
 }
 
+void XmlPrinter::printError(
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    std::string errorCode,
+    std::string errorText
+  )
+{  
+  
+  char timeBuffer [TIME_BUFFER_SIZE];
+  getCurrentTime(timeBuffer);
+  
+  xmlpp::Element * header = mErrorXml->get_root_node()->add_child("Header");
+  header->set_attribute("creationTime", timeBuffer);
+  header->set_attribute("sender", "localhost");
+  header->set_attribute("instanceId", intToString(adapterId));
+  header->set_attribute("bufferSize", intToString(bufferSize));
+  header->set_attribute("version", MTCONNECT_XML_VERS);
+  header->set_attribute("nextSequence", intToString(nextSeq));
+  
+  xmlpp::Element * error = mErrorXml->get_root_node()->add_child("Error");
+  error->set_attribute("errorCode", errorCode);
+  error->set_child_text(errorText);
+  
+  
+  printNode(mErrorXml->get_root_node());
+  
+  mErrorXml->get_root_node()->remove_child(header);
+  mErrorXml->get_root_node()->remove_child(error);
+}
+
 /* XmlPrinter Protected Methods */
+void XmlPrinter::initErrorXml()
+{
+  mErrorXml = new xmlpp::Document;
+  
+  xmlpp::Element * root = mErrorXml->create_root_node("MTConnectStreams");
+  
+  root->set_attribute("xmlns:m", "urn:mtconnect.com:MTConnectError:1.0");
+  root->set_attribute("xmlns", "urn:mtconnect.com:MTConnectError:1.0");
+  root->set_attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+  root->set_attribute("xsi:schemaLocation", "urn:mtconnect.com:MTConnectError:1.0 /schemas/MTConnectError.xsd");
+}
+
 void XmlPrinter::printIndentation(unsigned int indentation)
 {
   for(unsigned int i = 0; i < indentation; ++i)
@@ -151,4 +207,20 @@ void XmlPrinter::printIndentation(unsigned int indentation)
   }
 }
 
+void XmlPrinter::getCurrentTime(char buffer[])
+{
+  time_t rawtime;
+  struct tm * timeinfo;
 
+  time ( &rawtime );
+  timeinfo = gmtime ( &rawtime );
+
+  strftime (buffer, TIME_BUFFER_SIZE, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
+}
+
+std::string XmlPrinter::intToString(unsigned int i)
+{
+  std::ostringstream stm;
+  stm << i;
+  return stm.str();
+}

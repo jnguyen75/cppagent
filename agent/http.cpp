@@ -34,26 +34,35 @@
 #include "http.hpp"
 
 /* HTTP public methods */
+HTTP::HTTP()
+{
+  mXmlPrinter = new XmlPrinter(&mXmlStream);
+}
+
+HTTP::~HTTP()
+{
+  delete mXmlPrinter;
+}
 
 /* Overridden method that is called per web request */
 void HTTP::on_request (
-      const std::string& path,
-      std::string& result,
-      const map_type& queries,
-      const map_type& cookies,
-      queue_type& new_cookies,
-      const map_type& incoming_headers,
-      map_type& response_headers,
-      const std::string& foreign_ip,
-      const std::string& local_ip,
-      unsigned short foreign_port,
-      unsigned short local_port
-    )
+    const std::string& path,
+    std::string& result,
+    const map_type& queries,
+    const map_type& cookies,
+    queue_type& new_cookies,
+    const map_type& incoming_headers,
+    map_type& response_headers,
+    const std::string& foreign_ip,
+    const std::string& local_ip,
+    unsigned short foreign_port,
+    unsigned short local_port
+  )
 {
   try 
   {
     // Reset the XML output stream for each request
-    xmlStream.str("");
+    mXmlStream.str("");
     
     // Find the first position of '/'
     std::string::size_type loc1 = path.find( "/", 1 );
@@ -73,6 +82,7 @@ void HTTP::on_request (
       }
       else
       {
+        std::cout << "Routing Error1" << std::endl;
         printError("Routing Error", "The path '" + path + "' does not exist.");
       }
     }
@@ -91,12 +101,13 @@ void HTTP::on_request (
       }
       else
       {
-      
+        std::cout << "Routing Error2" << std::endl;
+        printError("Routing Error", "The path '" + path + "' does not exist.");
       }
     }
     
     // Output the XML stream into the browser
-    result = xmlStream.str();
+    result = mXmlStream.str();
   }
   catch (std::exception & e)
   {
@@ -149,10 +160,10 @@ void HTTP::handleCurrent(const map_type& queries)
 {
   try
   {
-    XmlPrinter xmlPrinter("../include/current.xml", &xmlStream);
-    xmlPrinter.printNode(xmlPrinter.getRootNode(), 0);
+    //XmlPrinter xmlPrinter("../include/current.xml", &xmlStream);
+    //xmlPrinter.printNode(xmlPrinter.getRootNode(), 0);
     
-    unsigned int seq, firstSeq, lastSeq;
+    unsigned int seq, firstSeq;
     mAdapters[0]->current(&seq, &firstSeq);
     std::cout << "Seq: " << seq << std::endl;
     std::cout << "FirstSeq: " << firstSeq << std::endl;
@@ -177,12 +188,7 @@ bool HTTP::isBasicCall(std::string call)
 
 void HTTP::printError(std::string errorCode, std::string text)
 {
-  // Error template
-  xmlStream << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
-  xmlStream << "<m:MTConnectStreams xsi:schemaLocation=\"urn:mtconnect.com:MTConnectError:0.9 /schemas/MTConnectError.xsd\">" << std::endl;
-  xmlStream << "  <Header creationTime=\"2009-03-02T22:09:34+00:00\" sender=\"localhost\" instanceId=\"1235613755\" bufferSize=\"100000\" version=\"0.9\" nextSequence=\"\"/>" << std::endl;
-  xmlStream << "  <Error errorCode=\"" << errorCode << "\">" << text << "</Error>" << std::endl;
-  xmlStream << "</m:MTConnectStreams>" << std::endl;
+  mXmlPrinter->printError(1, Adapter::SlidingBufferSize, 2, errorCode, text);
 }
 
 /***** Procedural Code *****/
