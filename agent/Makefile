@@ -5,9 +5,10 @@ INCLUDE_DIRECTORIES=/opt/local/include/libxml++-2.6 \
 	/opt/local/include/sigc++-2.0 /opt/local/lib/sigc++-2.0/include \
 	/opt/local/include/glib-2.0 /opt/local/lib/glib-2.0/include \
 	/opt/local/include ../lib ../devices
+LIB_DIRECTORIES=/opt/local/lib
 
 CXXFLAGS = -g -Wall $(INCLUDE_DIRECTORIES:%=-I%) -DDLIB_NO_GUI_SUPPORT
-LDFLAGS = -L/opt/local/lib
+LDFLAGS = $(LIB_DIRECTORIES:%=-L%)
 LIBRARIES=  xml++-2.6 xml2 pthread z m glibmm-2.4 gobject-2.0 sigc-2.0 glib-2.0 intl iconv 
 
 vpath %.hpp ../devices
