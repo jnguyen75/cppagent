@@ -66,8 +66,8 @@ void Connector::connect()
       sockBuf[status] = '\0';
       
       // ### TAKE ME OUT ###
-      std::cout << "Received: " << sockBuf << std::endl;
-      ::sleep(1);
+      //std::cout << "Received: " << sockBuf << std::endl;
+      //::sleep(1);
       
       // Append the temporary buffer to the socket buffer
       mBuffer += sockBuf;
@@ -93,7 +93,7 @@ void Connector::connect()
         
         while (stream.getline(buf, LINE_BUFFER_SIZE))
         {
-          processLine(buf);
+          processData(buf);
         }
         
         // Clear buffer/insert overflow data

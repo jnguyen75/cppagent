@@ -34,16 +34,49 @@
 #ifndef COMPONENT_EVENT_HPP
 #define COMPONENT_EVENT_HPP
 
-#include "device_datum.hpp"
+#include "../devices/data_item.hpp"
+
 #include <string>
 #include <iostream>
+#include <cmath>
 
 /* Component Event */
 class ComponentEvent
 {
+public:
+  enum ESimpleUnits
+  {
+    INCH,
+    FOOT,
+    CENTIMETER,
+    DECIMETER,
+    METER,
+    FAHRENHEIT,
+    POUND,
+    GRAM,
+    RADIAN,
+    MINUTE,
+    HOUR,
+    SECOND, 
+    MILLIMETER, 
+    LITER,
+    DEGREE,
+    KILOGRAM,
+    NEWTON,
+    CELSIUS,
+    REVOLUTION,
+    STATUS,
+    PERCENT,
+    NEWTON_MILLIMETER,
+    HERTZ
+  };
+  
+  static const unsigned int NumSimpleUnits = 23;
+  static const std::string SSimpleUnits[];
+  
 protected:
   /* Holds the data item from the device */
-  DeviceDatum * mItem;
+  DataItem * mDataItem;
   
   /* Sequence number of the event */
   unsigned int mSequence;
@@ -52,25 +85,30 @@ protected:
   std::string mTime;
   
   /* The value of the event */
-  void * mValue;
+  float mValue;
 
 protected:
   /* Convert the value to the agent unit standards */
-  void convertValue();
+  void convertValue(std::string value);
   
   /* Convert a simple value from native units to MTConnect units */
+  float convertSimple(std::string units, float v);
+  
   //void
   
 public:
   /* Initialize the ComponentEvent with the type of event, sequence number, time and value */
-  ComponentEvent(const char * item, unsigned int sequence, std::string time, void * value);
+  ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value);
   
   /* Virtual destructor */
-  virtual ~ComponentEvent();
+  ~ComponentEvent();
   
   /* Get value, whatever the value may be*/
   template <class T>
   T getValue();
+  
+public:
+  static ComponentEvent::ESimpleUnits getSimpleUnitsEnum(std::string name);
 };
 
 #endif

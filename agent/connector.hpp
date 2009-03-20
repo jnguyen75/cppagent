@@ -71,8 +71,10 @@ public:
   /*
    *  Method to handle what to do with each line of data from Socket
    */
-  virtual void processLine(std::string line) = 0;
+  virtual void processData(std::string line) = 0;
 };
+
+#include "connector.cpp"
 
 #endif
 

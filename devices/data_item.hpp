@@ -31,114 +31,85 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
+#ifndef DATA_ITEM_HPP
+#define DATA_ITEM_HPP
+
+#include <map>
+#include <iostream>
+
 #include "component.hpp"
 
-const std::string Component::SComponentSpecs[NumComponentSpecs] = {
-  // Component parts
-  "Axes",
-  "Controller",
-  "Device",
-  "Linear",
-  "Power",
-  "Spindle",
-  // Component details
-  "Components",
-  "DataItem",
-  "DataItems",
-  "Description",
-  "Source",
-  "text"
+class DataItem
+{
+protected:
+  /* Unique ID for each component */
+  unsigned int mId;
+  
+  /* Name for itself */
+  std::string mName;
+  
+  /* Type of data item */
+  std::string mType;
+  
+  /* Subtype of data item */
+  std::string mSubType;
+  
+  /* Category of data item */
+  std::string mCategory;
+  
+  /* Native units of data item */
+  std::string mNativeUnits;
+  
+  /* Units of data item */
+  std::string mUnits;
+  
+  /* Native scale of data item */
+  float mNativeScale;
+  
+  /* Sig figs of data item */
+  std::string mSignificantDigits;
+  
+  /* Coordinate system of data item */
+  std::string mCoordinateSystem;
+  
+  /* Extra source information of data item */
+  std::string mSource;
+  
+  /* Component that data item is associated with */  
+  Component * mComponent;
+  
+public:
+  /* Construct a data item with appropriate attributes mapping */
+  DataItem(std::map<std::string, std::string> attributes);
+  
+  /* Get ID of data item */
+  unsigned int getId();
+  
+  /* Get name of data item */
+  std::string getName();
+  
+  /* Returns if data item has this name (or source name) */
+  bool hasName(std::string name);
+  
+  /* Get type of data item */
+  std::string getType();
+  
+  /* Get native units of data item */
+  std::string getNativeUnits();
+  
+  /* Get native scale of data item */
+  float getNativeScale();
+  
+  /* Add a source (extra information) to data item */
+  void addSource(std::string source);
+  
+  /* Get source (extra information) of data item */
+  std::string getSource();
+  
+  /* Set component that data item is associated with */
+  void setComponent(Component * component);
 };
 
-/* Component public methods */
-Component::Component(std::map<std::string, std::string> attributes)
-{
-  // Error checking..?
-  mId = atoi(attributes["id"].c_str());
-  mName = attributes["name"];
-  
-  mParent = NULL;
-}
+#endif
 
-unsigned int Component::getId()
-{
-  return mId;
-}
 
-std::string Component::getName()
-{
-  return mName;
-}
-
-Component * Component::getParent()
-{
-  return mParent;
-}
-
-std::string Component::getManufacturer()
-{
-  return mManufacturer;
-}
-
-std::string Component::getSerialNumber()
-{
-  return mSerialNumber;
-}
-
-std::string Component::getStation()
-{
-  return mStation;
-}
-
-std::list<Component *> Component::getChildren()
-{
-  return mChildren;
-}
-
-void Component::addChild(Component * child)
-{
-  mChildren.push_back(child);
-}
-
-void Component::setParent(Component * parent)
-{
-  mParent = parent;
-}
-
-void Component::addDescription(std::map<std::string, std::string> attributes)
-{
-  if (!attributes["manufacturer"].empty())
-  {
-    mManufacturer = attributes["manufacturer"];
-  }
-  
-  if (!attributes["serialNumber"].empty())
-  {
-    mSerialNumber = attributes["serialNumber"];
-  }
-  
-  if (!attributes["station"].empty())
-  {
-    mStation = attributes["station"];
-  }
-  
-}
-
-/* Component public static methods */
-Component::EComponentSpecs Component::getComponentEnum(std::string name)
-{
-  for (unsigned int i=0; i<Component::NumComponentSpecs; i++)
-  {
-    if (name == Component::SComponentSpecs[i])
-    {
-       return (Component::EComponentSpecs) i;
-    }
-  }
-  
-  // TODO: Error/exception
-}
-
-bool Component::hasNameAndId(std::map<std::string, std::string> attributes)
-{
-  return !attributes["name"].empty() && !attributes["id"].empty();
-}

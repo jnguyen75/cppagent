@@ -33,18 +33,13 @@
 
 #include "xml_parser.hpp"
 
-void print(std::string tag, std::string element)
-{
-  std::cout << tag << ": [" << element << "]\n";
-}
-
 /* XmlParser public methods */
 XmlParser::XmlParser(std::string xmlPath)
 {
   try
   {
     mParser = new xmlpp::DomParser;
-
+    
     // Set to false now because XML does not contain DTD
     mParser->set_validate(false);
     // We just want the text to be resolved/unescaped automatically.
@@ -65,6 +60,11 @@ XmlParser::~XmlParser()
 xmlpp::Node * XmlParser::getRootNode()
 {
   return mParser->get_document()->get_root_node();
+}
+
+void print(std::string tag, std::string text)
+{
+  std::cout << tag << "= " << text << std::endl;
 }
 
 void XmlParser::parse(const xmlpp::Node* node)
@@ -88,6 +88,7 @@ void XmlParser::parse(const xmlpp::Node* node)
     if (!nodeText && !nodeComment && !nodename.empty())
     {
       print("Tag", nodename);
+      //handleTag(nodename);
     }
     
     // Right now, nothing is being done for conditions: if nodeContent/nodeComment
@@ -126,19 +127,29 @@ void XmlParser::parse(const xmlpp::Node* node)
     if (!nodeText && !nodeComment && !nodename.empty())
     {
   //    printIndentation(indentation);
-//      *mXmlStream << "</" << nodename << ">" << std::endl;
+  //    *mXmlStream << "</" << nodename << ">" << std::endl;
     }
   }
 
 }
 
-int main ()
+std::map<std::string, std::string> XmlParser::getAttributes(const xmlpp::Node * node)
 {
-  XmlParser * xml = new XmlParser("../include/config.xml");
-  
-  //std::cout << xml->getRootNode()->get_name() << std::endl;
-  
-  xml->parse(xml->getRootNode());
-  
-  return 0;
+  std::map<std::string, std::string> mapToReturn;
+  if (const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node))
+  {
+    // 
+    const xmlpp::Element::AttributeList& attributes = nodeElement->get_attributes();
+    for (xmlpp::Element::AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
+    {
+      const xmlpp::Attribute* attribute = * iter;
+      mapToReturn[attribute->get_name()] = attribute->get_value();
+    }
+  }
+  else
+  {
+    // Error handling..?
+    std::cout << "ERROR! xml_parser.cpp" << std::endl; 
+  }
+  return mapToReturn;
 }

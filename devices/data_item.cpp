@@ -31,114 +31,87 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#include "component.hpp"
+#include "data_item.hpp"
 
-const std::string Component::SComponentSpecs[NumComponentSpecs] = {
-  // Component parts
-  "Axes",
-  "Controller",
-  "Device",
-  "Linear",
-  "Power",
-  "Spindle",
-  // Component details
-  "Components",
-  "DataItem",
-  "DataItems",
-  "Description",
-  "Source",
-  "text"
-};
-
-/* Component public methods */
-Component::Component(std::map<std::string, std::string> attributes)
+DataItem::DataItem(std::map<std::string, std::string> attributes)
 {
-  // Error checking..?
   mId = atoi(attributes["id"].c_str());
   mName = attributes["name"];
+  mType = attributes["type"];
   
-  mParent = NULL;
+  if (!attributes["subtype"].empty())
+  {
+    mSubType = attributes["subType"];
+  }
+  
+  mCategory = attributes["category"];
+  
+  if (!attributes["nativeUnits"].empty())
+  {
+    mNativeUnits = attributes["nativeUnits"];
+  }
+  
+  if (!attributes["units"].empty())
+  {
+    mUnits = attributes["units"];
+  }
+  
+  mNativeScale = (!attributes["nativeScale"].empty()) ? atof(attributes["nativeScale"].c_str()) : 0.0f;
+  
+  if (!attributes["significantDigits"].empty())
+  {
+    mSignificantDigits = attributes["significantDigits"];
+  }
+  
+  if (!attributes["coordinateSystem"].empty())
+  {
+    mCoordinateSystem = attributes["coordinateSystem"];
+  }
+  
+  mComponent = NULL;
 }
 
-unsigned int Component::getId()
+unsigned int DataItem::getId()
 {
   return mId;
 }
 
-std::string Component::getName()
+std::string DataItem::getName()
 {
   return mName;
 }
 
-Component * Component::getParent()
+bool DataItem::hasName(std::string name)
 {
-  return mParent;
+  return mName == name || (!mSource.empty() && mSource == name);
 }
 
-std::string Component::getManufacturer()
+std::string DataItem::getType()
 {
-  return mManufacturer;
+  return mType;
 }
 
-std::string Component::getSerialNumber()
+std::string DataItem::getNativeUnits()
 {
-  return mSerialNumber;
+  return mNativeUnits;
 }
 
-std::string Component::getStation()
+float DataItem::getNativeScale()
 {
-  return mStation;
+  return mNativeScale;
 }
 
-std::list<Component *> Component::getChildren()
+void DataItem::addSource(std::string source)
 {
-  return mChildren;
+  mSource = source;
 }
 
-void Component::addChild(Component * child)
+std::string DataItem::getSource()
 {
-  mChildren.push_back(child);
+  return mSource;
 }
 
-void Component::setParent(Component * parent)
+void DataItem::setComponent(Component * component)
 {
-  mParent = parent;
-}
-
-void Component::addDescription(std::map<std::string, std::string> attributes)
-{
-  if (!attributes["manufacturer"].empty())
-  {
-    mManufacturer = attributes["manufacturer"];
-  }
-  
-  if (!attributes["serialNumber"].empty())
-  {
-    mSerialNumber = attributes["serialNumber"];
-  }
-  
-  if (!attributes["station"].empty())
-  {
-    mStation = attributes["station"];
-  }
-  
-}
-
-/* Component public static methods */
-Component::EComponentSpecs Component::getComponentEnum(std::string name)
-{
-  for (unsigned int i=0; i<Component::NumComponentSpecs; i++)
-  {
-    if (name == Component::SComponentSpecs[i])
-    {
-       return (Component::EComponentSpecs) i;
-    }
-  }
-  
-  // TODO: Error/exception
-}
-
-bool Component::hasNameAndId(std::map<std::string, std::string> attributes)
-{
-  return !attributes["name"].empty() && !attributes["id"].empty();
+  mComponent = component;
 }
