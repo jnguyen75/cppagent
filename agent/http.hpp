@@ -41,7 +41,7 @@
 #include <string>
 
 // External libraries
-#include "../lib/dlib/server.h"
+#include "dlib/server.h"
 
 #include "xml_printer.hpp"
 

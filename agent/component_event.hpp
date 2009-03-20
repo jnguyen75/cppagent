@@ -34,7 +34,7 @@
 #ifndef COMPONENT_EVENT_HPP
 #define COMPONENT_EVENT_HPP
 
-#include "../devices/data_item.hpp"
+#include "data_item.hpp"
 
 #include <string>
 #include <iostream>

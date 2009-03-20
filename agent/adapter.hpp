@@ -42,20 +42,20 @@
 
 #include "xml_parser.hpp"
 
-#include "../lib/dlib/sockets.h"
-#include "../lib/dlib/sliding_buffer.h"
+#include "dlib/sockets.h"
+#include "dlib/sliding_buffer.h"
 
 #include "connector.hpp"
 #include "component_event.hpp"
 
-#include "../devices/axes.hpp"
-#include "../devices/controller.hpp"
-#include "../devices/component.hpp"
-#include "../devices/device.hpp"
-#include "../devices/data_item.hpp"
-#include "../devices/linear.hpp"
-#include "../devices/power.hpp"
-#include "../devices/spindle.hpp"
+#include "axes.hpp"
+#include "controller.hpp"
+#include "component.hpp"
+#include "device.hpp"
+#include "data_item.hpp"
+#include "linear.hpp"
+#include "power.hpp"
+#include "spindle.hpp"
 
 #define SLIDING_BUFFER_SIZE 17 // Where size is exponent of 2
 

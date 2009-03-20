@@ -35,8 +35,8 @@
 #define CONNECTOR_HPP
 
 // Include the DLIB libraries
-#include "../lib/dlib/sockets.h"
-#include "../lib/dlib/server.h"
+#include "dlib/sockets.h"
+#include "dlib/server.h"
 
 /* Size of buffer to read at a time from the socket */
 #define SOCKET_BUFFER_SIZE 80
