@@ -104,8 +104,7 @@ public:
   ~ComponentEvent();
   
   /* Get value, whatever the value may be*/
-  template <class T>
-  T getValue();
+  float getValue();
   
 public:
   static ComponentEvent::ESimpleUnits getSimpleUnitsEnum(std::string name);

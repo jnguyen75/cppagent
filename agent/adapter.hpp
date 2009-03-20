@@ -38,6 +38,7 @@
 
 #include <map>
 #include <vector>
+#include <cmath>
 
 #include "xml_parser.hpp"
 
@@ -55,6 +56,8 @@
 #include "../devices/linear.hpp"
 #include "../devices/power.hpp"
 #include "../devices/spindle.hpp"
+
+#define SLIDING_BUFFER_SIZE 17 // Where size is exponent of 2
 
 using namespace dlib;
 
@@ -107,8 +110,14 @@ public:
   
   void current(std::string path);
   
-  /* Method used to search data for a unique ID */
-  Component * searchDevicesForId(unsigned int id);
+  void sample(unsigned int start, unsigned int count, std::string path = "");
+  
+  /*
+   * Retrieve DataItems for a given path.
+   * Default path is going to be "//Devices/Device"
+   * Default root is going to be ""
+   */
+  void dataItems(std::string path = "//Devices/Device", std::string root = "");
   
   /* Inherited method for incoming data from the server */
   void processData(std::string line);

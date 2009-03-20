@@ -55,22 +55,8 @@ const std::string basicCalls[NUM_BASIC_CALLS] = { "current", "probe", "sample" }
 using namespace dlib;
 
 // Web server used from dlib example
-class HTTP : public server::http_1a_c {
-public:
-  void on_request (
-        const std::string& path,
-        std::string& result,
-        const map_type& queries,
-        const map_type& cookies,
-        queue_type& new_cookies,
-        const map_type& incoming_headers,
-        map_type& response_headers,
-        const std::string& foreign_ip,
-        const std::string& local_ip,
-        unsigned short foreign_port,
-        unsigned short local_port
-    );
-
+class HTTP : public server::http_1a_c
+{
 protected:
   /* Methods to handle the 3 basic calls*/
   void handleCurrent();
@@ -88,9 +74,24 @@ protected:
   
   /* Class string stream to return XML on requests */
   std::ostringstream xmlStream;
+  
+public:
+  void on_request (
+        const std::string& path,
+        std::string& result,
+        const map_type& queries,
+        const map_type& cookies,
+        queue_type& new_cookies,
+        const map_type& incoming_headers,
+        map_type& response_headers,
+        const std::string& foreign_ip,
+        const std::string& local_ip,
+        unsigned short foreign_port,
+        unsigned short local_port
+    );
+  
+  void terminateServer();
 };
-
-void serverExitThread();
 
 #endif
 

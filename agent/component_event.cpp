@@ -76,10 +76,9 @@ ComponentEvent::~ComponentEvent()
 {
 }
 
-template <class T>
-T ComponentEvent::getValue()
+float ComponentEvent::getValue()
 {
-  return *(static_cast<int *>(mValue));
+  return mValue;
 }
 
 /* ComponentEvent protected methods */
