@@ -87,7 +87,7 @@ void HTTP::on_request (
       
       if (call == "current")
       {
-        handleCurrent();
+        handleCurrent(queries);
       }
       else
       {
@@ -145,12 +145,17 @@ void HTTP::handleDevicesAndPath(std::string device, std::string path)
   // TODO: @@adapter.data_items(dataPath)
 }
 
-void HTTP::handleCurrent()
+void HTTP::handleCurrent(const map_type& queries)
 {
   try
   {
     XmlPrinter xmlPrinter("../include/current.xml", &xmlStream);
     xmlPrinter.printNode(xmlPrinter.getRootNode(), 0);
+    
+    unsigned int seq, firstSeq, lastSeq;
+    mAdapters[0]->current(&seq, &firstSeq);
+    std::cout << "Seq: " << seq << std::endl;
+    std::cout << "FirstSeq: " << firstSeq << std::endl;
   }
   catch (std::exception & e)
   {

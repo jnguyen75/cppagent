@@ -44,7 +44,7 @@
 // External libraries
 #include "dlib/server.h"
 #include "adapter.hpp"
-
+#include "component_event.hpp"
 #include "xml_printer.hpp"
 
 // Connect to http://localhost:{SERVER_PORT}/
@@ -61,7 +61,7 @@ class HTTP : public server::http_1a_c
 {
 protected:
   /* Methods to handle the 3 basic calls*/
-  void handleCurrent();
+  void handleCurrent(const map_type& queries);
   void handleProbe();
   void handleSample();
   

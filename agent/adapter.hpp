@@ -58,7 +58,8 @@
 #include "power.hpp"
 #include "spindle.hpp"
 
-#define SLIDING_BUFFER_SIZE 17 // Where size is exponent of 2
+#define SLIDING_BUFFER_EXP   17      // Where size is exponent of 2
+#define SLIDING_BUFFER_SIZE  131072  // 2 ^ SLIDING_BUFFER_EXP
 
 using namespace dlib;
 

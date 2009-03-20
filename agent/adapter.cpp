@@ -46,7 +46,7 @@ Adapter::Adapter(std::string server, unsigned int port, std::string configXml)
   // Sequence number and sliding buffer for data
   mSequence = 1;
   mSlidingBuffer = new sliding_buffer_kernel_1<ComponentEvent *>();
-  mSlidingBuffer->set_size(17);
+  mSlidingBuffer->set_size(SLIDING_BUFFER_EXP);
   
   // Mutex used for synchronized access to sliding buffer and sequence number
   mSequenceLock = new dlib::mutex;
@@ -66,26 +66,23 @@ Adapter::~Adapter()
 
 void Adapter::thread()
 {
+  std::cout << "Starting adapter thread to read data" << std::endl;
   connect();
 }
 
 std::vector<ComponentEvent *> Adapter::current(
   unsigned int * seq,
   unsigned int * firstSeq,
-  unsigned int * lastSeq,
   std::string path)
 {
-  //results = []
-  //sequence, first_seq, last_seq = nil
   mSequenceLock->lock();
   
   *seq = mSequence;
   *firstSeq = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
-  *lastSeq = mSequence - 1;
   
   std::vector<ComponentEvent *> results;
   
-  for (int i=firstSequence; i<=lastSequence; i++)
+  for (int i=*firstSeq; i<mSequence; i++)
   {
     if ((*mSlidingBuffer)[i]->getValue() != 0.0f)
     {
@@ -94,9 +91,8 @@ std::vector<ComponentEvent *> Adapter::current(
   }
   
   mSequenceLock->unlock();
-
-  //[results, sequence, first_seq, last_seq]
-  //return results;
+  
+  return results;
 }
 
 void Adapter::sample(unsigned int start, unsigned int count, std::string path)
@@ -351,7 +347,7 @@ void Adapter::addToBuffer(std::string time, std::string key, std::string value)
     mSequence++;
     mSequenceLock->unlock();
     std::cout << "Sequence: " << mSequence << std::endl;
-    std::cout << "SlidBuf Size: " << mSlidingBuffer->size() << std::endl;
+    //std::cout << "SlidBuf Size: " << mSlidingBuffer->size() << std::endl;
   }
   catch (std::string msg)
   {
