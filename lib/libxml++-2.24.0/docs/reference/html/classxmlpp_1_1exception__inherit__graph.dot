@@ -1,0 +1,15 @@
+digraph G
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize=10,labelfontname="FreeSans",labelfontsize=10];
+  node [fontname="FreeSans",fontsize=10,shape=record];
+  Node1 [label="xmlpp::exception",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node2 [label="std::exception",height=0.2,width=0.4,color="black",URL="libstdc++.tag.xml$classstd_1_1exception.html"];
+  Node1 -> Node3 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node3 [label="xmlpp::internal_error",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1internal__error.html"];
+  Node1 -> Node4 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node4 [label="xmlpp::parse_error",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1parse__error.html",tooltip="This exception will be thrown when the parser encounters an error in the XML document..."];
+  Node4 -> Node5 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node5 [label="xmlpp::validity_error",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1validity__error.html",tooltip="This exception will be thrown when the parser encounters a validity error in the..."];
+}

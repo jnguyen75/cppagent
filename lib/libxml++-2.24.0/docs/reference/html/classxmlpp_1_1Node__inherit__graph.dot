@@ -1,0 +1,26 @@
+digraph G
+{
+  bgcolor="transparent";
+  edge [fontname="FreeSans",fontsize=10,labelfontname="FreeSans",labelfontsize=10];
+  node [fontname="FreeSans",fontsize=10,shape=record];
+  rankdir=LR;
+  Node1 [label="xmlpp::Node",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node2 [label="xmlpp::NonCopyable",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1NonCopyable.html",tooltip="Herited by classes which cannot be copied."];
+  Node1 -> Node3 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node3 [label="xmlpp::Attribute",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1Attribute.html",tooltip="Represents XML Node attributes."];
+  Node1 -> Node4 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node4 [label="xmlpp::ContentNode",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1ContentNode.html",tooltip="Content Node."];
+  Node4 -> Node5 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node5 [label="xmlpp::CdataNode",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1CdataNode.html",tooltip="CData node."];
+  Node4 -> Node6 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node6 [label="xmlpp::CommentNode",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1CommentNode.html",tooltip="Comment Node."];
+  Node4 -> Node7 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node7 [label="xmlpp::ProcessingInstructionNode",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1ProcessingInstructionNode.html"];
+  Node4 -> Node8 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node8 [label="xmlpp::TextNode",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1TextNode.html",tooltip="Text Node."];
+  Node1 -> Node9 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node9 [label="xmlpp::Element",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1Element.html",tooltip="Element nodes have attributes as well as child nodes."];
+  Node1 -> Node10 [dir=back,color="midnightblue",fontsize=10,style="solid",fontname="FreeSans"];
+  Node10 [label="xmlpp::EntityReference",height=0.2,width=0.4,color="black",URL="$classxmlpp_1_1EntityReference.html",tooltip="Entity references refer to previously declared entities."];
+}

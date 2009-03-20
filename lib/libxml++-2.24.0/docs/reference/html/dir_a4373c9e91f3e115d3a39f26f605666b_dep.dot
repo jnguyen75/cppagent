@@ -1,0 +1,15 @@
+digraph G {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize=10, fontname="FreeSans"];
+  edge [ labelfontsize=9, labelfontname="FreeSans"];
+  subgraph clusterdir_a4373c9e91f3e115d3a39f26f605666b {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_a4373c9e91f3e115d3a39f26f605666b.html"];
+    dir_a4373c9e91f3e115d3a39f26f605666b [shape=plaintext label="libxml++"];
+    dir_0551b4a8225d124f6ff9b11a1479fd27 [shape=box label="exceptions" color="black" fillcolor="white" style="filled" URL="dir_0551b4a8225d124f6ff9b11a1479fd27.html"];
+    dir_1f114efeafac78cc7d6decae9b9d2cff [shape=box label="io" color="black" fillcolor="white" style="filled" URL="dir_1f114efeafac78cc7d6decae9b9d2cff.html"];
+    dir_f9149298332043ae3a7d5bec029fc036 [shape=box label="nodes" color="black" fillcolor="white" style="filled" URL="dir_f9149298332043ae3a7d5bec029fc036.html"];
+    dir_65af5c016f2acebca7ed0bd44caed309 [shape=box label="parsers" color="black" fillcolor="white" style="filled" URL="dir_65af5c016f2acebca7ed0bd44caed309.html"];
+    dir_3162803dd5ab2874e70c7b1665d0ea7e [shape=box label="validators" color="black" fillcolor="white" style="filled" URL="dir_3162803dd5ab2874e70c7b1665d0ea7e.html"];
+  }
+}
