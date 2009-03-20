@@ -104,6 +104,17 @@ void HTTP::on_request (
   }
 }
 
+void HTTP::terminateServer()
+{
+  // FIXME: Wait for user to close server
+  std::cout << "Press enter at anytime to terminate web server" << std::endl;
+  std::cin.get();
+
+  // Shut down server by unblocking HTTP::start()
+  clear();
+}
+
+/* HTTP protected methods */
 void HTTP::handleDevicesAndPath(std::string device, std::string path)
 {
   std::string dataPath = "";
@@ -172,21 +183,6 @@ void HTTP::printError(std::string errorCode, std::string text)
   xmlStream << "  <Header creationTime=\"2009-03-02T22:09:34+00:00\" sender=\"localhost\" instanceId=\"1235613755\" bufferSize=\"100000\" version=\"0.9\" nextSequence=\"\"/>" << std::endl;
   xmlStream << "  <Error errorCode=\"" << errorCode << "\">" << text << "</Error>" << std::endl;
   xmlStream << "</m:MTConnectStreams>" << std::endl;
-}
-
-/***** Procedural code ******/
-
-// Create an instance of our web server
-HTTP webServer;
-
-void serverExitThread()
-{
-  // Wait for user to close server
-  std::cout << "Press enter to end this program" << std::endl;
-  std::cin.get();
-
-  // Shut down server by unblocking HTTP::start()
-  webServer.clear();
 }
 
 int main()

@@ -65,39 +65,32 @@ void Adapter::current(std::string path)
   //sequence, first_seq, last_seq = nil
   mSequenceLock->lock();
   
-  /*@mutex.synchronize do
-    @adapters.each do |adapter|
-      adapter.items.each do |k, data_item|
-        results << data_item.value if data_item.value
-      end
-    end
-    results = filter(results, path) if path
-    first_seq = @results.start
-    last_seq = first_seq + @results.length
-    sequence = @sequence
-  end*/
-  mSequenceLock->unlock();
-
-  //[results, sequence, first_seq, last_seq]
+  unsigned int firstSequence = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
+  unsigned int lastSequence = mSequence - 1;
   
-}
-
-/*
-TODO : IS THIS NEEDED?
-Component * Adapter::searchDevicesForId(unsigned int id)
-{
-  for (unsigned int i=0; i<mDevices.size(); i++)
+  std::vector<ComponentEvent *> results;
+  
+  for (int i=firstSequence; i<=lastSequence; i++)
   {
-    // For each device, perform a recursive call on itself and children
-    Component * toFind = mDevices[i]->findById(id);
-    if (toFind != NULL)
+    if ((*mSequenceBuffer)[i]->getValue() != 0.0f)
     {
-      return toFind;
+      results.push_back((*mSequenceBuffer)[i]);
     }
   }
   
-  return NULL;
-}*/
+  mSequenceLock->unlock();
+
+  //[results, sequence, first_seq, last_seq]
+  return results;
+}
+
+void Adapter::sample(unsigned int start, unsigned int count, std::string path)
+{
+  mSequenceLock->lock();
+  unsigned int lastSequence = mSequence - 1;
+  unsigned int firstSequence = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
+  mSequenceLock->unlock();
+}
 
 void Adapter::processData(std::string line)
 {
@@ -122,11 +115,6 @@ void Adapter::processData(std::string line)
   }
   else // Key -> Value Pairings
   {
-    //std::string value;
-    //getline(toParse, value, '|');
-    
-    //std::cout << "Key: " << key << std::endl;
-    //std::cout << "Value: " << value << std::endl;
     
     addToBuffer(time, key, value);
     
