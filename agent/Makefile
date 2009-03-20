@@ -29,7 +29,6 @@ controller.cpp \
 power.cpp \
 dlib.cpp
 
-
 OBJS=$(SOURCES:%.cpp=%.o)
 LIBS=$(LIBRARIES:%=-l%)
 
@@ -41,7 +40,5 @@ clean:
 agent: $(OBJS)
 	g++ ${CXXFLAGS} ${LDFLAGS} -o agent $+ ${LIBS}
 
-.cpp.o: 
-	g++ -c ${CXXFLAGS} $< 
-
 %.o: %.cpp %.hpp
+	g++ -c ${CXXFLAGS} $< 

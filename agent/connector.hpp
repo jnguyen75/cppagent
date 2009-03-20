@@ -61,6 +61,7 @@ protected:
 public:
   /* Instantiate the server by assigning it a server and port */
   Connector(std::string server, unsigned int port);
+    virtual ~Connector();
   
   /*
    *  Blocking call to connect to the server/port

@@ -100,7 +100,7 @@ void Adapter::processData(std::string line)
   getline(toParse, key, '|');
   std::string time = key;
   
-  //std::cout << "Time = " << time << std::endl;
+  std::cout << "Time = " << time << std::endl;
   
   getline(toParse, key, '|');
   std::string type = key;

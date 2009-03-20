@@ -101,7 +101,7 @@ public:
   ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value);
   
   /* Virtual destructor */
-  ~ComponentEvent();
+  virtual ~ComponentEvent();
   
   /* Get value, whatever the value may be*/
   float getValue();

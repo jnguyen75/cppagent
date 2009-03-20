@@ -106,7 +106,7 @@ public:
   Adapter(std::string server, unsigned int port, std::string configXml);
   
   /* Destructor */
-  ~Adapter();
+  virtual ~Adapter();
   
   void current(std::string path);
   
