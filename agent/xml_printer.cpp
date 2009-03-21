@@ -39,16 +39,8 @@ XmlPrinter::XmlPrinter(std::ostringstream * xmlStream)
   mXmlStream = xmlStream;
   try
   {
-    mParser = new xmlpp::DomParser;
-
-    // Set to false now because XML does not contain DTD
-    mParser->set_validate(false);
-    // We just want the text to be resolved/unescaped automatically.
-    mParser->set_substitute_entities();
-    
     initErrorXml();
-    
-    //mParser->parse_file(xmlPath);
+    initSampleXml();
   }
   catch (std::exception & e)
   {
@@ -58,100 +50,73 @@ XmlPrinter::XmlPrinter(std::ostringstream * xmlStream)
 
 XmlPrinter::~XmlPrinter()
 {
-  delete mParser;
-  
   delete mErrorXml;
+  delete mSampleXml;
 }
 
-// TODO 
-xmlpp::Node * XmlPrinter::getRootNode()
-{
-  return mParser->get_document()->get_root_node();
-}
 
 void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
 {
-  // Make sure the parser is available
-  if (mParser)
-  {
-    // Constant node data determined for each node
-    const xmlpp::ContentNode* nodeContent = dynamic_cast<const xmlpp::ContentNode*>(node);
-    const xmlpp::TextNode* nodeText = dynamic_cast<const xmlpp::TextNode*>(node);
-    const xmlpp::CommentNode* nodeComment = dynamic_cast<const xmlpp::CommentNode*>(node);
-    const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node);
+  // Constant node data determined for each node
+  const xmlpp::ContentNode* nodeContent = dynamic_cast<const xmlpp::ContentNode*>(node);
+  const xmlpp::TextNode* nodeText = dynamic_cast<const xmlpp::TextNode*>(node);
+  const xmlpp::CommentNode* nodeComment = dynamic_cast<const xmlpp::CommentNode*>(node);
+  const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node);
 
-    // Ignore empty whitespace
-    if (nodeText and nodeText->is_white_space())
+  // Ignore empty whitespace
+  if (nodeText and nodeText->is_white_space())
+  {
+    return;
+  }
+  
+  Glib::ustring nodename = node->get_name();
+  
+  // Node name tag: i.e. "<tag"
+  // Leave ">" out in case there are other attributes
+  if (!nodeText and !nodeComment and !nodename.empty())
+  {
+    printIndentation(indentation);
+    *mXmlStream << "<" << nodename;
+  }
+  
+  // Right now, nothing is being done for conditions: if nodeContent/nodeComment
+  if (nodeText)
+  {
+    printIndentation(indentation);
+    *mXmlStream << nodeText->get_content() << std::endl;
+  }
+  else if (nodeElement)
+  {
+    // Print attributes for the element
+    // i.e. ...attribute1="value1" attribute2="value2"...
+    const xmlpp::Element::AttributeList& attributes = nodeElement->get_attributes();
+    for (xmlpp::Element::AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
     {
-      return;
+      const xmlpp::Attribute* attribute = *iter;
+      *mXmlStream << " " << attribute->get_name() << "=\"" << attribute->get_value() << "\"";
     }
     
-    Glib::ustring nodename = node->get_name();
+    std::string endTag = (nodeElement->has_child_text() or indentation == 0) ? ">" : " />";
     
-    // Node name tag: i.e. "<tag"
-    // Leave ">" out in case there are other attributes
-    if (!nodeText and !nodeComment and !nodename.empty())
+    *mXmlStream << endTag << std::endl;
+  }
+  
+  // If node does NOT have content, then it may have children, so perform print on children
+  if (!nodeContent)
+  {
+    // Recurse through child nodes
+    xmlpp::Node::NodeList list = node->get_children();
+    for(xmlpp::Node::NodeList::iterator iter = list.begin(); iter != list.end(); ++iter)
     {
-      printIndentation(indentation);
-      *mXmlStream << "<" << nodename;
-    }
-    
-    // Right now, nothing is being done for conditions: if nodeContent/nodeComment
-    if (nodeText)
-    {
-      printIndentation(indentation);
-      *mXmlStream << nodeText->get_content() << std::endl;
-    }
-    else if (nodeElement)
-    {
-      // Print attributes for the element
-      // i.e. ...attribute1="value1" attribute2="value2"...
-      const xmlpp::Element::AttributeList& attributes = nodeElement->get_attributes();
-      for (xmlpp::Element::AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
-      {
-        const xmlpp::Attribute* attribute = *iter;
-        *mXmlStream << " " << attribute->get_name() << "=\"" << attribute->get_value() << "\"";
-      }
-      
-      std::string endTag = (nodeElement->has_child_text() or indentation == 0) ? ">" : " />";
-      
-      std::cout << indentation << std::endl;
-      
-      *mXmlStream << endTag << std::endl;
-    }
-    
-    // If node does NOT have content, then it may have children, so perform print on children
-    if (!nodeContent)
-    {
-      // Recurse through child nodes
-      xmlpp::Node::NodeList list = node->get_children();
-      for(xmlpp::Node::NodeList::iterator iter = list.begin(); iter != list.end(); ++iter)
-      {
-        printNode(*iter, indentation + 2);
-      }
-    }
-    
-    // Close off xml tag, i.e. </tag>
-    if ((!nodeText and !nodeComment and !nodename.empty() and nodeElement->has_child_text()) or indentation == 0)
-    {
-      printIndentation(indentation);
-      *mXmlStream << "</" << nodename << ">" << std::endl;
+      printNode(*iter, indentation + 2);
     }
   }
-}
-
-void XmlPrinter::printPath(std::string path)
-{
-  // TODO, using xml::find
-  xmlpp::NodeSet results = getRootNode()->find("//MTConnectStreams");
   
-  std::cout << results.size();
-  
-  //printNode(getRootNode(), 0);
-  
-  for (unsigned int i=0; i<results.size(); i++)
+  // Close off xml tag, i.e. </tag>
+  if ((!nodeText and !nodeComment and !nodename.empty() and nodeElement->has_child_text()) or indentation == 0)
   {
-    printNode(results[i], 0);
+    printIndentation(indentation);
+    *mXmlStream << "</" << nodename << ">" << std::endl;
   }
 }
 
@@ -163,7 +128,6 @@ void XmlPrinter::printError(
     std::string errorText
   )
 {  
-  
   char timeBuffer [TIME_BUFFER_SIZE];
   getCurrentTime(timeBuffer);
   
@@ -186,6 +150,34 @@ void XmlPrinter::printError(
   mErrorXml->get_root_node()->remove_child(error);
 }
 
+void XmlPrinter::printSample(
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    unsigned int firstSeq,
+    std::vector<Device *> devices
+  )
+{
+  char timeBuffer [TIME_BUFFER_SIZE];
+  getCurrentTime(timeBuffer);
+  
+  xmlpp::Element * header = mSampleXml->get_root_node()->add_child("Header");
+  header->set_attribute("creationTime", timeBuffer);
+  header->set_attribute("sender", "localhost");
+  header->set_attribute("instanceId", intToString(adapterId));
+  header->set_attribute("bufferSize", intToString(bufferSize));
+  header->set_attribute("version", MTCONNECT_XML_VERS);
+  header->set_attribute("nextSequence", intToString(nextSeq));
+  header->set_attribute("firstSequence", intToString(firstSeq));
+  header->set_attribute("lastSequence", intToString(nextSeq - 1));
+  
+  xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
+  
+  printNode(mSampleXml->get_root_node());
+  
+  mErrorXml->get_root_node()->remove_child(header);
+}
+
 /* XmlPrinter Protected Methods */
 void XmlPrinter::initErrorXml()
 {
@@ -196,6 +188,18 @@ void XmlPrinter::initErrorXml()
   root->set_attribute("xmlns:m", "urn:mtconnect.com:MTConnectError:1.0");
   root->set_attribute("xmlns", "urn:mtconnect.com:MTConnectError:1.0");
   root->set_attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+  root->set_attribute("xsi:schemaLocation", "urn:mtconnect.com:MTConnectError:1.0 /schemas/MTConnectError.xsd");
+}
+
+void XmlPrinter::initSampleXml()
+{
+  mSampleXml = new xmlpp::Document;
+  
+  xmlpp::Element * root = mSampleXml->create_root_node("MTConnectStreams");
+  
+  root->set_attribute("xmlns:m", "urn:mtconnect.com:MTConnectStreams:1.0");
+  root->set_attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+  root->set_attribute("xmlns", "urn:mtconnect.com:MTConnectError:1.0");
   root->set_attribute("xsi:schemaLocation", "urn:mtconnect.com:MTConnectError:1.0 /schemas/MTConnectError.xsd");
 }
 

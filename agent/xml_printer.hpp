@@ -42,6 +42,9 @@
 #include <ctime>
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
+
+#include "device.hpp"
 
 // Include the LibXML Library
 #include <libxml++/libxml++.h>
@@ -52,14 +55,14 @@ protected:
   /* Pointer to the stream to write to XML */
   std::ostringstream * mXmlStream;
   
-  /* LibXML++ XML DOM Parser */
-  xmlpp::DomParser * mParser;
-  
-  
   xmlpp::Document * mErrorXml;
+  
+  xmlpp::Document * mSampleXml;
   
 protected:
   void initErrorXml();
+  
+  void initSampleXml();
   
   /* Simple helper function to put indentations into the XML stream */
   void printIndentation(unsigned int indentation);
@@ -75,21 +78,25 @@ public:
   /* Virtual destructor */
   virtual ~XmlPrinter();
   
-  /* Getter method that simply returns a pointer to the root node of the document */
-  xmlpp::Node * getRootNode();
-  
   /* Function to parse and write XML */
   void printNode(const xmlpp::Node* node, unsigned int indentation = 0);
   
-  /* Output XML based on path parameter given */
-  void printPath(std::string path);
-  
-  void printError(
+  void printError
+  (
     unsigned int adapterId,
     unsigned int bufferSize,
     unsigned int nextSeq,
     std::string errorCode,
     std::string errorText
+  );
+  
+  void printSample
+  (
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    unsigned int firstSeq,
+    std::vector<Device *> devices
   );
 };
 

@@ -121,6 +121,8 @@ public:
   
   void sample(unsigned int start, unsigned int count, std::string path = "");
   
+  std::vector<Device *> getDevices();
+  
   /*
    * Retrieve DataItems for a given path.
    * Default path is going to be "//Devices/Device"

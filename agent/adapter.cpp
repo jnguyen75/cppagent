@@ -71,9 +71,10 @@ void Adapter::thread()
 }
 
 std::vector<ComponentEvent *> Adapter::current(
-  unsigned int * seq,
-  unsigned int * firstSeq,
-  std::string path)
+    unsigned int * seq,
+    unsigned int * firstSeq,
+    std::string path
+  )
 {
   mSequenceLock->lock();
   
@@ -82,7 +83,7 @@ std::vector<ComponentEvent *> Adapter::current(
   
   std::vector<ComponentEvent *> results;
   
-  for (int i=*firstSeq; i<mSequence; i++)
+  for (unsigned int i=*firstSeq; i<mSequence; i++)
   {
     if ((*mSlidingBuffer)[i]->getValue() != 0.0f)
     {
@@ -101,6 +102,11 @@ void Adapter::sample(unsigned int start, unsigned int count, std::string path)
   unsigned int lastSequence = mSequence - 1;
   unsigned int firstSequence = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
   mSequenceLock->unlock();
+}
+
+std::vector<Device *> Adapter::getDevices()
+{
+  return mDevices;
 }
 
 void Adapter::processData(std::string line)

@@ -160,11 +160,9 @@ void HTTP::handleCurrent(const map_type& queries)
 {
   try
   {
-    //XmlPrinter xmlPrinter("../include/current.xml", &xmlStream);
-    //xmlPrinter.printNode(xmlPrinter.getRootNode(), 0);
-    
     unsigned int seq, firstSeq;
     mAdapters[0]->current(&seq, &firstSeq);
+    mXmlPrinter->printSample(1, Adapter::SlidingBufferSize, seq, firstSeq, mAdapters[0]->getDevices());
     std::cout << "Seq: " << seq << std::endl;
     std::cout << "FirstSeq: " << firstSeq << std::endl;
   }
@@ -172,18 +170,6 @@ void HTTP::handleCurrent(const map_type& queries)
   {
     std::cout << "XML Exception: " << e.what() << std::endl;
   }
-}
-
-bool HTTP::isBasicCall(std::string call)
-{
-  for (int i=0; i<NUM_BASIC_CALLS; i++)
-  {
-    if (call == basicCalls[i])
-    {
-      return true;
-    }
-  }
-  return false;
 }
 
 void HTTP::printError(std::string errorCode, std::string text)

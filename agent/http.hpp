@@ -44,15 +44,12 @@
 // External libraries
 #include "dlib/server.h"
 #include "adapter.hpp"
+//#include "device.cpp"
 #include "component_event.hpp"
 #include "xml_printer.hpp"
 
 // Connect to http://localhost:{SERVER_PORT}/
 #define SERVER_PORT 5000
-
-// The basic calls
-#define NUM_BASIC_CALLS 3
-const std::string basicCalls[NUM_BASIC_CALLS] = { "current", "probe", "sample" };
 
 using namespace dlib;
 
@@ -62,14 +59,11 @@ class HTTP : public server::http_1a_c
 protected:
   /* Methods to handle the 3 basic calls*/
   void handleCurrent(const map_type& queries);
-  void handleProbe();
-  void handleSample();
+  void handleProbe(const map_type& queries);
+  void handleSample(const map_type& queries);
   
   /* Handle the device/path parameters for the xpath search */
   void handleDevicesAndPath(std::string device, std::string path = "");
-  
-  /* Determines if the URL path is one of the predetermined basic calls */
-  bool isBasicCall(std::string call);
   
   /* Output an XML Error */
   void printError(std::string errorCode, std::string text);
