@@ -48,9 +48,21 @@ Device::Device(std::map<std::string, std::string> attributes)
   }
 }
 
-std::string Device::getUuid()
+std::string Device::getClass()
 {
-  return mUuid;
+  return "Device";
+}
+
+
+std::map<std::string, std::string> Device::getAttributes()
+{
+  std::map<std::string, std::string> attributes = Component::getAttributes();
+  
+  attributes["sampleRate"] = floatToString(mSampleRate);
+  attributes["iso841Class"] = intToString(mIso841Class);
+  attributes["uuid"] = mUuid;
+  
+  return attributes;
 }
 
 /* Device public static methods */

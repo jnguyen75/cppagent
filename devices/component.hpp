@@ -39,6 +39,12 @@
 #include <string>
 
 #include <iostream>
+#include <sstream>
+
+#include "data_item.hpp"
+
+// Forward Declaration
+class DataItem;
 
 class Component
 {
@@ -66,6 +72,7 @@ public:
   static const unsigned int NumComponentSpecs = 12;
   static const std::string SComponentSpecs[];
   
+  
 protected:
   /* Unique ID for each component */
   unsigned int mId;
@@ -73,11 +80,18 @@ protected:
   /* Name for itself */
   std::string mName;
   
+  /* uuid */
+  std::string mUuid;
+  
   /* Pointer to the parent component */
   Component * mParent;
   
+  
   /* Each component keeps track of it's children in a list */
   std::list<Component *> mChildren;
+  
+  /* Keep Track of all the data items associated with this component */
+  std::list<DataItem *> mDataItems;
   
   /* Description of itself */
   std::string mManufacturer;
@@ -85,8 +99,19 @@ protected:
   std::string mStation;
 
 public:
+  static std::string intToString(unsigned int i);
+  
+  static std::string floatToString(float i);
+
+public:
   /* Take in mapping of attributes */
   Component(std::map<std::string, std::string> attributes);
+  
+  virtual std::string getClass() = 0;
+  
+  virtual std::map<std::string, std::string> getAttributes();
+  
+  std::map<std::string, std::string> getDescription();
   
   /* Get the component ID */
   unsigned int getId();
@@ -97,20 +122,17 @@ public:
   /* Get the component's parent component */
   Component * getParent();
   
-  /* Get the component manufacturer */
-  std::string getManufacturer();
-  
-  /* Get the component serial number */
-  std::string getSerialNumber();
-  
-  /* Get the component station */
-  std::string getStation();
-  
   /* Get the component's list of children */
   std::list<Component *> getChildren();
   
   /* Add a child to component's list of children */
   void addChild(Component * child);
+  
+  /* Get the component's list of data items */
+  std::list<DataItem *> getDataItems();
+  
+  /* Add a data item to component's list of data items */
+  void addDataItem(DataItem * dataItem);
   
   /* Set the component's parent */
   void setParent(Component * parent);

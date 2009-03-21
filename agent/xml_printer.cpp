@@ -63,6 +63,8 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
   const xmlpp::TextNode* nodeText = dynamic_cast<const xmlpp::TextNode*>(node);
   const xmlpp::CommentNode* nodeComment = dynamic_cast<const xmlpp::CommentNode*>(node);
   const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node);
+  
+  bool hasChildren = (node->get_children().size() > 0);
 
   // Ignore empty whitespace
   if (nodeText and nodeText->is_white_space())
@@ -91,7 +93,10 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
     // Print attributes for the element
     // i.e. ...attribute1="value1" attribute2="value2"...
     const xmlpp::Element::AttributeList& attributes = nodeElement->get_attributes();
-    for (xmlpp::Element::AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
+    for (xmlpp::Element::AttributeList::const_iterator iter=attributes.begin();
+          iter != attributes.end();
+          ++iter
+        )
     {
       const xmlpp::Attribute* attribute = *iter;
       *mXmlStream << " " << attribute->get_name() << "=\"" << attribute->get_value() << "\"";
@@ -99,7 +104,9 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
     
     //std::string endTag = (nodeElement->has_child_text() or indentation == 0) ? ">" : " />";
     
-    *mXmlStream << ">" << std::endl;
+    std::string endTag = (hasChildren) ? ">" : " />";
+    
+    *mXmlStream << endTag << std::endl;
   }
   
   // If node does NOT have content, then it may have children, so perform print on children
@@ -107,14 +114,14 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
   {
     // Recurse through child nodes
     xmlpp::Node::NodeList list = node->get_children();
-    for(xmlpp::Node::NodeList::iterator iter = list.begin(); iter != list.end(); ++iter)
+    for (xmlpp::Node::NodeList::iterator iter = list.begin(); iter != list.end(); ++iter)
     {
       printNode(*iter, indentation + 2);
     }
   }
   
   // Close off xml tag, i.e. </tag>
-  if (!nodeText and !nodeComment and !nodename.empty())// or indentation == 0)
+  if (!nodeText and !nodeComment and !nodename.empty() and hasChildren)// or indentation == 0)
   {
     printIndentation(indentation);
     *mXmlStream << "</" << nodename << ">" << std::endl;
@@ -155,8 +162,7 @@ void XmlPrinter::printProbe(
   for (std::vector<Device *>::iterator d=deviceList.begin(); d!=deviceList.end(); d++ )
   {
     xmlpp::Element * device = devices->add_child("Device");
-    device->set_attribute("name", (*d)->getName());
-    device->set_attribute("uuid", (*d)->getUuid());
+    printProbeHelper(device, *d);
   }
   
   printNode(mProbeXml->get_root_node());
@@ -164,7 +170,6 @@ void XmlPrinter::printProbe(
   mProbeXml->get_root_node()->remove_child(header);
   mProbeXml->get_root_node()->remove_child(devices);
 }
-
 
 void XmlPrinter::printSample(
     unsigned int adapterId,
@@ -181,8 +186,8 @@ void XmlPrinter::printSample(
   for (std::vector<Device *>::iterator device=devices.begin(); device!=devices.end(); device++ )
   {
     xmlpp::Element * deviceStream = streams->add_child("DeviceStream");
-    deviceStream->set_attribute("name", (*device)->getName());
-    deviceStream->set_attribute("uuid", (*device)->getUuid());
+    //deviceStream->set_attribute("name", (*device)->getName());
+    //deviceStream->set_attribute("uuid", (*device)->getUuid());
     
   }
   
@@ -252,6 +257,48 @@ xmlpp::Element * XmlPrinter::addHeader(
   return header;
 }
 
+void XmlPrinter::printProbeHelper(xmlpp::Element * element, Component * component)
+{
+  addAttributes(element, component->getAttributes());
+    
+  std::map<std::string, std::string> desc = component->getDescription();
+  
+  if (desc.size() > 0)
+  {
+    xmlpp::Element * description = element->add_child("Description");
+    addAttributes(description, desc);
+  }
+  
+  std::list<DataItem *> datum = component->getDataItems();
+  if (datum.size() > 0)
+  {
+    xmlpp::Element * dataItems = element->add_child("DataItems");
+    for (std::list<DataItem *>::iterator data=datum.begin();
+          data!=datum.end();
+          data++
+        )
+    {
+      xmlpp::Element * dataItem = dataItems->add_child("DataItem");
+      addAttributes(dataItem, (*data)->getAttributes());
+    }
+  }
+
+  std::list<Component *> children = component->getChildren();
+  
+  if (children.size() > 0)
+  {
+    xmlpp::Element * components = element->add_child("Components");
+    for (std::list<Component *>::iterator child=children.begin();
+          child!=children.end();
+          child++
+        )
+    {
+      xmlpp::Element * component = components->add_child((*child)->getClass());
+      printProbeHelper(component, *child);
+    }
+  }
+}
+
 void XmlPrinter::printIndentation(unsigned int indentation)
 {
   for(unsigned int i = 0; i < indentation; ++i)
@@ -271,9 +318,28 @@ void XmlPrinter::getCurrentTime(char buffer[])
   strftime (buffer, TIME_BUFFER_SIZE, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
 }
 
+void XmlPrinter::addAttributes(xmlpp::Element * element, std::map<std::string, std::string> attributes)
+{
+  for (std::map<std::string, std::string>::iterator attribute=attributes.begin();
+        attribute!=attributes.end();
+        attribute++
+      )
+  {
+    element->set_attribute(attribute->first, attribute->second);
+  }
+}
+
 std::string XmlPrinter::intToString(unsigned int i)
 {
   std::ostringstream stm;
   stm << i;
   return stm.str();
 }
+
+std::string XmlPrinter::floatToString(float f)
+{
+  std::ostringstream stm;
+  stm << f;
+  return stm.str();
+}
+

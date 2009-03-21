@@ -44,6 +44,8 @@ protected:
 public:
   Linear(std::map<std::string, std::string> attributes);
   
+  std::string getClass();
+  
 };
 
 #endif

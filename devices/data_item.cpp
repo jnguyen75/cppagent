@@ -71,6 +71,18 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
   mComponent = NULL;
 }
 
+std::map<std::string, std::string> DataItem::getAttributes()
+{
+  std::map<std::string, std::string> attributes;
+  
+  attributes["id"] = Component::intToString(mId);
+  attributes["name"] = mName;
+  attributes["type"] = mType;
+  
+  return attributes;
+}
+
+
 unsigned int DataItem::getId()
 {
   return mId;

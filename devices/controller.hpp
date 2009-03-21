@@ -44,6 +44,8 @@ protected:
 public:
   Controller(std::map<std::string, std::string> attributes);
   
+  std::string getClass();
+  
 };
 
 #endif

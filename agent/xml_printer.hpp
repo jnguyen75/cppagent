@@ -40,11 +40,15 @@
 
 #include <iostream>
 #include <ctime>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include <map>
+#include <list>
 
 #include "device.hpp"
+#include "data_item.hpp"
 
 // Include the LibXML Library
 #include <libxml++/libxml++.h>
@@ -78,12 +82,18 @@ protected:
     unsigned int firstSeq = 0
   );
   
+  void printProbeHelper(xmlpp::Element * element, Component * component);
+  
   /* Simple helper function to put indentations into the XML stream */
   void printIndentation(unsigned int indentation);
   
   void getCurrentTime(char buffer[]);
   
+  void addAttributes(xmlpp::Element * element, std::map<std::string, std::string> attributes);
+  
   std::string intToString(unsigned int i);
+  
+  std::string floatToString(float i);
   
 public:
   /* Constructor to set the pointer to the correct stringstream */

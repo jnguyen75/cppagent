@@ -33,6 +33,7 @@
 
 #include "component.hpp"
 
+/* Component static constants */
 const std::string Component::SComponentSpecs[NumComponentSpecs] = {
   // Component parts
   "Axes",
@@ -50,14 +51,61 @@ const std::string Component::SComponentSpecs[NumComponentSpecs] = {
   "text"
 };
 
+/* Component protected methods */
+std::string Component::intToString(unsigned int i)
+{
+  std::ostringstream stm;
+  stm << i;
+  return stm.str();
+}
+
+std::string Component::floatToString(float f)
+{
+  std::ostringstream stm;
+  stm << f;
+  return stm.str();
+}
+
 /* Component public methods */
 Component::Component(std::map<std::string, std::string> attributes)
 {
-  // Error checking..?
+  // TODO: Error checking..?
   mId = atoi(attributes["id"].c_str());
   mName = attributes["name"];
   
   mParent = NULL;
+}
+
+std::map<std::string, std::string> Component::getAttributes()
+{
+  std::map<std::string, std::string> attributes;
+  
+  attributes["id"] = intToString(mId);
+  attributes["name"] = mName;
+  
+  return attributes;
+}
+
+std::map<std::string, std::string> Component::getDescription()
+{
+  std::map<std::string, std::string> description;
+  
+  if (!mManufacturer.empty())
+  {
+    description["manufacturer"] = mManufacturer;
+  }
+  
+  if (!mSerialNumber.empty())
+  {
+    description["serialNumber"] = mSerialNumber;
+  }
+  
+  if (!mStation.empty())
+  {
+    description["station"] = mStation;
+  }
+  
+  return description;
 }
 
 unsigned int Component::getId()
@@ -75,21 +123,6 @@ Component * Component::getParent()
   return mParent;
 }
 
-std::string Component::getManufacturer()
-{
-  return mManufacturer;
-}
-
-std::string Component::getSerialNumber()
-{
-  return mSerialNumber;
-}
-
-std::string Component::getStation()
-{
-  return mStation;
-}
-
 std::list<Component *> Component::getChildren()
 {
   return mChildren;
@@ -98,6 +131,16 @@ std::list<Component *> Component::getChildren()
 void Component::addChild(Component * child)
 {
   mChildren.push_back(child);
+}
+
+std::list<DataItem *> Component::getDataItems()
+{
+  return mDataItems;
+}
+  
+void Component::addDataItem(DataItem * dataItem)
+{
+  mDataItems.push_back(dataItem);
 }
 
 void Component::setParent(Component * parent)

@@ -122,13 +122,6 @@ void XmlParser::parse(const xmlpp::Node* node)
         parse(*iter);
       }
     }
-    
-    // Close off xml tag, i.e. </tag>
-    if (!nodeText and !nodeComment and !nodename.empty())
-    {
-  //    printIndentation(indentation);
-  //    *mXmlStream << "</" << nodename << ">" << std::endl;
-    }
   }
 
 }

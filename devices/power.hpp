@@ -44,6 +44,8 @@ protected:
 public:
   Power(std::map<std::string, std::string> attributes);
   
+  std::string getClass();
+  
 };
 
 #endif

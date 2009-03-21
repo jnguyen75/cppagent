@@ -39,6 +39,8 @@
 
 #include "component.hpp"
 
+class Component;
+
 class DataItem
 {
 public:
@@ -89,6 +91,8 @@ protected:
 public:
   /* Construct a data item with appropriate attributes mapping */
   DataItem(std::map<std::string, std::string> attributes);
+  
+  std::map<std::string, std::string> getAttributes();
   
   /* Get ID of data item */
   unsigned int getId();

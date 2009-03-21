@@ -41,4 +41,8 @@ Controller::Controller(std::map<std::string, std::string> attributes)
 
 }
 
+std::string Controller::getClass()
+{
+  return "Controller";
+}
 

@@ -314,6 +314,7 @@ void Adapter::loadDataItem(xmlpp::Node * dataItem, Component * parent)
     }
   }
   
+  parent->addDataItem(d);
   mDataItems.push_back(d);
 }
 

@@ -41,4 +41,8 @@ Axes::Axes(std::map<std::string, std::string> attributes)
 
 }
 
+std::string Axes::getClass()
+{
+  return "Axes";
+}
 

@@ -44,6 +44,8 @@ protected:
 public:
   Axes(std::map<std::string, std::string> attributes);
   
+  std::string getClass();
+  
 };
 
 #endif

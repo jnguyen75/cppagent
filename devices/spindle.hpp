@@ -44,6 +44,8 @@ protected:
 public:
   Spindle(std::map<std::string, std::string> attributes);
   
+  std::string getClass();
+  
 };
 
 #endif
