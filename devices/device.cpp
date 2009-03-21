@@ -48,6 +48,11 @@ Device::Device(std::map<std::string, std::string> attributes)
   }
 }
 
+std::string Device::getUuid()
+{
+  return mUuid;
+}
+
 /* Device public static methods */
 bool Device::hasDeviceSpecs(std::map<std::string, std::string> attributes)
 {

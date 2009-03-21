@@ -51,23 +51,19 @@ Adapter::Adapter(std::string server, unsigned int port, std::string configXml)
   // Mutex used for synchronized access to sliding buffer and sequence number
   mSequenceLock = new dlib::mutex;
   
+  // Will start threaded object: Adapter::thread()
   start();
 }
 
 Adapter::~Adapter()
 {
+  // Will stop threaded object gracefully Adapter::thread()
   stop();
   wait();
   
   delete mConfig;
   delete mSlidingBuffer;
   delete mSequenceLock;
-}
-
-void Adapter::thread()
-{
-  std::cout << "Starting adapter thread to read data" << std::endl;
-  connect();
 }
 
 std::vector<ComponentEvent *> Adapter::current(
@@ -85,7 +81,7 @@ std::vector<ComponentEvent *> Adapter::current(
   
   for (unsigned int i=*firstSeq; i<mSequence; i++)
   {
-    if ((*mSlidingBuffer)[i]->getValue() != 0.0f)
+    if ((*mSlidingBuffer)[i]->getFValue() != 0.0f)
     {
       results.push_back((*mSlidingBuffer)[i]);
     }
@@ -117,7 +113,7 @@ void Adapter::processData(std::string line)
   getline(toParse, key, '|');
   std::string time = key;
   
-  std::cout << "Time = " << time << std::endl;
+  //std::cout << "Time = " << time << std::endl;
   
   getline(toParse, key, '|');
   std::string type = key;
@@ -132,14 +128,11 @@ void Adapter::processData(std::string line)
   }
   else // Key -> Value Pairings
   {
-    
     addToBuffer(time, key, value);
     
     // Will be bypassed by single "Time|Item|Value" event
     while (getline(toParse, key, '|') and getline(toParse, value, '|'))
     {
-      //std::cout << "Key: " << key << std::endl;
-      //std::cout << "Value: " << value << std::endl;
       addToBuffer(time, key, value);
     }
   }
@@ -187,8 +180,14 @@ void Adapter::printDataItems()
   std::cout << std::endl;
 }
 
+/* Adapter private methods */
+void Adapter::thread()
+{
+  std::cout << "Starting adapter thread to read data" << std::endl;
+  connect();
+}
 
-/* Component protected methods */
+/* Adapter protected methods */
 void Adapter::loadDevices()
 {
   xmlpp::NodeSet devices = mConfig->getRootNode()->find("//MTConnectDevices/Devices/*");
@@ -352,8 +351,6 @@ void Adapter::addToBuffer(std::string time, std::string key, std::string value)
     (*mSlidingBuffer)[mSequence] = new ComponentEvent(&d, mSequence, time, value);
     mSequence++;
     mSequenceLock->unlock();
-    std::cout << "Sequence: " << mSequence << std::endl;
-    //std::cout << "SlidBuf Size: " << mSlidingBuffer->size() << std::endl;
   }
   catch (std::string msg)
   {

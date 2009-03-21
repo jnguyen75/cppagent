@@ -63,7 +63,10 @@ protected:
   void handleSample(const map_type& queries);
   
   /* Handle the device/path parameters for the xpath search */
-  void handleDevicesAndPath(std::string device, std::string path = "");
+  void handleDevicesAndPath(const map_type& queries);
+  
+  
+  void clearDevices();
   
   /* Output an XML Error */
   void printError(std::string errorCode, std::string text);
@@ -75,6 +78,8 @@ protected:
   XmlPrinter * mXmlPrinter;
   
   std::vector<Adapter *> mAdapters;
+  
+  std::vector<Device *> mDeviceList;
   
 public:
   HTTP();

@@ -41,6 +41,14 @@
 
 class DataItem
 {
+public:
+  enum Category
+  {
+    SAMPLE,
+    EVENT
+  };
+  
+  
 protected:
   /* Unique ID for each component */
   unsigned int mId;
@@ -55,7 +63,7 @@ protected:
   std::string mSubType;
   
   /* Category of data item */
-  std::string mCategory;
+  Category mCategory;
   
   /* Native units of data item */
   std::string mNativeUnits;
@@ -88,11 +96,17 @@ public:
   /* Get name of data item */
   std::string getName();
   
+  std::string getSource();
+  
   /* Returns if data item has this name (or source name) */
   bool hasName(std::string name);
   
   /* Get type of data item */
   std::string getType();
+  
+  Category getCategory();
+  
+  bool isSample();
   
   /* Get native units of data item */
   std::string getNativeUnits();
@@ -102,9 +116,6 @@ public:
   
   /* Add a source (extra information) to data item */
   void addSource(std::string source);
-  
-  /* Get source (extra information) of data item */
-  std::string getSource();
   
   /* Set component that data item is associated with */
   void setComponent(Component * component);

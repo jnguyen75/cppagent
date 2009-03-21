@@ -44,7 +44,7 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
     mSubType = attributes["subType"];
   }
   
-  mCategory = attributes["category"];
+  mCategory = (attributes["category"] == "SAMPLE") ? SAMPLE : EVENT;
   
   if (!attributes["nativeUnits"].empty())
   {
@@ -81,6 +81,11 @@ std::string DataItem::getName()
   return mName;
 }
 
+std::string DataItem::getSource()
+{
+  return (mSource.empty()) ? mName : mSource;
+}
+
 bool DataItem::hasName(std::string name)
 {
   return mName == name || (!mSource.empty() && mSource == name);
@@ -89,6 +94,16 @@ bool DataItem::hasName(std::string name)
 std::string DataItem::getType()
 {
   return mType;
+}
+
+DataItem::Category DataItem::getCategory()
+{
+  return mCategory;
+}
+
+bool DataItem::isSample()
+{
+  return mCategory == SAMPLE;
 }
 
 std::string DataItem::getNativeUnits()
@@ -104,11 +119,6 @@ float DataItem::getNativeScale()
 void DataItem::addSource(std::string source)
 {
   mSource = source;
-}
-
-std::string DataItem::getSource()
-{
-  return mSource;
 }
 
 void DataItem::setComponent(Component * component)

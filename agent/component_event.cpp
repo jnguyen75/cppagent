@@ -33,7 +33,7 @@
 
 #include "component_event.hpp"
 
-/* ComponentEvent public static constants*/
+/* ComponentEvent public static constants */
 const std::string ComponentEvent::SSimpleUnits[NumSimpleUnits] = {
   "INCH",
   "FOOT",
@@ -59,6 +59,7 @@ const std::string ComponentEvent::SSimpleUnits[NumSimpleUnits] = {
   "NEWTON_MILLIMETER",
   "HERTZ"
 };
+
 /* ComponentEvent public methods */
 ComponentEvent::ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value)
 {
@@ -66,47 +67,45 @@ ComponentEvent::ComponentEvent(DataItem * dataItem, unsigned int sequence, std::
   mSequence = sequence;
   mTime = time;
   
+  fValue = 0.0f;
   convertValue(value);
-  std::cout << "Type: " << mDataItem->getType() << std::endl;
-  std::cout << "Previous: " << value << std::endl;
-  std::cout << "Converted: " << mValue << std::endl;
 }
 
 ComponentEvent::~ComponentEvent()
 {
 }
 
-float ComponentEvent::getValue()
+float ComponentEvent::getFValue()
 {
-  return mValue;
+  return fValue;
+}
+
+std::string ComponentEvent::getSValue()
+{
+  return sValue;
 }
 
 /* ComponentEvent protected methods */
 void ComponentEvent::convertValue(std::string value)
 {
-  // Check if the type is an alarm first
-  if (mDataItem->getType() == "ALARM")
+  // Check if the type is an alarm or if it doesn't have units
+  if (mDataItem->getType() == "ALARM" or mDataItem->getNativeUnits().empty())
   {
-    // TODO: Convert to upper case, split into array
+    // TODO: Convert to upper case, split into array??
+    sValue = value;
     return;
-  }
-  else if (mDataItem->getNativeUnits().empty())
-  {
-    return;
-  }
-  
-  // Else
+  } // Else
   
   std::string units = mDataItem->getNativeUnits();
   std::string::size_type slashLoc = units.find('/');
   
   if (slashLoc == std::string::npos)
   {
-    mValue = convertSimple(units, atof(value.c_str()));
+    fValue = convertSimple(units, atof(value.c_str()));
   }
   else if (units == "REVOLUTIONS/MINUTE")
   {
-    mValue = atof(value.c_str());
+    fValue = atof(value.c_str());
   }
   else
   {
@@ -117,11 +116,11 @@ void ComponentEvent::convertValue(std::string value)
     
     if (numerator == "REVOLUTION" and denominator == "SECOND")
     {
-      mValue = atof(value.c_str()) * 60.0f;
+      fValue = atof(value.c_str()) * 60.0f;
     }
     else if (carotLoc == std::string::npos)
     {
-      mValue = convertSimple(numerator, atof(value.c_str())) / convertSimple(denominator, 1.0);
+      fValue = convertSimple(numerator, atof(value.c_str())) / convertSimple(denominator, 1.0);
     }
     else
     {
@@ -129,13 +128,13 @@ void ComponentEvent::convertValue(std::string value)
       std::string power = units.substr(carotLoc+1);
       
       float div = pow(convertSimple(unit, atof(value.c_str())), atof(power.c_str()));
-      mValue = convertSimple(numerator, atof(value.c_str())) / div;
+      fValue = convertSimple(numerator, atof(value.c_str())) / div;
     }
   }
   
   if (mDataItem->getNativeScale() != 0.0f)
   {
-    mValue /= mDataItem->getNativeScale();
+    fValue /= mDataItem->getNativeScale();
   }
 }
 
@@ -184,6 +183,7 @@ float ComponentEvent::convertSimple(std::string units, float v)
   }
 }
 
+/* ComponentEvent public static methods */
 ComponentEvent::ESimpleUnits ComponentEvent::getSimpleUnitsEnum(std::string name)
 {
   for (unsigned int i=0; i<ComponentEvent::NumSimpleUnits; i++)

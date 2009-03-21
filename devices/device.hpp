@@ -49,6 +49,8 @@ protected:
 public:
   Device(std::map<std::string, std::string> attributes);
   
+  std::string getUuid();
+  
 public:
   static bool hasDeviceSpecs(std::map<std::string, std::string> attributes);
 };

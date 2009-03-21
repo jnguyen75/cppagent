@@ -99,6 +99,10 @@ void HTTP::on_request (
       {
         handleCurrent(queries);
       }
+      else if (call == "probe")
+      {
+        handleProbe(queries);
+      }
       else
       {
         std::cout << "Routing Error2" << std::endl;
@@ -121,23 +125,23 @@ void HTTP::addAdapter(std::string server, unsigned int port, std::string configX
 }
 
 /* HTTP protected methods */
-void HTTP::handleDevicesAndPath(std::string device, std::string path)
+void HTTP::handleDevicesAndPath(const map_type& queries)
 {
   std::string dataPath = "";
-  std::string deviceList = "";
+  //std::vector<Device *> devices;
   
-  if (!device.empty()) // If there is a device
+  if (queries.is_in_domain("device")) // If there is a device
   {
     // Set the prefix
-    std::string prefix = "//Devices/Device[@name=\"" + device + "\"]";
-    if (!path.empty())
+    std::string prefix = "//Devices/Device[@name=\"" + queries["device"] + "\"]";
+    if (queries.is_in_domain("path"))
     {
-      std::istringstream toParse(path);
+      std::istringstream toParse(queries["path"]);
       std::string token;
       
       while (std::getline(toParse, token, '|'))
       {
-        dataPath += token + "|";
+        dataPath += prefix + token + "|";
       }
       
       dataPath.erase(dataPath.length()-1);
@@ -146,14 +150,22 @@ void HTTP::handleDevicesAndPath(std::string device, std::string path)
     {
       dataPath = prefix;
     }
+    
+    // TODO: devices = Find device by name
   }
   else
   {
-    dataPath = (!path.empty()) ? path : "//Devices/Device";
+    dataPath = (queries.is_in_domain("path")) ? queries["path"] : "//Devices/Device";
+    // TODO: devices = list of all devices
   }
   
   // TODO: Clear_Devices
   // TODO: @@adapter.data_items(dataPath)
+}
+
+void HTTP::clearDevices()
+{
+  
 }
 
 void HTTP::handleCurrent(const map_type& queries)
@@ -170,6 +182,22 @@ void HTTP::handleCurrent(const map_type& queries)
   {
     std::cout << "XML Exception: " << e.what() << std::endl;
   }
+}
+
+void HTTP::handleProbe(const map_type& queries)
+{
+  if (queries.is_in_domain("device"))
+  {
+    // Find queries["device"]
+  }
+  else
+  {
+    mDeviceList = mAdapters[0]->getDevices();
+  }
+  
+  unsigned int seq, firstSeq;
+  mAdapters[0]->current(&seq, &firstSeq);
+  mXmlPrinter->printProbe(1, Adapter::SlidingBufferSize, seq, mDeviceList);
 }
 
 void HTTP::printError(std::string errorCode, std::string text)

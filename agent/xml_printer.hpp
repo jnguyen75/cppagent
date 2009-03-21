@@ -59,10 +59,24 @@ protected:
   
   xmlpp::Document * mSampleXml;
   
+  xmlpp::Document * mProbeXml;
+  
 protected:
   void initErrorXml();
   
+  void initProbeXml();
+  
   void initSampleXml();
+  
+  xmlpp::Element * addRoot(xmlpp::Document * doc, std::string rootName, std::string xmlnsM);
+  
+  xmlpp::Element * addHeader(
+    xmlpp::Document * doc,
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    unsigned int firstSeq = 0
+  );
   
   /* Simple helper function to put indentations into the XML stream */
   void printIndentation(unsigned int indentation);
@@ -88,6 +102,14 @@ public:
     unsigned int nextSeq,
     std::string errorCode,
     std::string errorText
+  );
+  
+  void printProbe
+  (
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    std::vector<Device *> devices
   );
   
   void printSample

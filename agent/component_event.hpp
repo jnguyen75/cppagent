@@ -85,7 +85,8 @@ protected:
   std::string mTime;
   
   /* The value of the event */
-  float mValue;
+  float fValue;
+  std::string sValue;
 
 protected:
   /* Convert the value to the agent unit standards */
@@ -104,7 +105,8 @@ public:
   virtual ~ComponentEvent();
   
   /* Get value, whatever the value may be*/
-  float getValue();
+  float getFValue();
+  std::string getSValue();
   
 public:
   static ComponentEvent::ESimpleUnits getSimpleUnitsEnum(std::string name);

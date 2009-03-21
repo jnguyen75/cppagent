@@ -40,6 +40,7 @@ XmlPrinter::XmlPrinter(std::ostringstream * xmlStream)
   try
   {
     initErrorXml();
+    initProbeXml();
     initSampleXml();
   }
   catch (std::exception & e)
@@ -96,9 +97,9 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
       *mXmlStream << " " << attribute->get_name() << "=\"" << attribute->get_value() << "\"";
     }
     
-    std::string endTag = (nodeElement->has_child_text() or indentation == 0) ? ">" : " />";
+    //std::string endTag = (nodeElement->has_child_text() or indentation == 0) ? ">" : " />";
     
-    *mXmlStream << endTag << std::endl;
+    *mXmlStream << ">" << std::endl;
   }
   
   // If node does NOT have content, then it may have children, so perform print on children
@@ -113,7 +114,7 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
   }
   
   // Close off xml tag, i.e. </tag>
-  if ((!nodeText and !nodeComment and !nodename.empty() and nodeElement->has_child_text()) or indentation == 0)
+  if (!nodeText and !nodeComment and !nodename.empty())// or indentation == 0)
   {
     printIndentation(indentation);
     *mXmlStream << "</" << nodename << ">" << std::endl;
@@ -128,27 +129,42 @@ void XmlPrinter::printError(
     std::string errorText
   )
 {  
-  char timeBuffer [TIME_BUFFER_SIZE];
-  getCurrentTime(timeBuffer);
-  
-  xmlpp::Element * header = mErrorXml->get_root_node()->add_child("Header");
-  header->set_attribute("creationTime", timeBuffer);
-  header->set_attribute("sender", "localhost");
-  header->set_attribute("instanceId", intToString(adapterId));
-  header->set_attribute("bufferSize", intToString(bufferSize));
-  header->set_attribute("version", MTCONNECT_XML_VERS);
-  header->set_attribute("nextSequence", intToString(nextSeq));
+  xmlpp::Element * header = addHeader(mErrorXml, adapterId, bufferSize, nextSeq);
   
   xmlpp::Element * error = mErrorXml->get_root_node()->add_child("Error");
   error->set_attribute("errorCode", errorCode);
   error->set_child_text(errorText);
-  
   
   printNode(mErrorXml->get_root_node());
   
   mErrorXml->get_root_node()->remove_child(header);
   mErrorXml->get_root_node()->remove_child(error);
 }
+
+void XmlPrinter::printProbe(
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    std::vector<Device *> deviceList
+  )
+{  
+  xmlpp::Element * header = addHeader(mProbeXml, adapterId, bufferSize, nextSeq);
+  
+  xmlpp::Element * devices = mProbeXml->get_root_node()->add_child("Devices");
+  
+  for (std::vector<Device *>::iterator d=deviceList.begin(); d!=deviceList.end(); d++ )
+  {
+    xmlpp::Element * device = devices->add_child("Device");
+    device->set_attribute("name", (*d)->getName());
+    device->set_attribute("uuid", (*d)->getUuid());
+  }
+  
+  printNode(mProbeXml->get_root_node());
+  
+  mProbeXml->get_root_node()->remove_child(header);
+  mProbeXml->get_root_node()->remove_child(devices);
+}
+
 
 void XmlPrinter::printSample(
     unsigned int adapterId,
@@ -158,49 +174,82 @@ void XmlPrinter::printSample(
     std::vector<Device *> devices
   )
 {
-  char timeBuffer [TIME_BUFFER_SIZE];
-  getCurrentTime(timeBuffer);
-  
-  xmlpp::Element * header = mSampleXml->get_root_node()->add_child("Header");
-  header->set_attribute("creationTime", timeBuffer);
-  header->set_attribute("sender", "localhost");
-  header->set_attribute("instanceId", intToString(adapterId));
-  header->set_attribute("bufferSize", intToString(bufferSize));
-  header->set_attribute("version", MTCONNECT_XML_VERS);
-  header->set_attribute("nextSequence", intToString(nextSeq));
-  header->set_attribute("firstSequence", intToString(firstSeq));
-  header->set_attribute("lastSequence", intToString(nextSeq - 1));
-  
+  xmlpp::Element * header = addHeader(mSampleXml, adapterId, bufferSize, nextSeq, firstSeq);
+    
   xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
+  
+  for (std::vector<Device *>::iterator device=devices.begin(); device!=devices.end(); device++ )
+  {
+    xmlpp::Element * deviceStream = streams->add_child("DeviceStream");
+    deviceStream->set_attribute("name", (*device)->getName());
+    deviceStream->set_attribute("uuid", (*device)->getUuid());
+    
+  }
   
   printNode(mSampleXml->get_root_node());
   
-  mErrorXml->get_root_node()->remove_child(header);
+  // This will recursively remove and get rid of its children  
+  mSampleXml->get_root_node()->remove_child(streams);
+  mSampleXml->get_root_node()->remove_child(header);
 }
 
 /* XmlPrinter Protected Methods */
 void XmlPrinter::initErrorXml()
 {
   mErrorXml = new xmlpp::Document;
-  
-  xmlpp::Element * root = mErrorXml->create_root_node("MTConnectStreams");
-  
-  root->set_attribute("xmlns:m", "urn:mtconnect.com:MTConnectError:1.0");
-  root->set_attribute("xmlns", "urn:mtconnect.com:MTConnectError:1.0");
-  root->set_attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-  root->set_attribute("xsi:schemaLocation", "urn:mtconnect.com:MTConnectError:1.0 /schemas/MTConnectError.xsd");
+  addRoot(mErrorXml, "MTConnectStreams", "urn:mtconnect.com:MTConnectError:0.9");
+}
+
+void XmlPrinter::initProbeXml()
+{
+  mProbeXml = new xmlpp::Document;
+  addRoot(mProbeXml, "MTConnectDevices", "urn:mtconnect.com:MTConnectDevices:0.9");
 }
 
 void XmlPrinter::initSampleXml()
 {
   mSampleXml = new xmlpp::Document;
+  addRoot(mSampleXml, "MTConnectStreams", "urn:mtconnect.com:MTConnectStreams:0.9");
+}
+
+xmlpp::Element * XmlPrinter::addRoot(xmlpp::Document * doc, std::string rootName, std::string xmlnsM)
+{
+  xmlpp::Element * root = doc->create_root_node(rootName);
   
-  xmlpp::Element * root = mSampleXml->create_root_node("MTConnectStreams");
-  
-  root->set_attribute("xmlns:m", "urn:mtconnect.com:MTConnectStreams:1.0");
+  root->set_attribute("xmlns:m", xmlnsM);
   root->set_attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
   root->set_attribute("xmlns", "urn:mtconnect.com:MTConnectError:1.0");
   root->set_attribute("xsi:schemaLocation", "urn:mtconnect.com:MTConnectError:1.0 /schemas/MTConnectError.xsd");
+  
+  return root;
+}
+
+xmlpp::Element * XmlPrinter::addHeader(
+    xmlpp::Document * doc,
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    unsigned int firstSeq
+  )
+{
+  char timeBuffer [TIME_BUFFER_SIZE];
+  getCurrentTime(timeBuffer);
+  
+  xmlpp::Element * header = doc->get_root_node()->add_child("Header");
+  header->set_attribute("creationTime", timeBuffer);
+  header->set_attribute("sender", "localhost");
+  header->set_attribute("instanceId", intToString(adapterId));
+  header->set_attribute("bufferSize", intToString(bufferSize));
+  header->set_attribute("version", MTCONNECT_XML_VERS);
+  header->set_attribute("nextSequence", intToString(nextSeq));
+  
+  if (firstSeq > 0)
+  {
+    header->set_attribute("firstSequence", intToString(firstSeq));
+    header->set_attribute("lastSequence", intToString(nextSeq - 1));
+  }
+  
+  return header;
 }
 
 void XmlPrinter::printIndentation(unsigned int indentation)

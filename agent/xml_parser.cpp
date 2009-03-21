@@ -78,14 +78,14 @@ void XmlParser::parse(const xmlpp::Node* node)
     const xmlpp::CommentNode* nodeComment = dynamic_cast<const xmlpp::CommentNode*>(node);
 
     // Ignore empty whitespace
-    if (nodeText && nodeText->is_white_space())
+    if (nodeText and nodeText->is_white_space())
       return;
     
     Glib::ustring nodename = node->get_name();
     
     // Node name tag: i.e. "<tag"
     // Leave ">" out in case there are other attributes
-    if (!nodeText && !nodeComment && !nodename.empty())
+    if (!nodeText and !nodeComment and !nodename.empty())
     {
       print("Tag", nodename);
       //handleTag(nodename);
@@ -124,7 +124,7 @@ void XmlParser::parse(const xmlpp::Node* node)
     }
     
     // Close off xml tag, i.e. </tag>
-    if (!nodeText && !nodeComment && !nodename.empty())
+    if (!nodeText and !nodeComment and !nodename.empty())
     {
   //    printIndentation(indentation);
   //    *mXmlStream << "</" << nodename << ">" << std::endl;
