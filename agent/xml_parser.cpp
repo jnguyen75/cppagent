@@ -42,13 +42,24 @@ XmlParser::XmlParser(std::string xmlPath)
     
     // Set to false now because XML does not contain DTD
     mParser->set_validate(false);
-    // We just want the text to be resolved/unescaped automatically.
+    
+    // We want the text to be resolved/unescaped automatically.
     mParser->set_substitute_entities();
+    
+    // Parse the input file
     mParser->parse_file(xmlPath);
   }
   catch (std::exception & e)
   {
     std::cout << "XML Exception: " << e.what() << std::endl;
+  }
+  
+  xmlpp::NodeSet devices = mParser->get_document()->get_root_node()->find("//MTConnectDevices/Devices/*");
+  
+  for (unsigned int i=0; i<devices.size(); i++)
+  {
+    // MAKE SURE FIRST ITEM IS DEVICE
+    mDevices.push_back(static_cast<Device *>(handleComponent(devices[i])));
   }
 }
 
@@ -57,86 +68,31 @@ XmlParser::~XmlParser()
   delete mParser;
 }
 
-xmlpp::Node * XmlParser::getRootNode()
+std::list<Device *> XmlParser::getDevices()
 {
-  return mParser->get_document()->get_root_node();
+  return mDevices;
 }
 
-void print(std::string tag, std::string text)
+std::list<DataItem *> XmlParser::getDataItems()
 {
-  std::cout << tag << "= " << text << std::endl;
+  return mDataItems;
 }
 
-void XmlParser::parse(const xmlpp::Node* node)
-{
-  // Make sure the parser is available
-  if (mParser)
-  {
-    // Constant node data determined for each node
-    const xmlpp::ContentNode* nodeContent = dynamic_cast<const xmlpp::ContentNode*>(node);
-    const xmlpp::TextNode* nodeText = dynamic_cast<const xmlpp::TextNode*>(node);
-    const xmlpp::CommentNode* nodeComment = dynamic_cast<const xmlpp::CommentNode*>(node);
-
-    // Ignore empty whitespace
-    if (nodeText and nodeText->is_white_space())
-      return;
-    
-    Glib::ustring nodename = node->get_name();
-    
-    // Node name tag: i.e. "<tag"
-    // Leave ">" out in case there are other attributes
-    if (!nodeText and !nodeComment and !nodename.empty())
-    {
-      print("Tag", nodename);
-      //handleTag(nodename);
-    }
-    
-    // Right now, nothing is being done for conditions: if nodeContent/nodeComment
-    if (nodeText)
-    {
-      print("Content", nodeText->get_content());
-    }
-    else if (const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node))
-    {
-      // Print attributes for the element
-      // i.e. ...attribute1="value1" attribute2="value2"...
-      const xmlpp::Element::AttributeList& attributes = nodeElement->get_attributes();
-      for (xmlpp::Element::AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
-      {
-        const xmlpp::Attribute* attribute = *iter;
-        //*mXmlStream << " " << attribute->get_name() << "=\"" << attribute->get_value() << "\"";
-        print("AttributeName", attribute->get_name());
-        print("AttributeValue", attribute->get_value());
-      }
-      
-//      *mXmlStream << ">" << std::endl;
-    }
-    
-    // If node does NOT have content, then it may have children, so perform print on children
-    if (!nodeContent)
-    {
-      // Recurse through child nodes
-      xmlpp::Node::NodeList list = node->get_children();
-      for(xmlpp::Node::NodeList::iterator iter = list.begin(); iter != list.end(); ++iter)
-      {
-        parse(*iter);
-      }
-    }
-  }
-
-}
-
+/* XmlParser protected methods */
 std::map<std::string, std::string> XmlParser::getAttributes(const xmlpp::Node * node)
 {
   std::map<std::string, std::string> mapToReturn;
+  
+  // Only element nodes have attributes
   if (const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node))
   {
-    // 
+    // Load all the attributes into the map to return
     const xmlpp::Element::AttributeList& attributes = nodeElement->get_attributes();
-    for (xmlpp::Element::AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
+    
+    xmlpp::Element::AttributeList::const_iterator attribute;
+    for (attribute=attributes.begin(); attribute!=attributes.end(); attribute++)
     {
-      const xmlpp::Attribute* attribute = * iter;
-      mapToReturn[attribute->get_name()] = attribute->get_value();
+      mapToReturn[(*attribute)->get_name()] = (*attribute)->get_value();
     }
   }
   else
@@ -145,4 +101,134 @@ std::map<std::string, std::string> XmlParser::getAttributes(const xmlpp::Node * 
     std::cout << "ERROR! xml_parser.cpp" << std::endl; 
   }
   return mapToReturn;
+}
+
+Component * XmlParser::handleComponent(xmlpp::Node * component, Component * parent)
+{
+  Component * toReturn = NULL;
+  Component::EComponentSpecs spec = Component::getComponentEnum(component->get_name());
+  switch (spec)
+  {
+    case Component::AXES:
+    case Component::CONTROLLER:
+    case Component::DEVICE:
+    case Component::LINEAR:
+    case Component::POWER:
+    case Component::SPINDLE:
+      toReturn = loadComponent(component, spec);
+      break;
+    case Component::COMPONENTS:
+    case Component::DATA_ITEMS:
+      handleChildren(component, parent);
+      break;
+    case Component::DATA_ITEM:
+      loadDataItem(component, parent);
+      break;
+    case Component::TEXT:
+      break;
+    default:
+      std::cout << "ERROR: parsing XML" << std::endl;
+      std::cout << "Received: " << Component::getComponentEnum(component->get_name()) << std::endl;
+  }
+  
+  // Construct
+  if (toReturn != NULL and parent != NULL)
+  {
+    parent->addChild(toReturn);
+    toReturn->setParent(parent);
+  }
+  
+  
+  // Check if there are children
+  if (toReturn != NULL and !dynamic_cast<const xmlpp::ContentNode*>(component))
+  {
+    xmlpp::Node::NodeList children = component->get_children();
+    for (xmlpp::Node::NodeList::iterator child=children.begin(); child!=children.end(); ++child)
+    {
+      std::string childName = (*child)->get_name();
+      //std::cout << childName << "\n";
+      if (childName == "Description")
+      {
+        toReturn->addDescription(getAttributes(*child));
+      }
+      else
+      {
+        handleComponent(*child, toReturn);
+      }
+    }
+  }
+  
+  return toReturn;
+}
+
+Component * XmlParser::loadComponent(xmlpp::Node * component, Component::EComponentSpecs spec)
+{
+  std::map<std::string, std::string> attributes = getAttributes(component);
+  
+  // TODO: ERROR CHECKING
+  if (!attributes.empty() and Component::hasNameAndId(attributes))
+  {
+    switch (spec)
+    {
+      case Component::AXES:
+        return new Axes(attributes);
+      case Component::CONTROLLER:
+        return new Controller(attributes);
+      case Component::DEVICE:
+        return new Device(attributes);
+      case Component::LINEAR:
+        return new Linear(attributes);
+      case Component::POWER:
+        return new Power(attributes);
+      case Component::SPINDLE:
+        return new Spindle(attributes);
+      // TODO: other cases/error
+    }
+  }
+  
+  std::cout << "ERERERR" << std::endl;
+  return NULL;
+}
+
+void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent)
+{
+  // TODO: Error check attributes
+  DataItem * d = new DataItem(getAttributes(dataItem));
+  d->setComponent(parent);
+  
+  // Check children for "source"
+  if (!dynamic_cast<const xmlpp::ContentNode*>(dataItem))
+  {
+    xmlpp::Node::NodeList children = dataItem->get_children();
+    for (xmlpp::Node::NodeList::iterator child=children.begin(); child!=children.end(); ++child)
+    {
+      std::string childName = (*child)->get_name();
+      //std::cout << childName << std::endl;
+      if (childName == "Source")
+      {
+        xmlpp::Node::NodeList grandChildren = (*child)->get_children();
+        const xmlpp::TextNode* nodeText = dynamic_cast<const xmlpp::TextNode*>(grandChildren.front());
+        if (nodeText)
+        {
+          //std::cout << "Adding: " << nodeText->get_content() << "\n";
+          d->addSource(nodeText->get_content());
+        }
+      }
+    }
+  }
+  
+  parent->addDataItem(d);
+  mDataItems.push_back(d);
+}
+
+void XmlParser::handleChildren(xmlpp::Node * components, Component * parent)
+{
+  if (!dynamic_cast<const xmlpp::ContentNode*>(components))
+  {
+    xmlpp::Node::NodeList children = components->get_children();
+    for (xmlpp::Node::NodeList::iterator child=children.begin(); child!=children.end(); ++child)
+    {
+      handleComponent(*child, parent);
+    }
+  }
 }

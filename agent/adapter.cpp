@@ -37,11 +37,8 @@
 Adapter::Adapter(std::string server, unsigned int port, std::string configXml)
 : Connector(server, port)
 {
-  // Load .xml configuration
-  mConfig = new XmlParser(configXml);
-  
   // Load devices from configuration
-  loadDevices();
+  loadDevices(configXml);
   
   // Sequence number and sliding buffer for data
   mSequence = 1;
@@ -53,7 +50,6 @@ Adapter::Adapter(std::string server, unsigned int port, std::string configXml)
   
   // Will start threaded object: Adapter::thread()
   start();
-  printDataItems();
 }
 
 Adapter::~Adapter()
@@ -62,12 +58,11 @@ Adapter::~Adapter()
   stop();
   wait();
   
-  delete mConfig;
   delete mSlidingBuffer;
   delete mSequenceLock;
 }
 
-std::vector<ComponentEvent *> Adapter::current(
+std::list<ComponentEvent *> Adapter::current(
     unsigned int * seq,
     unsigned int * firstSeq,
     std::string path
@@ -78,7 +73,7 @@ std::vector<ComponentEvent *> Adapter::current(
   *seq = mSequence;
   *firstSeq = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
   
-  std::vector<ComponentEvent *> results;
+  std::list<ComponentEvent *> results;
   
   for (unsigned int i=*firstSeq; i<mSequence; i++)
   {
@@ -110,11 +105,10 @@ std::list<ComponentEvent *> Adapter::sample(
   
   // START SHOULD BE BETWEEN 0 AND SEQUENCE NUMBER
   start = (start <= *firstSeq) ? *firstSeq + 1  : start;
-  count += start;
+  unsigned int end = (count + start >= mSequence) ? mSequence-1 : count+start;
   
-  for (unsigned int i = start; i<count; i++)
+  for (unsigned int i = start; i<end; i++)
   {
-    std::cout << i << ": " << (*mSlidingBuffer)[i]->getDataItem()->getId() << std::endl;
     results.push_back((*mSlidingBuffer)[i]);
   }
   
@@ -123,7 +117,7 @@ std::list<ComponentEvent *> Adapter::sample(
   return results;
 }
 
-std::vector<Device *> Adapter::getDevices()
+std::list<Device *> Adapter::getDevices()
 {
   return mDevices;
 }
@@ -161,48 +155,6 @@ void Adapter::processData(std::string line)
   }
 }
 
-void Adapter::printComponents()
-{
-  std::cout << "** Component **" << std::endl;
-  
-  for (unsigned int i=0; i<mDevices.size(); i++)
-  {
-    std::cout << i << std::endl;
-    printNodesAndChildren(mDevices[i]);
-  }
-  
-  std::cout << std::endl;
-}
-
-void Adapter::printNodesAndChildren(Component * component)
-{
-  std::cout << "#" << component->getId() << ": " << component->getName();
-  if (component->getParent() != NULL)
-  {
-    std::cout << " (Belongs to #" << component->getParent()->getId() << ")" << std::endl;
-  }
-  
-  std::list<Component *> children = component->getChildren();
-  
-  for (std::list<Component *>::iterator child=children.begin(); child!=children.end(); ++child)
-  {
-    printNodesAndChildren(*child);
-  }
-}
-
-void Adapter::printDataItems()
-{
-  std::cout << "** Data Items **" << std::endl;
-  
-  for (unsigned int i=0; i<mDataItems.size(); i++)
-  {
-    std::cout << "#" << mDataItems[i]->getId() << ": " << mDataItems[i]->getName();
-    std::cout << " (" << mDataItems[i]->getSource() << ")" << std::endl;
-  }
-  
-  std::cout << std::endl;
-}
-
 /* Adapter private methods */
 void Adapter::thread()
 {
@@ -211,160 +163,30 @@ void Adapter::thread()
 }
 
 /* Adapter protected methods */
-void Adapter::loadDevices()
+void Adapter::loadDevices(std::string configXml)
 {
-  xmlpp::NodeSet devices = mConfig->getRootNode()->find("//MTConnectDevices/Devices/*");
+  // Load .xml configuration
+  XmlParser * mConfig = new XmlParser(configXml);
   
-  for (unsigned int i=0; i<devices.size(); i++)
-  {
-    // MAKE SURE FIRST ITEM IS DEVICE
-    mDevices.push_back(static_cast<Device *>(handleComponent(devices[i])));
-  }
-}
-
-Component * Adapter::handleComponent(xmlpp::Node * component, Component * parent)
-{
-  Component * toReturn = NULL;
-  Component::EComponentSpecs spec = Component::getComponentEnum(component->get_name());
-  switch (spec)
-  {
-    case Component::AXES:
-    case Component::CONTROLLER:
-    case Component::DEVICE:
-    case Component::LINEAR:
-    case Component::POWER:
-    case Component::SPINDLE:
-      toReturn = loadComponent(component, spec);
-      break;
-    case Component::COMPONENTS:
-    case Component::DATA_ITEMS:
-      handleChildren(component, parent);
-      break;
-    case Component::DATA_ITEM:
-      loadDataItem(component, parent);
-      break;
-    case Component::TEXT:
-      break;
-    default:
-      std::cout << "ERROR: parsing XML" << std::endl;
-      std::cout << "Received: " << Component::getComponentEnum(component->get_name()) << std::endl;
-  }
+  mDevices = mConfig->getDevices();
+  mDataItems = mConfig->getDataItems();
   
-  // Construct
-  if (toReturn != NULL and parent != NULL)
-  {
-    parent->addChild(toReturn);
-    toReturn->setParent(parent);
-  }
-  
-  
-  // Check if there are children
-  if (toReturn != NULL and !dynamic_cast<const xmlpp::ContentNode*>(component))
-  {
-    xmlpp::Node::NodeList children = component->get_children();
-    for (xmlpp::Node::NodeList::iterator child=children.begin(); child!=children.end(); ++child)
-    {
-      std::string childName = (*child)->get_name();
-      //std::cout << childName << "\n";
-      if (childName == "Description")
-      {
-        std::map<std::string, std::string> attributes = mConfig->getAttributes(*child);
-        toReturn->addDescription(attributes);
-      }
-      else
-      {
-        handleComponent(*child, toReturn);
-      }
-    }
-  }
-  
-  return toReturn;
-}
-
-Component * Adapter::loadComponent(xmlpp::Node * component, Component::EComponentSpecs spec)
-{
-  std::map<std::string, std::string> attributes = mConfig->getAttributes(component);
-  
-  // TODO: ERROR CHECKING
-  if (!attributes.empty() and Component::hasNameAndId(attributes))
-  {
-    switch (spec)
-    {
-      case Component::AXES:
-        return new Axes(attributes);
-      case Component::CONTROLLER:
-        return new Controller(attributes);
-      case Component::DEVICE:
-        return new Device(attributes);
-      case Component::LINEAR:
-        return new Linear(attributes);
-      case Component::POWER:
-        return new Power(attributes);
-      case Component::SPINDLE:
-        return new Spindle(attributes);
-      // TODO: other cases/error
-    }
-  }
-  
-  std::cout << "ERERERR" << std::endl;
-  return NULL;
-}
-
-void Adapter::loadDataItem(xmlpp::Node * dataItem, Component * parent)
-{
-  // TODO: Error check attributes
-  std::map<std::string, std::string> attributes = mConfig->getAttributes(dataItem);
-  DataItem * d = new DataItem(attributes);
-  d->setComponent(parent);
-  
-  // Check children for "source"
-  if (!dynamic_cast<const xmlpp::ContentNode*>(dataItem))
-  {
-    xmlpp::Node::NodeList children = dataItem->get_children();
-    for (xmlpp::Node::NodeList::iterator child=children.begin(); child!=children.end(); ++child)
-    {
-      std::string childName = (*child)->get_name();
-      //std::cout << childName << std::endl;
-      if (childName == "Source")
-      {
-        xmlpp::Node::NodeList grandChildren = (*child)->get_children();
-        const xmlpp::TextNode* nodeText = dynamic_cast<const xmlpp::TextNode*>(grandChildren.front());
-        if (nodeText)
-        {
-          //std::cout << "Adding: " << nodeText->get_content() << "\n";
-          d->addSource(nodeText->get_content());
-        }
-      }
-    }
-  }
-  
-  parent->addDataItem(d);
-  mDataItems.push_back(d);
+  delete mConfig;
 }
 
 DataItem * Adapter::getDataItemByName(std::string name) throw (std::string)
 {
-  for (unsigned int i=0; i<mDataItems.size(); i++)
+  std::list<DataItem *>::iterator dataItem;
+  for (dataItem = mDataItems.begin(); dataItem!=mDataItems.end(); dataItem++)
   {
-    if (mDataItems[i]->hasName(name))
+    if ((*dataItem)->hasName(name))
     {
-      return mDataItems[i];
+      return (*dataItem);
     }
   }
   throw (std::string) "DataItem '" + name + "' was not found";
 }
 
-void Adapter::handleChildren(xmlpp::Node * components, Component * parent)
-{
-  if (!dynamic_cast<const xmlpp::ContentNode*>(components))
-  {
-    xmlpp::Node::NodeList children = components->get_children();
-    for (xmlpp::Node::NodeList::iterator child=children.begin(); child!=children.end(); ++child)
-    {
-      handleComponent(*child, parent);
-    }
-  }
-}
 
 void Adapter::addToBuffer(std::string time, std::string key, std::string value)
 {
@@ -376,13 +198,9 @@ void Adapter::addToBuffer(std::string time, std::string key, std::string value)
     (*mSlidingBuffer)[mSequence] = new ComponentEvent(d, mSequence, time, value);
     mSequence++;
     mSequenceLock->unlock();
-    
-    //d->addComponentEvent();
   }
   catch (std::string msg)
   {
     std::cerr << "Adapter.cpp: " << msg << std::endl;
   }
 }
-
-

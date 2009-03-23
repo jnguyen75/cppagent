@@ -172,12 +172,15 @@ Device * HTTP::findDeviceByName(std::string name)
 {
   for (unsigned int i=0; i<mAdapters.size(); i++)
   {
-    std::vector<Device *> devices = mAdapters[i]->getDevices();
-    for (unsigned int j=0; j<devices.size(); j++)
+    std::list<Adapter *>::iterator first = mAdapters.begin();
+    std::list<Device *> devices = (*first)->getDevices();
+    
+    std::list<Device *>::iterator device;
+    for (device=devices.begin(); device!=devices.end(); device++)
     {
-      if (devices[j]->getName() == name)
+      if ((*device)->getName() == name)
       {
-        return devices[j];
+        return *device;
       }
     }
   }
@@ -201,8 +204,11 @@ void HTTP::fetchData(std::string path, bool current, unsigned int start, unsigne
   }
   else
   {
-    std::list<ComponentEvent *> results = mAdapters[0]->sample(&seq, &firstSeq, start, count, path);
-    mXmlPrinter->printSample(1, Adapter::SlidingBufferSize, seq, firstSeq, results);
+    std::list<Adapter *>::iterator first = mAdapters.begin();
+    std::list<Device *> devices = (*first)->getDevices();
+    
+    std::list<ComponentEvent *> results = (*first)->sample(&seq, &firstSeq, start, count, path);
+    mXmlPrinter->printSample(1, Adapter::SLIDING_BUFFER_SIZE, seq, firstSeq, results);
   }
 }
 
@@ -211,7 +217,9 @@ void HTTP::handleCurrent(const map_type& queries)
   try
   {
     unsigned int seq, firstSeq;
-    mAdapters[0]->current(&seq, &firstSeq);
+    
+    std::list<Adapter *>::iterator first = mAdapters.begin();
+    (*first)->current(&seq, &firstSeq);
     //mXmlPrinter->printSample(1, Adapter::SlidingBufferSize, seq, firstSeq, mAdapters[0]->getDevices());
     std::cout << "Seq: " << seq << std::endl;
     std::cout << "FirstSeq: " << firstSeq << std::endl;
@@ -241,12 +249,15 @@ void HTTP::handleProbe(const map_type& queries)
   else
   {
     // TODO: GET ALL DEVICES
-    mDeviceList = mAdapters[0]->getDevices();
+    std::list<Adapter *>::iterator first = mAdapters.begin();
+    mDeviceList = (*first)->getDevices();
   }
   
   unsigned int seq, firstSeq;
-  mAdapters[0]->current(&seq, &firstSeq);
-  mXmlPrinter->printProbe(1, Adapter::SlidingBufferSize, seq, mDeviceList);
+  
+  std::list<Adapter *>::iterator first = mAdapters.begin();
+  (*first)->current(&seq, &firstSeq);
+  mXmlPrinter->printProbe(1, Adapter::SLIDING_BUFFER_SIZE, seq, mDeviceList);
   
   mDeviceList.clear();
 }
@@ -282,7 +293,7 @@ void HTTP::handleSample(const map_type& queries)
 
 void HTTP::printError(std::string errorCode, std::string text)
 {
-  mXmlPrinter->printError(1, Adapter::SlidingBufferSize, 2, errorCode, text);
+  mXmlPrinter->printError(1, Adapter::SLIDING_BUFFER_SIZE, 2, errorCode, text);
 }
 
 /***** Procedural Code *****/

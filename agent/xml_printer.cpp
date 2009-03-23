@@ -157,14 +157,15 @@ void XmlPrinter::printProbe(
     unsigned int adapterId,
     unsigned int bufferSize,
     unsigned int nextSeq,
-    std::vector<Device *> deviceList
+    std::list<Device *> deviceList
   )
 {  
   xmlpp::Element * header = addHeader(mProbeXml, adapterId, bufferSize, nextSeq);
   
   xmlpp::Element * devices = mProbeXml->get_root_node()->add_child("Devices");
   
-  for (std::vector<Device *>::iterator d=deviceList.begin(); d!=deviceList.end(); d++ )
+  std::list<Device *>::iterator d;
+  for (d=deviceList.begin(); d!=deviceList.end(); d++ )
   {
     xmlpp::Element * device = devices->add_child("Device");
     printProbeHelper(device, *d);
@@ -205,6 +206,7 @@ void XmlPrinter::printSample(
   {
     xmlpp::Element * element = searchListForElement(elements, (*result)->getDataItem()->getComponent()->getId());
     xmlpp::Element * child;
+    
     if (element == NULL)
     {
       Component * component = (*result)->getDataItem()->getComponent();
@@ -238,6 +240,8 @@ void XmlPrinter::printSample(
     {
       child->add_child_text((*result)->getSValue());
     }
+    
+    addAttributes(child, (*result)->getAttributes());
   }
   
   printNode(mSampleXml->get_root_node());

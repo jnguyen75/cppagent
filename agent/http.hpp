@@ -39,7 +39,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <vector>
+#include <list>
 
 // External libraries
 #include "dlib/server.h"
@@ -80,9 +80,9 @@ protected:
   
   XmlPrinter * mXmlPrinter;
   
-  std::vector<Adapter *> mAdapters;
+  std::list<Adapter *> mAdapters;
   
-  std::vector<Device *> mDeviceList;
+  std::list<Device *> mDeviceList;
   
 public:
   HTTP();

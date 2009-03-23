@@ -43,7 +43,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <vector>
 #include <map>
 #include <list>
 
@@ -122,7 +121,7 @@ public:
     unsigned int adapterId,
     unsigned int bufferSize,
     unsigned int nextSeq,
-    std::vector<Device *> devices
+    std::list<Device *> devices
   );
   
   void printSample

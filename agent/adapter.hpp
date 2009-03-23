@@ -37,7 +37,7 @@
 #include <iostream>
 
 #include <map>
-#include <vector>
+#include <list>
 #include <cmath>
 
 #include "xml_parser.hpp"
@@ -58,50 +58,37 @@
 #include "power.hpp"
 #include "spindle.hpp"
 
-#define SLIDING_BUFFER_EXP   17      // Where size is exponent of 2
-#define SLIDING_BUFFER_SIZE  131072  // 2 ^ SLIDING_BUFFER_EXP
-
 using namespace dlib;
 
 class Adapter : public Connector, public threaded_object
 {
-private:
-  void thread();
+public:
+  static const unsigned int SLIDING_BUFFER_EXP = 17;
+  static const unsigned int SLIDING_BUFFER_SIZE = 131072;
 
 protected:
-  /* Keep the configuration information stored */
-  XmlParser * mConfig;
+  /* Arrays to keep track of all devices and dataItems */
+  std::list<Device *> mDevices;
+  std::list<DataItem *> mDataItems;
   
-  /* Array to keep track of all devices */
-  std::vector<Device *> mDevices;
-  std::vector<DataItem *> mDataItems;
+  /* For access to the sequence number and sliding buffer, use the mutex */
+  dlib::mutex * mSequenceLock;
   
-  
-  /* */
+  /* Sequence number */
   unsigned int mSequence;
   
+  /* The sliding/circular buffer to hold all of the events/sample data */
   dlib::sliding_buffer_kernel_1<ComponentEvent *> * mSlidingBuffer;
   
-  dlib::mutex * mSequenceLock;
+private:
+  /* Inherited and is run as part of the threaded_object */
+  void thread();
   
 protected:
   /* Initial method called to call the //Devices/  path and begin loading */
-  void loadDevices();
+  void loadDevices(std::string configXml);
   
-  /* Main method to process the nodes and return the objects */
-  Component * handleComponent(xmlpp::Node * component, Component * parent = NULL);
-  
-  /* Helper to handle/return each component of the device */
-  Component * loadComponent(xmlpp::Node * component, Component::EComponentSpecs spec);
-  
-  /* Load the data items */
-  void loadDataItem(xmlpp::Node * dataItems, Component * component);
-  
-  /* Find a DataItem by name, throw an exception */
   DataItem * getDataItemByName(std::string name) throw (std::string);
-  
-  /* Helper method to perform loading on children and set up relationships */
-  void handleChildren(xmlpp::Node * components, Component * parent = NULL);
   
   /* Add ComponentEvent and specs to the SlidingBuffer */
   void addToBuffer(std::string time, std::string key, std::string value);
@@ -113,7 +100,7 @@ public:
   /* Destructor */
   virtual ~Adapter();
   
-  std::vector<ComponentEvent *> current(
+  std::list<ComponentEvent *> current(
     unsigned int * seq,
     unsigned int * firstSeq,
     std::string path = ""
@@ -127,25 +114,10 @@ public:
     std::string path = ""
   );
   
-  std::vector<Device *> getDevices();
-  
-  /*
-   * Retrieve DataItems for a given path.
-   * Default path is going to be "//Devices/Device"
-   * Default root is going to be ""
-   */
-  void dataItems(std::string path = "//Devices/Device", std::string root = "");
+  std::list<Device *> getDevices();
   
   /* Inherited method for incoming data from the server */
   void processData(std::string line);
-  
-  /* Print methods primarily used for debugging */
-  void printComponents();
-  void printNodesAndChildren(Component * component);
-  void printDataItems();
-
-public:
-  static const unsigned int SlidingBufferSize = 131072;
 };
 
 #endif

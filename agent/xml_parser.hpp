@@ -35,6 +35,16 @@
 #define XML_PARSER_HPP
 
 #include <iostream>
+#include <list>
+
+#include "axes.hpp"
+#include "controller.hpp"
+#include "component.hpp"
+#include "device.hpp"
+#include "data_item.hpp"
+#include "linear.hpp"
+#include "power.hpp"
+#include "spindle.hpp"
 
 // Include the LibXML Library
 #include <libxml++/libxml++.h>
@@ -45,6 +55,28 @@ protected:
   /* LibXML++ XML DOM Parser */
   xmlpp::DomParser * mParser;
   
+  /* Arrays to keep track of all devices and dataItems */
+  std::list<Device *> mDevices;
+  std::list<DataItem *> mDataItems;
+
+protected:
+  std::map<std::string, std::string> getAttributes(const xmlpp::Node * node);
+  
+  /* Main method to process the nodes and return the objects */
+  Component * handleComponent(xmlpp::Node * component, Component * parent = NULL);
+  
+  /* Helper to handle/return each component of the device */
+  Component * loadComponent(xmlpp::Node * component, Component::EComponentSpecs spec);
+  
+  /* Load the data items */
+  void loadDataItem(xmlpp::Node * dataItems, Component * component);
+  
+  /* Find a DataItem by name, throw an exception */
+  DataItem * getDataItemByName(std::string name) throw (std::string);
+  
+  /* Helper method to perform loading on children and set up relationships */
+  void handleChildren(xmlpp::Node * components, Component * parent = NULL);
+  
 public:
   /* Constructor to set the open the correct file */
   XmlParser(std::string xmlPath);
@@ -52,14 +84,9 @@ public:
   /* Virtual destructor */
   virtual ~XmlParser();
   
-  /* Getter method that simply returns a pointer to the root node of the document */
-  xmlpp::Node * getRootNode();
-  
-  void parse(const xmlpp::Node * node);
-  
-  std::map<std::string, std::string> getAttributes(const xmlpp::Node * node);
-  
-  //virtual void handleTag(std::string tag) = 0;
+  /* Get list of devices and data items */
+  std::list<Device *> getDevices();
+  std::list<DataItem *> getDataItems();
 };
 
 #endif
