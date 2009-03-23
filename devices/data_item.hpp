@@ -51,7 +51,7 @@ public:
   };
   
   
-protected:
+protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
   /* Unique ID for each component */
   unsigned int mId;
   
@@ -77,7 +77,7 @@ protected:
   float mNativeScale;
   
   /* Sig figs of data item */
-  std::string mSignificantDigits;
+  unsigned int mSignificantDigits;
   
   /* Coordinate system of data item */
   std::string mCoordinateSystem;

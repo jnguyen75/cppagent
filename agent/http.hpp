@@ -65,6 +65,7 @@ protected:
   /* Handle the device/path parameters for the xpath search */
   void handleDevicesAndPath(const map_type& queries);
   
+  Device * findDeviceByName(std::string name);
   
   void clearDevices();
   

@@ -262,6 +262,7 @@ Component * Adapter::loadComponent(xmlpp::Node * component, Component::EComponen
 {
   std::map<std::string, std::string> attributes = mConfig->getAttributes(component);
   
+  // TODO: ERROR CHECKING
   if (!attributes.empty() and Component::hasNameAndId(attributes))
   {
     switch (spec)
@@ -352,6 +353,8 @@ void Adapter::addToBuffer(std::string time, std::string key, std::string value)
     (*mSlidingBuffer)[mSequence] = new ComponentEvent(&d, mSequence, time, value);
     mSequence++;
     mSequenceLock->unlock();
+    
+    //d->addComponentEvent();
   }
   catch (std::string msg)
   {

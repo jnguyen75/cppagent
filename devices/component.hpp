@@ -74,34 +74,33 @@ public:
   
   
 protected:
+  /* Component specs */
   /* Unique ID for each component */
   unsigned int mId;
   
   /* Name for itself */
   std::string mName;
   
-  /* uuid */
+  /* Universal unique identifier */
   std::string mUuid;
   
+  /* If receiving data, a sample rate is needed */
+  float mSampleRate;
+  
+  /* Description of itself */
+  std::string mManufacturer;
+  std::string mSerialNumber;
+  std::string mStation;
+  
+  /* Component relationships */
   /* Pointer to the parent component */
   Component * mParent;
-  
   
   /* Each component keeps track of it's children in a list */
   std::list<Component *> mChildren;
   
   /* Keep Track of all the data items associated with this component */
   std::list<DataItem *> mDataItems;
-  
-  /* Description of itself */
-  std::string mManufacturer;
-  std::string mSerialNumber;
-  std::string mStation;
-
-public:
-  static std::string intToString(unsigned int i);
-  
-  static std::string floatToString(float i);
 
 public:
   /* Take in mapping of attributes */
@@ -111,36 +110,31 @@ public:
   
   virtual std::map<std::string, std::string> getAttributes();
   
+  /* Add/get description specifications using an attribute map */
+  void addDescription(std::map<std::string, std::string> attributes);
   std::map<std::string, std::string> getDescription();
   
-  /* Get the component ID */
+  /* Getter methods for the component ID/Name */
   unsigned int getId();
-  
-  /* Get the component name */
   std::string getName();
   
-  /* Get the component's parent component */
+  /* Set/Get the component's parent component */
+  void setParent(Component * parent);
   Component * getParent();
   
-  /* Get the component's list of children */
+  /* Add to/get the component's list of children */
+  void addChild(Component * child);
   std::list<Component *> getChildren();
   
-  /* Add a child to component's list of children */
-  void addChild(Component * child);
-  
-  /* Get the component's list of data items */
+  /* Add to/get the component's list of data items */
+  void addDataItem(DataItem * dataItem);
   std::list<DataItem *> getDataItems();
   
-  /* Add a data item to component's list of data items */
-  void addDataItem(DataItem * dataItem);
-  
-  /* Set the component's parent */
-  void setParent(Component * parent);
-  
-  /* Add a description specifications from an attribute map */
-  void addDescription(std::map<std::string, std::string> attributes);
-  
 public:
+  /* Simple methods to convert float/int to strings */
+  static std::string intToString(unsigned int i);
+  static std::string floatToString(float i);
+  
   /* Get the enumeration corresponding to the string */
   static Component::EComponentSpecs getComponentEnum(std::string name);
   

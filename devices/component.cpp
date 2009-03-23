@@ -51,27 +51,15 @@ const std::string Component::SComponentSpecs[NumComponentSpecs] = {
   "text"
 };
 
-/* Component protected methods */
-std::string Component::intToString(unsigned int i)
-{
-  std::ostringstream stm;
-  stm << i;
-  return stm.str();
-}
-
-std::string Component::floatToString(float f)
-{
-  std::ostringstream stm;
-  stm << f;
-  return stm.str();
-}
-
 /* Component public methods */
 Component::Component(std::map<std::string, std::string> attributes)
 {
   // TODO: Error checking..?
   mId = atoi(attributes["id"].c_str());
   mName = attributes["name"];
+  
+  mUuid = attributes["uuid"];
+  mSampleRate = (attributes["sampleRate"].empty()) ? 0.0f : atof(attributes["sampleRate"].c_str());
   
   mParent = NULL;
 }
@@ -83,7 +71,35 @@ std::map<std::string, std::string> Component::getAttributes()
   attributes["id"] = intToString(mId);
   attributes["name"] = mName;
   
+  if (mSampleRate != 0.0f)
+  {
+    attributes["sampleRate"] = floatToString(mSampleRate);
+  }
+  
+  if (!mUuid.empty())
+  {
+    attributes["uuid"] = mUuid;
+  }
+  
   return attributes;
+}
+
+void Component::addDescription(std::map<std::string, std::string> attributes)
+{
+  if (!attributes["manufacturer"].empty())
+  {
+    mManufacturer = attributes["manufacturer"];
+  }
+  
+  if (!attributes["serialNumber"].empty())
+  {
+    mSerialNumber = attributes["serialNumber"];
+  }
+  
+  if (!attributes["station"].empty())
+  {
+    mStation = attributes["station"];
+  }
 }
 
 std::map<std::string, std::string> Component::getDescription()
@@ -118,14 +134,14 @@ std::string Component::getName()
   return mName;
 }
 
+void Component::setParent(Component * parent)
+{
+  mParent = parent;
+}
+
 Component * Component::getParent()
 {
   return mParent;
-}
-
-std::list<Component *> Component::getChildren()
-{
-  return mChildren;
 }
 
 void Component::addChild(Component * child)
@@ -133,41 +149,37 @@ void Component::addChild(Component * child)
   mChildren.push_back(child);
 }
 
-std::list<DataItem *> Component::getDataItems()
+std::list<Component *> Component::getChildren()
 {
-  return mDataItems;
+  return mChildren;
 }
-  
+
 void Component::addDataItem(DataItem * dataItem)
 {
   mDataItems.push_back(dataItem);
 }
 
-void Component::setParent(Component * parent)
+std::list<DataItem *> Component::getDataItems()
 {
-  mParent = parent;
-}
-
-void Component::addDescription(std::map<std::string, std::string> attributes)
-{
-  if (!attributes["manufacturer"].empty())
-  {
-    mManufacturer = attributes["manufacturer"];
-  }
-  
-  if (!attributes["serialNumber"].empty())
-  {
-    mSerialNumber = attributes["serialNumber"];
-  }
-  
-  if (!attributes["station"].empty())
-  {
-    mStation = attributes["station"];
-  }
-  
-}
+  return mDataItems;
+}  
 
 /* Component public static methods */
+std::string Component::intToString(unsigned int i)
+{
+  std::ostringstream stm;
+  stm << i;
+  return stm.str();
+}
+
+std::string Component::floatToString(float f)
+{
+  std::ostringstream stm;
+  stm << f;
+  return stm.str();
+}
+
+
 Component::EComponentSpecs Component::getComponentEnum(std::string name)
 {
   for (unsigned int i=0; i<Component::NumComponentSpecs; i++)
@@ -183,5 +195,5 @@ Component::EComponentSpecs Component::getComponentEnum(std::string name)
 
 bool Component::hasNameAndId(std::map<std::string, std::string> attributes)
 {
-  return !attributes["name"].empty() && !attributes["id"].empty();
+  return !attributes["name"].empty() and !attributes["id"].empty();
 }

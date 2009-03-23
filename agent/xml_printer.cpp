@@ -52,6 +52,7 @@ XmlPrinter::XmlPrinter(std::ostringstream * xmlStream)
 XmlPrinter::~XmlPrinter()
 {
   delete mErrorXml;
+  delete mProbeXml;
   delete mSampleXml;
 }
 
@@ -106,6 +107,7 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
     
     std::string endTag = (hasChildren) ? ">" : " />";
     
+    // TODO: TAKE CARE OF <TAG>\nTEXT\n</TAG>
     *mXmlStream << endTag << std::endl;
   }
   
@@ -116,7 +118,10 @@ void XmlPrinter::printNode(const xmlpp::Node* node, unsigned int indentation)
     xmlpp::Node::NodeList list = node->get_children();
     for (xmlpp::Node::NodeList::iterator iter = list.begin(); iter != list.end(); ++iter)
     {
-      printNode(*iter, indentation + 2);
+      //if (!dynamic_cast<const xmlpp::TextNode*>(*iter))
+      //{
+        printNode(*iter, indentation + 2);
+      //}
     }
   }
   
@@ -280,6 +285,12 @@ void XmlPrinter::printProbeHelper(xmlpp::Element * element, Component * componen
     {
       xmlpp::Element * dataItem = dataItems->add_child("DataItem");
       addAttributes(dataItem, (*data)->getAttributes());
+      std::string source = (*data)->getSource();
+      if (!source.empty())
+      {
+        xmlpp::Element * src = dataItem->add_child("Source");
+        src->add_child_text(source);
+      }
     }
   }
 

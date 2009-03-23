@@ -39,7 +39,7 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
   mName = attributes["name"];
   mType = attributes["type"];
   
-  if (!attributes["subtype"].empty())
+  if (!attributes["subType"].empty())
   {
     mSubType = attributes["subType"];
   }
@@ -58,10 +58,7 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
   
   mNativeScale = (!attributes["nativeScale"].empty()) ? atof(attributes["nativeScale"].c_str()) : 0.0f;
   
-  if (!attributes["significantDigits"].empty())
-  {
-    mSignificantDigits = attributes["significantDigits"];
-  }
+  mSignificantDigits = (!attributes["significantDigits"].empty()) ? atoi(attributes["significantDigits"].c_str()) : 0;
   
   if (!attributes["coordinateSystem"].empty())
   {
@@ -79,6 +76,32 @@ std::map<std::string, std::string> DataItem::getAttributes()
   attributes["name"] = mName;
   attributes["type"] = mType;
   
+  if (!mSubType.empty())
+  {
+    attributes["subType"] = mSubType;
+  }
+  
+  attributes["category"] = (mCategory == SAMPLE) ? "SAMPLE" : "EVENT";
+  
+  if (!mNativeUnits.empty())
+  {
+    attributes["nativeUnits"] = mNativeUnits;
+  }
+  
+  if (!mUnits.empty())
+  {
+    attributes["units"] = mUnits;
+  }
+  
+  attributes["nativeScale"] = Component::floatToString(mNativeScale);
+  
+  attributes["significantDigits"] = Component::intToString(mSignificantDigits);
+  
+  if (!mCoordinateSystem.empty())
+  {
+    attributes["coordinateSystem"] = mCoordinateSystem;
+  }
+  
   return attributes;
 }
 
@@ -95,7 +118,7 @@ std::string DataItem::getName()
 
 std::string DataItem::getSource()
 {
-  return (mSource.empty()) ? mName : mSource;
+  return mSource;
 }
 
 bool DataItem::hasName(std::string name)

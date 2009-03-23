@@ -39,9 +39,6 @@
 class Device : public Component
 { 
 protected:
-  /* Device specs */
-  float mSampleRate;
-  
   unsigned int mIso841Class;
   
 public:
@@ -50,9 +47,6 @@ public:
   std::string getClass();
   
   std::map<std::string, std::string> getAttributes();
-  
-public:
-  static bool hasDeviceSpecs(std::map<std::string, std::string> attributes);
 };
 
 #endif

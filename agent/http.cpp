@@ -83,7 +83,7 @@ void HTTP::on_request (
       else
       {
         std::cout << "Routing Error1" << std::endl;
-        printError("Routing Error", "The path '" + path + "' does not exist.");
+        printError("ROUTING_ERROR", "The path '" + path + "' does not exist.");
       }
     }
     else
@@ -106,7 +106,7 @@ void HTTP::on_request (
       else
       {
         std::cout << "Routing Error2" << std::endl;
-        printError("Routing Error", "The path '" + path + "' does not exist.");
+        printError("ROUTING_ERROR", "The path '" + path + "' does not exist.");
       }
     }
     
@@ -163,6 +163,23 @@ void HTTP::handleDevicesAndPath(const map_type& queries)
   // TODO: @@adapter.data_items(dataPath)
 }
 
+Device * HTTP::findDeviceByName(std::string name)
+{
+  for (unsigned int i=0; i<mAdapters.size(); i++)
+  {
+    std::vector<Device *> devices = mAdapters[i]->getDevices();
+    for (unsigned int j=0; j<devices.size(); j++)
+    {
+      if (devices[j]->getName() == name)
+      {
+        return devices[j];
+      }
+    }
+  }
+  
+  return NULL;
+}
+
 void HTTP::clearDevices()
 {
   
@@ -189,15 +206,28 @@ void HTTP::handleProbe(const map_type& queries)
   if (queries.is_in_domain("device"))
   {
     // Find queries["device"]
+    Device * device = findDeviceByName(queries["device"]);
+    if (device == NULL)
+    {
+      printError("NO_DEVICE", "Could not find the device '" + queries["device"] + "'");
+      return;
+    }
+    else
+    {
+      mDeviceList.push_back(device);
+    }
   }
   else
   {
+    // TODO: GET ALL DEVICES
     mDeviceList = mAdapters[0]->getDevices();
   }
   
   unsigned int seq, firstSeq;
   mAdapters[0]->current(&seq, &firstSeq);
   mXmlPrinter->printProbe(1, Adapter::SlidingBufferSize, seq, mDeviceList);
+  
+  mDeviceList.clear();
 }
 
 void HTTP::printError(std::string errorCode, std::string text)
