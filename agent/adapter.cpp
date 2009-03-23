@@ -53,6 +53,7 @@ Adapter::Adapter(std::string server, unsigned int port, std::string configXml)
   
   // Will start threaded object: Adapter::thread()
   start();
+  printDataItems();
 }
 
 Adapter::~Adapter()
@@ -92,12 +93,34 @@ std::vector<ComponentEvent *> Adapter::current(
   return results;
 }
 
-void Adapter::sample(unsigned int start, unsigned int count, std::string path)
+std::list<ComponentEvent *> Adapter::sample(
+    unsigned int * seq,
+    unsigned int * firstSeq,
+    unsigned int start,
+    unsigned int count,
+    std::string path
+  )
 {
   mSequenceLock->lock();
-  unsigned int lastSequence = mSequence - 1;
-  unsigned int firstSequence = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
+  
+  *seq = mSequence;
+  *firstSeq = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
+  
+  std::list<ComponentEvent *> results;
+  
+  // START SHOULD BE BETWEEN 0 AND SEQUENCE NUMBER
+  start = (start <= *firstSeq) ? *firstSeq + 1  : start;
+  count += start;
+  
+  for (unsigned int i = start; i<count; i++)
+  {
+    std::cout << i << ": " << (*mSlidingBuffer)[i]->getDataItem()->getId() << std::endl;
+    results.push_back((*mSlidingBuffer)[i]);
+  }
+  
   mSequenceLock->unlock();
+  
+  return results;
 }
 
 std::vector<Device *> Adapter::getDevices()
@@ -319,13 +342,13 @@ void Adapter::loadDataItem(xmlpp::Node * dataItem, Component * parent)
   mDataItems.push_back(d);
 }
 
-DataItem & Adapter::getDataItemByName(std::string name) throw (std::string)
+DataItem * Adapter::getDataItemByName(std::string name) throw (std::string)
 {
   for (unsigned int i=0; i<mDataItems.size(); i++)
   {
     if (mDataItems[i]->hasName(name))
     {
-      return *mDataItems[i];
+      return mDataItems[i];
     }
   }
   throw (std::string) "DataItem '" + name + "' was not found";
@@ -347,10 +370,10 @@ void Adapter::addToBuffer(std::string time, std::string key, std::string value)
 {
   try
   {
-    DataItem d = getDataItemByName(key);
+    DataItem * d = getDataItemByName(key);
     
     mSequenceLock->lock();
-    (*mSlidingBuffer)[mSequence] = new ComponentEvent(&d, mSequence, time, value);
+    (*mSlidingBuffer)[mSequence] = new ComponentEvent(d, mSequence, time, value);
     mSequence++;
     mSequenceLock->unlock();
     

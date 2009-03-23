@@ -47,6 +47,7 @@
 #include <map>
 #include <list>
 
+#include "component_event.hpp"
 #include "device.hpp"
 #include "data_item.hpp"
 
@@ -54,7 +55,7 @@
 #include <libxml++/libxml++.h>
 
 class XmlPrinter
-{
+{ 
 protected:
   /* Pointer to the stream to write to XML */
   std::ostringstream * mXmlStream;
@@ -90,6 +91,8 @@ protected:
   void getCurrentTime(char buffer[]);
   
   void addAttributes(xmlpp::Element * element, std::map<std::string, std::string> attributes);
+  
+  xmlpp::Element * searchListForElement(std::list<xmlpp::Element *> elements, unsigned int name);
   
   std::string intToString(unsigned int i);
   
@@ -128,7 +131,7 @@ public:
     unsigned int bufferSize,
     unsigned int nextSeq,
     unsigned int firstSeq,
-    std::vector<Device *> devices
+    std::list<ComponentEvent *> results
   );
 };
 

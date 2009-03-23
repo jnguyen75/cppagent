@@ -50,6 +50,13 @@ public:
     EVENT
   };
   
+  struct dataItemCmp
+  {
+    bool operator()( DataItem * d1, DataItem * d2 ) const {
+      return d1->getId() == d2->getId();
+    }
+  };
+  
   
 protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
   /* Unique ID for each component */
@@ -107,6 +114,7 @@ public:
   
   /* Get type of data item */
   std::string getType();
+  std::string getSubType();
   
   Category getCategory();
   
@@ -121,8 +129,9 @@ public:
   /* Add a source (extra information) to data item */
   void addSource(std::string source);
   
-  /* Set component that data item is associated with */
+  /* Set/get component that data item is associated with */
   void setComponent(Component * component);
+  Component * getComponent();
 };
 
 #endif

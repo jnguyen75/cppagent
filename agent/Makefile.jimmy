@@ -44,13 +44,16 @@ LIBS=$(LIBRARIES:%=-l%)
 all: agent
 
 clean:
-	rm -rf *.o agent
+	@echo Removing all object and binary files
+	@rm -rf *.o agent
 
 agent: $(OBJS)
-	g++ ${CXXFLAGS} ${LDFLAGS} -o agent $+ ${LIBS}
+	@echo Building agent
+	@g++ ${CXXFLAGS} ${LDFLAGS} -o agent $+ ${LIBS}
 
 %.o: %.cpp %.hpp
-	g++ -c ${CXXFLAGS} $<
+	@echo Compiling $<
+	@g++ -c ${CXXFLAGS} $<
 
 http.o: adapter.hpp connector.hpp component_event.hpp axes.hpp controller.hpp device.hpp \
 	data_item.hpp linear.hpp power.hpp spindle.hpp xml_printer.hpp

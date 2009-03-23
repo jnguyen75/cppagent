@@ -34,6 +34,7 @@
 #ifndef COMPONENT_EVENT_HPP
 #define COMPONENT_EVENT_HPP
 
+#include "component.hpp"
 #include "data_item.hpp"
 
 #include <string>
@@ -101,8 +102,12 @@ public:
   /* Initialize the ComponentEvent with the type of event, sequence number, time and value */
   ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value);
   
+  std::map<std::string, std::string> getAttributes();
+  
   /* Virtual destructor */
   virtual ~ComponentEvent();
+  
+  DataItem * getDataItem();
   
   /* Get value, whatever the value may be*/
   float getFValue();

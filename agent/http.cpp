@@ -103,6 +103,10 @@ void HTTP::on_request (
       {
         handleProbe(queries);
       }
+      else if (call == "sample")
+      {
+        handleSample(queries);
+      }
       else
       {
         std::cout << "Routing Error2" << std::endl;
@@ -125,7 +129,7 @@ void HTTP::addAdapter(std::string server, unsigned int port, std::string configX
 }
 
 /* HTTP protected methods */
-void HTTP::handleDevicesAndPath(const map_type& queries)
+std::string HTTP::devicesAndPath(const map_type& queries)
 {
   std::string dataPath = "";
   //std::vector<Device *> devices;
@@ -161,6 +165,7 @@ void HTTP::handleDevicesAndPath(const map_type& queries)
   
   // TODO: Clear_Devices
   // TODO: @@adapter.data_items(dataPath)
+  return "";
 }
 
 Device * HTTP::findDeviceByName(std::string name)
@@ -185,13 +190,29 @@ void HTTP::clearDevices()
   
 }
 
+void HTTP::fetchData(std::string path, bool current, unsigned int start, unsigned int count)
+{
+  //names
+  //sender
+  unsigned int seq, firstSeq;
+  if (current)
+  {
+  
+  }
+  else
+  {
+    std::list<ComponentEvent *> results = mAdapters[0]->sample(&seq, &firstSeq, start, count, path);
+    mXmlPrinter->printSample(1, Adapter::SlidingBufferSize, seq, firstSeq, results);
+  }
+}
+
 void HTTP::handleCurrent(const map_type& queries)
 {
   try
   {
     unsigned int seq, firstSeq;
     mAdapters[0]->current(&seq, &firstSeq);
-    mXmlPrinter->printSample(1, Adapter::SlidingBufferSize, seq, firstSeq, mAdapters[0]->getDevices());
+    //mXmlPrinter->printSample(1, Adapter::SlidingBufferSize, seq, firstSeq, mAdapters[0]->getDevices());
     std::cout << "Seq: " << seq << std::endl;
     std::cout << "FirstSeq: " << firstSeq << std::endl;
   }
@@ -228,6 +249,35 @@ void HTTP::handleProbe(const map_type& queries)
   mXmlPrinter->printProbe(1, Adapter::SlidingBufferSize, seq, mDeviceList);
   
   mDeviceList.clear();
+}
+
+void HTTP::handleSample(const map_type& queries)
+{
+  unsigned int count = (queries.is_in_domain("count")) ? atoi(queries["count"].c_str()) : 100;
+  std::string path = "";//devicesAndPath(queries);
+  
+  if (queries.is_in_domain("frequency"))
+  {
+    // TODO
+  }
+  else
+  {
+    unsigned int start;
+    if (queries.is_in_domain("start"))
+    {
+      start = atoi(queries["start"].c_str());
+    }
+    else if (queries.is_in_domain("from"))
+    {
+      start = atoi(queries["from"].c_str());
+    }
+    else
+    {
+      start = 0;
+    }
+    
+    fetchData(path, false, start, count);
+  }
 }
 
 void HTTP::printError(std::string errorCode, std::string text)

@@ -98,7 +98,7 @@ protected:
   void loadDataItem(xmlpp::Node * dataItems, Component * component);
   
   /* Find a DataItem by name, throw an exception */
-  DataItem & getDataItemByName(std::string name) throw (std::string);
+  DataItem * getDataItemByName(std::string name) throw (std::string);
   
   /* Helper method to perform loading on children and set up relationships */
   void handleChildren(xmlpp::Node * components, Component * parent = NULL);
@@ -119,7 +119,13 @@ public:
     std::string path = ""
   );
   
-  void sample(unsigned int start, unsigned int count, std::string path = "");
+  std::list<ComponentEvent *> sample(
+    unsigned int * seq,
+    unsigned int * firstSeq,
+    unsigned int start,
+    unsigned int count,
+    std::string path = ""
+  );
   
   std::vector<Device *> getDevices();
   

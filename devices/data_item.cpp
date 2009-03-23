@@ -131,6 +131,11 @@ std::string DataItem::getType()
   return mType;
 }
 
+std::string DataItem::getSubType()
+{
+  return mSubType;
+}
+
 DataItem::Category DataItem::getCategory()
 {
   return mCategory;
@@ -159,4 +164,9 @@ void DataItem::addSource(std::string source)
 void DataItem::setComponent(Component * component)
 {
   mComponent = component;
+}
+
+Component * DataItem::getComponent()
+{
+  return mComponent;
 }

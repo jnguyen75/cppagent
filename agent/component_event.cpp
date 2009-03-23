@@ -75,6 +75,24 @@ ComponentEvent::~ComponentEvent()
 {
 }
 
+std::map<std::string, std::string> ComponentEvent::getAttributes()
+{
+  std::map<std::string, std::string> attributes;
+  
+  attributes["dataItemId"] = Component::intToString(mDataItem->getId());
+  attributes["timestamp"] = mTime;
+  attributes["subType"] = mDataItem->getSubType();
+  attributes["name"] = mDataItem->getName();
+  attributes["sequence"] = Component::intToString(mSequence);
+  
+  return attributes;
+}
+
+DataItem * ComponentEvent::getDataItem()
+{
+  return mDataItem;
+}
+
 float ComponentEvent::getFValue()
 {
   return fValue;
