@@ -62,7 +62,7 @@ Adapter::~Adapter()
   delete mSequenceLock;
 }
 
-std::list<ComponentEvent *> Adapter::current(
+void Adapter::current(
     unsigned int * seq,
     unsigned int * firstSeq,
     std::string path
@@ -73,19 +73,7 @@ std::list<ComponentEvent *> Adapter::current(
   *seq = mSequence;
   *firstSeq = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
   
-  std::list<ComponentEvent *> results;
-  
-  for (unsigned int i=*firstSeq; i<mSequence; i++)
-  {
-    if ((*mSlidingBuffer)[i]->getFValue() != 0.0f)
-    {
-      results.push_back((*mSlidingBuffer)[i]);
-    }
-  }
-  
   mSequenceLock->unlock();
-  
-  return results;
 }
 
 std::list<ComponentEvent *> Adapter::sample(
@@ -120,6 +108,11 @@ std::list<ComponentEvent *> Adapter::sample(
 std::list<Device *> Adapter::getDevices()
 {
   return mDevices;
+}
+
+std::list<DataItem *> Adapter::getDataItems()
+{
+  return mDataItems;
 }
 
 void Adapter::processData(std::string line)
@@ -195,7 +188,9 @@ void Adapter::addToBuffer(std::string time, std::string key, std::string value)
     DataItem * d = getDataItemByName(key);
     
     mSequenceLock->lock();
-    (*mSlidingBuffer)[mSequence] = new ComponentEvent(d, mSequence, time, value);
+    ComponentEvent * event = new ComponentEvent(d, mSequence, time, value);
+    (*mSlidingBuffer)[mSequence] = event;
+    d->setLatestEvent(event);
     mSequence++;
     mSequenceLock->unlock();
   }

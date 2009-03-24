@@ -177,6 +177,75 @@ void XmlPrinter::printProbe(
   mProbeXml->get_root_node()->remove_child(devices);
 }
 
+void XmlPrinter::printCurrent(
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    unsigned int firstSeq,
+    std::list<DataItem *> dataItems
+  )
+{
+  xmlpp::Element * header = addHeader(mSampleXml, adapterId, bufferSize, nextSeq, firstSeq);
+    
+  xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
+  
+  xmlpp::Element * deviceStream = streams->add_child("DeviceStream");
+  
+  std::list<xmlpp::Element *> elements;
+  
+  std::list<DataItem *>::iterator dataItem;
+  for (dataItem=dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
+  {
+    if ((*dataItem)->getLatestEvent() != NULL)
+    {
+      xmlpp::Element * element = searchListForElement(elements, (*dataItem)->getComponent()->getId());
+      xmlpp::Element * child;
+      
+      if (element == NULL)
+      {
+        Component * component = (*dataItem)->getComponent();
+        
+        xmlpp::Element * componentStream = deviceStream->add_child("ComponentStream");
+        
+        componentStream->set_attribute("component", component->getClass());
+        componentStream->set_attribute("name", component->getName());
+        componentStream->set_attribute("componentId", Component::intToString(component->getId()));
+        
+        bool sample = (*dataItem)->isSample();
+        
+        std::string dataName = (sample) ? "Samples" : "Events";
+        
+        xmlpp::Element * data = componentStream->add_child(dataName);
+        
+        elements.push_back(data);
+        
+        child = data->add_child((*dataItem)->getType());
+      }
+      else
+      {
+        child = element->add_child((*dataItem)->getType());
+      }
+      
+      if ((*dataItem)->isSample())
+      {
+        child->add_child_text(Component::floatToString((*dataItem)->getLatestEvent()->getFValue()));
+      }
+      else
+      {
+        child->add_child_text((*dataItem)->getLatestEvent()->getSValue());
+      }
+      
+      addAttributes(child, (*dataItem)->getLatestEvent()->getAttributes());
+    }
+  }
+  
+  
+  printNode(mSampleXml->get_root_node());
+  
+  // This will recursively remove and get rid of its children  
+  mSampleXml->get_root_node()->remove_child(streams);
+  mSampleXml->get_root_node()->remove_child(header);
+}
 void XmlPrinter::printSample(
     unsigned int adapterId,
     unsigned int bufferSize,

@@ -38,8 +38,11 @@
 #include <iostream>
 
 #include "component.hpp"
+#include "../agent/component_event.hpp"
 
 class Component;
+
+class ComponentEvent;
 
 class DataItem
 {
@@ -95,6 +98,9 @@ protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
   /* Component that data item is associated with */  
   Component * mComponent;
   
+  
+  ComponentEvent * mLatestEvent;
+  
 public:
   /* Construct a data item with appropriate attributes mapping */
   DataItem(std::map<std::string, std::string> attributes);
@@ -132,6 +138,10 @@ public:
   /* Set/get component that data item is associated with */
   void setComponent(Component * component);
   Component * getComponent();
+  
+  /* Set/get latest component event the data item is associated with */
+  void setLatestEvent(ComponentEvent * event);
+  ComponentEvent * getLatestEvent();
 };
 
 #endif

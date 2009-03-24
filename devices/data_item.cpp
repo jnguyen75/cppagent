@@ -66,6 +66,7 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
   }
   
   mComponent = NULL;
+  mLatestEvent = NULL;
 }
 
 std::map<std::string, std::string> DataItem::getAttributes()
@@ -169,4 +170,14 @@ void DataItem::setComponent(Component * component)
 Component * DataItem::getComponent()
 {
   return mComponent;
+}
+
+void DataItem::setLatestEvent(ComponentEvent * event)
+{
+  mLatestEvent = event;
+}
+
+ComponentEvent * DataItem::getLatestEvent()
+{
+  return mLatestEvent;
 }

@@ -45,7 +45,7 @@ HTTP::~HTTP()
 }
 
 /* Overridden method that is called per web request */
-void HTTP::on_request (
+void HTTP::on_request(
     const std::string& path,
     std::string& result,
     const map_type& queries,
@@ -200,7 +200,12 @@ void HTTP::fetchData(std::string path, bool current, unsigned int start, unsigne
   unsigned int seq, firstSeq;
   if (current)
   {
-  
+    std::list<Adapter *>::iterator first = mAdapters.begin();
+    std::list<DataItem *> dataItems = (*first)->getDataItems();
+    
+    (*first)->current(&seq, &firstSeq, path);
+    
+    mXmlPrinter->printCurrent(1, Adapter::SLIDING_BUFFER_SIZE, seq, firstSeq, dataItems);
   }
   else
   {
@@ -221,8 +226,15 @@ void HTTP::handleCurrent(const map_type& queries)
     std::list<Adapter *>::iterator first = mAdapters.begin();
     (*first)->current(&seq, &firstSeq);
     //mXmlPrinter->printSample(1, Adapter::SlidingBufferSize, seq, firstSeq, mAdapters[0]->getDevices());
-    std::cout << "Seq: " << seq << std::endl;
-    std::cout << "FirstSeq: " << firstSeq << std::endl;
+    if (queries.is_in_domain("frequency"))
+    {
+      //stream
+    }
+    else
+    {
+      std::string path = "";
+      fetchData(path, true);
+    }
   }
   catch (std::exception & e)
   {

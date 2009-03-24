@@ -124,6 +124,15 @@ public:
     std::list<Device *> devices
   );
   
+  void printCurrent
+  (
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    unsigned int firstSeq,
+    std::list<DataItem *> dataItems
+  );
+  
   void printSample
   (
     unsigned int adapterId,

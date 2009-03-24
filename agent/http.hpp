@@ -69,7 +69,7 @@ protected:
   
   void clearDevices();
   
-  void fetchData(std::string path, bool current, unsigned int start, unsigned int count);
+  void fetchData(std::string path, bool current, unsigned int start = 0, unsigned int count = 100);
   
   /* Output an XML Error */
   void printError(std::string errorCode, std::string text);

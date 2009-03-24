@@ -100,7 +100,9 @@ public:
   /* Destructor */
   virtual ~Adapter();
   
-  std::list<ComponentEvent *> current(
+  //void getSequenceNumbers(unsigned int * seq, unsigned int * firstSeq);
+  
+  void current(
     unsigned int * seq,
     unsigned int * firstSeq,
     std::string path = ""
@@ -115,6 +117,7 @@ public:
   );
   
   std::list<Device *> getDevices();
+  std::list<DataItem *> getDataItems();
   
   /* Inherited method for incoming data from the server */
   void processData(std::string line);

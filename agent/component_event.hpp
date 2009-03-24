@@ -41,6 +41,8 @@
 #include <iostream>
 #include <cmath>
 
+class DataItem;
+
 /* Component Event */
 class ComponentEvent
 {
