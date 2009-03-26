@@ -53,12 +53,38 @@ public:
     EVENT
   };
   
-  struct dataItemCmp
+  enum EType
   {
-    bool operator()( DataItem * d1, DataItem * d2 ) const {
-      return d1->getId() == d2->getId();
-    }
+    ACCELERATION,
+    ALARM,
+    ANGLE,
+    ANGULAR_ACCELERATION,
+    BLOCK,
+    CODE,
+    DIRECTION,
+    EXECUTION,
+    PATH_FEEDRATE,
+    AXIS_FEEDRATE,
+    LINE,
+    LOAD,
+    CONTROLLER_MODE,
+    OTHER,
+    POSITION,
+    POWER_STATUS,
+    PRESSURE,
+    PROGRAM,
+    SPINDLE_SPEED,
+    STATUS,
+    TEMPERATURE,
+    TICK,
+    TRANSFER,
+    VELOCITY,
+    ANGULAR_VELOCITY
   };
+  
+  static const unsigned int NumTypes = 25;
+  static const std::string STypeUpper[];
+  static const std::string STypeCamel[];
   
   
 protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
@@ -69,7 +95,7 @@ protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
   std::string mName;
   
   /* Type of data item */
-  std::string mType;
+  EType mType;
   
   /* Subtype of data item */
   std::string mSubType;
@@ -98,7 +124,6 @@ protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
   /* Component that data item is associated with */  
   Component * mComponent;
   
-  
   ComponentEvent * mLatestEvent;
   
 public:
@@ -119,7 +144,8 @@ public:
   bool hasName(std::string name);
   
   /* Get type of data item */
-  std::string getType();
+  DataItem::EType getType();
+  std::string getTypeString(bool uppercase);
   std::string getSubType();
   
   Category getCategory();
@@ -142,6 +168,10 @@ public:
   /* Set/get latest component event the data item is associated with */
   void setLatestEvent(ComponentEvent * event);
   ComponentEvent * getLatestEvent();
+  
+public:
+  /* Get the enumeration corresponding to the string */
+  static DataItem::EType getTypeEnum(std::string name);
 };
 
 #endif

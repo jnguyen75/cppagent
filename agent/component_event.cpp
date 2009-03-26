@@ -107,7 +107,7 @@ std::string ComponentEvent::getSValue()
 void ComponentEvent::convertValue(std::string value)
 {
   // Check if the type is an alarm or if it doesn't have units
-  if (mDataItem->getType() == "ALARM" or mDataItem->getNativeUnits().empty())
+  if (mDataItem->getType() == DataItem::ALARM or mDataItem->getNativeUnits().empty())
   {
     // TODO: Convert to upper case, split into array??
     sValue = value;

@@ -63,13 +63,13 @@ protected:
   void handleSample(const map_type& queries);
   
   /* Handle the device/path parameters for the xpath search */
-  std::string devicesAndPath(const map_type& queries);
+  std::list<DataItem *> devicesAndPath(const map_type& queries);
   
   Device * findDeviceByName(std::string name);
   
   void clearDevices();
   
-  void fetchData(std::string path, bool current, unsigned int start = 0, unsigned int count = 100);
+  void fetchData(std::list<DataItem *> dataItems, bool current, unsigned int start = 0, unsigned int count = 100);
   
   /* Output an XML Error */
   void printError(std::string errorCode, std::string text);

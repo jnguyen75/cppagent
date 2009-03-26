@@ -74,7 +74,7 @@ void HTTP::on_request(
     if (loc1 < end)
     {
       // Look for another '/', should not find one unless it is the end of the path
-      std::string::size_type loc2 = path.find( "/", loc1+1 );
+      std::string::size_type loc2 = path.find( "/", loc1+1);
       
       if (loc2 == end)
       {
@@ -88,10 +88,6 @@ void HTTP::on_request(
     }
     else
     {
-      // Look in queries for device & path parameters
-      std::string qDevice = (queries.is_in_domain("device")) ? queries["device"] : "";
-      std::string qPath = (queries.is_in_domain("path")) ? queries["path"] : "";
-      //handleDevicesAndPath(qDevice, qPath);
       
       std::string call = path.substr(1, loc1-1);
       
@@ -129,25 +125,30 @@ void HTTP::addAdapter(std::string server, unsigned int port, std::string configX
 }
 
 /* HTTP protected methods */
-std::string HTTP::devicesAndPath(const map_type& queries)
+std::list<DataItem *> HTTP::devicesAndPath(const map_type& queries)
 {
   std::string dataPath = "";
-  //std::vector<Device *> devices;
   
-  if (queries.is_in_domain("device")) // If there is a device
+  if (queries.is_in_domain("device"))
   {
+    std::string deviceName = queries["device"];
+    
     // Set the prefix
-    std::string prefix = "//Devices/Device[@name=\"" + queries["device"] + "\"]";
+    std::string prefix = "//Devices/Device[@name=\"" + deviceName + "\"]";
+    
     if (queries.is_in_domain("path"))
     {
       std::istringstream toParse(queries["path"]);
       std::string token;
       
+      // Prefix each part of the path:
+      // i.e. "path1|path2" => "{prefix}path1|{prefix}path2"
       while (std::getline(toParse, token, '|'))
       {
         dataPath += prefix + token + "|";
       }
       
+      // Get rid of last extraneous '|'
       dataPath.erase(dataPath.length()-1);
     }
     else
@@ -155,23 +156,35 @@ std::string HTTP::devicesAndPath(const map_type& queries)
       dataPath = prefix;
     }
     
-    // TODO: devices = Find device by name
+    // TODO: ADAPTER
+    std::list<Adapter *>::iterator first = mAdapters.begin();
+    Device * device = (*first)->getDeviceByName(deviceName);
+    //mDeviceList.push_back(device);
   }
   else
   {
+    
     dataPath = (queries.is_in_domain("path")) ? queries["path"] : "//Devices/Device";
-    // TODO: devices = list of all devices
+    // TODO: ADAPTER
+    std::list<Adapter *>::iterator adapter;
+    for (adapter=mAdapters.begin(); adapter!=mAdapters.end(); adapter++)
+    {
+      std::list<Device *> adapterDevices = (*adapter)->getDevices();
+      //mDeviceList.merge(adapterDevices);
+    }
   }
   
-  // TODO: Clear_Devices
-  // TODO: @@adapter.data_items(dataPath)
-  return "";
+  // TODO: Clear_Devices..?
+  // TODO: ADAPTER
+  std::list<Adapter *>::iterator first = mAdapters.begin();
+  return (*first)->getDataItems(dataPath);
 }
 
 Device * HTTP::findDeviceByName(std::string name)
 {
   for (unsigned int i=0; i<mAdapters.size(); i++)
   {
+    // TODO: ADAPTER
     std::list<Adapter *>::iterator first = mAdapters.begin();
     std::list<Device *> devices = (*first)->getDevices();
     
@@ -193,7 +206,7 @@ void HTTP::clearDevices()
   
 }
 
-void HTTP::fetchData(std::string path, bool current, unsigned int start, unsigned int count)
+void HTTP::fetchData(std::list<DataItem *> dataItems, bool current, unsigned int start, unsigned int count)
 {
   //names
   //sender
@@ -201,9 +214,9 @@ void HTTP::fetchData(std::string path, bool current, unsigned int start, unsigne
   if (current)
   {
     std::list<Adapter *>::iterator first = mAdapters.begin();
-    std::list<DataItem *> dataItems = (*first)->getDataItems();
+    //std::list<DataItem *> dataItems = (*first)->getDataItems();
     
-    (*first)->current(&seq, &firstSeq, path);
+    (*first)->current(&seq, &firstSeq, "");
     
     mXmlPrinter->printCurrent(1, Adapter::SLIDING_BUFFER_SIZE, seq, firstSeq, dataItems);
   }
@@ -212,33 +225,30 @@ void HTTP::fetchData(std::string path, bool current, unsigned int start, unsigne
     std::list<Adapter *>::iterator first = mAdapters.begin();
     std::list<Device *> devices = (*first)->getDevices();
     
-    std::list<ComponentEvent *> results = (*first)->sample(&seq, &firstSeq, start, count, path);
+    std::list<ComponentEvent *> results = (*first)->sample(&seq, &firstSeq, start, count, "");
     mXmlPrinter->printSample(1, Adapter::SLIDING_BUFFER_SIZE, seq, firstSeq, results);
   }
 }
 
 void HTTP::handleCurrent(const map_type& queries)
 {
-  try
+  unsigned int seq, firstSeq;
+  
+  // TODO: ADAPTER
+  std::list<Adapter *>::iterator first = mAdapters.begin();
+  (*first)->current(&seq, &firstSeq);
+  
+  std::list<DataItem *> dataItems = devicesAndPath(queries);
+  
+  //mXmlPrinter->printSample(1, Adapter::SlidingBufferSize, seq, firstSeq, mAdapters[0]->getDevices());
+  if (queries.is_in_domain("frequency"))
   {
-    unsigned int seq, firstSeq;
-    
-    std::list<Adapter *>::iterator first = mAdapters.begin();
-    (*first)->current(&seq, &firstSeq);
-    //mXmlPrinter->printSample(1, Adapter::SlidingBufferSize, seq, firstSeq, mAdapters[0]->getDevices());
-    if (queries.is_in_domain("frequency"))
-    {
-      //stream
-    }
-    else
-    {
-      std::string path = "";
-      fetchData(path, true);
-    }
+    //stream
   }
-  catch (std::exception & e)
+  else
   {
-    std::cout << "XML Exception: " << e.what() << std::endl;
+    std::string path = "";
+    fetchData(dataItems, true);
   }
 }
 
@@ -277,7 +287,7 @@ void HTTP::handleProbe(const map_type& queries)
 void HTTP::handleSample(const map_type& queries)
 {
   unsigned int count = (queries.is_in_domain("count")) ? atoi(queries["count"].c_str()) : 100;
-  std::string path = "";//devicesAndPath(queries);
+  std::list<DataItem *> dataItems = devicesAndPath(queries);
   
   if (queries.is_in_domain("frequency"))
   {
@@ -299,7 +309,7 @@ void HTTP::handleSample(const map_type& queries)
       start = 0;
     }
     
-    fetchData(path, false, start, count);
+    fetchData(dataItems, false, start, count);
   }
 }
 

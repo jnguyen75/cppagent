@@ -219,11 +219,11 @@ void XmlPrinter::printCurrent(
         
         elements.push_back(data);
         
-        child = data->add_child((*dataItem)->getType());
+        child = data->add_child((*dataItem)->getTypeString(false));
       }
       else
       {
-        child = element->add_child((*dataItem)->getType());
+        child = element->add_child((*dataItem)->getTypeString(false));
       }
       
       if ((*dataItem)->isSample())
@@ -294,11 +294,11 @@ void XmlPrinter::printSample(
       
       elements.push_back(data);
       
-      child = data->add_child((*result)->getDataItem()->getType());
+      child = data->add_child((*result)->getDataItem()->getTypeString(false));
     }
     else
     {
-      child = element->add_child((*result)->getDataItem()->getType());
+      child = element->add_child((*result)->getDataItem()->getTypeString(false));
     }
     
     if ((*result)->getDataItem()->isSample())

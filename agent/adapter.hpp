@@ -67,6 +67,9 @@ public:
   static const unsigned int SLIDING_BUFFER_SIZE = 131072;
 
 protected:
+  /* Use the xml parser to  */
+  XmlParser * mConfig;
+  
   /* Arrays to keep track of all devices and dataItems */
   std::list<Device *> mDevices;
   std::list<DataItem *> mDataItems;
@@ -85,10 +88,9 @@ private:
   void thread();
   
 protected:
-  /* Initial method called to call the //Devices/  path and begin loading */
-  void loadDevices(std::string configXml);
-  
-  DataItem * getDataItemByName(std::string name) throw (std::string);
+  /* */
+  DataItem * getDataItemByName(std::string name);
+  DataItem * getDataItemById(unsigned int id);
   
   /* Add ComponentEvent and specs to the SlidingBuffer */
   void addToBuffer(std::string time, std::string key, std::string value);
@@ -116,8 +118,11 @@ public:
     std::string path = ""
   );
   
+  Device * getDeviceByName(std::string name);
   std::list<Device *> getDevices();
+  
   std::list<DataItem *> getDataItems();
+  std::list<DataItem *> getDataItems(std::string path, xmlpp::Node * node = NULL);
   
   /* Inherited method for incoming data from the server */
   void processData(std::string line);

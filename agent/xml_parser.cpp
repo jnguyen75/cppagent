@@ -78,6 +78,11 @@ std::list<DataItem *> XmlParser::getDataItems()
   return mDataItems;
 }
 
+xmlpp::Node * XmlParser::getRootNode()
+{
+  return mParser->get_document()->get_root_node();
+}
+
 /* XmlParser protected methods */
 std::map<std::string, std::string> XmlParser::getAttributes(const xmlpp::Node * node)
 {

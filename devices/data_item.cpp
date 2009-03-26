@@ -33,11 +33,70 @@
 
 #include "data_item.hpp"
 
+/* DataItem public static constants */
+const std::string DataItem::STypeUpper[NumTypes] = {
+  "ACCELERATION",
+  "ALARM",
+  "ANGLE",
+  "ANGULAR_ACCELERATION",
+  "BLOCK",
+  "CODE",
+  "DIRECTION",
+  "EXECUTION",
+  "PATH_FEEDRATE",
+  "AXIS_FEEDRATE",
+  "LINE",
+  "LOAD",
+  "CONTROLLER_MODE",
+  "OTHER",
+  "POSITION",
+  "POWER_STATUS",
+  "PRESSURE",
+  "PROGRAM",
+  "SPINDLE_SPEED",
+  "STATUS",
+  "TEMPERATURE",
+  "TICK",
+  "TRANSFER",
+  "VELOCITY",
+  "ANGULAR_VELOCITY"
+};
+
+const std::string DataItem::STypeCamel[NumTypes] = {
+  "Acceleration",
+  "Alarm",
+  "Angle",
+  "AngularAcceleration",
+  "Block",
+  "Code",
+  "Direction",
+  "Execution",
+  "PathFeedrate",
+  "AxisFeedrate",
+  "Line",
+  "Load",
+  "ControllerMode",
+  "Other",
+  "Position",
+  "PowerStatus",
+  "Pressure",
+  "Program",
+  "SpindleSpeed",
+  "Status",
+  "Temperatur",
+  "Tick",
+  "Transfer",
+  "Velocity",
+  "AngularVelocity"
+};
+
+
+/* DataItem public methods */
 DataItem::DataItem(std::map<std::string, std::string> attributes)
 {
   mId = atoi(attributes["id"].c_str());
   mName = attributes["name"];
-  mType = attributes["type"];
+  mType = getTypeEnum(attributes["type"]);
   
   if (!attributes["subType"].empty())
   {
@@ -127,9 +186,14 @@ bool DataItem::hasName(std::string name)
   return mName == name || (!mSource.empty() && mSource == name);
 }
 
-std::string DataItem::getType()
+DataItem::EType DataItem::getType()
 {
   return mType;
+}
+
+std::string DataItem::getTypeString(bool uppercase)
+{
+  return (uppercase) ? STypeUpper[mType] : STypeCamel[mType];
 }
 
 std::string DataItem::getSubType()
@@ -180,4 +244,18 @@ void DataItem::setLatestEvent(ComponentEvent * event)
 ComponentEvent * DataItem::getLatestEvent()
 {
   return mLatestEvent;
+}
+
+/* DataItem public static methods */
+DataItem::EType DataItem::getTypeEnum(std::string name)
+{
+  for (unsigned int i=0; i<DataItem::NumTypes; i++)
+  {
+    if (name == DataItem::STypeUpper[i])
+    {
+       return (DataItem::EType) i;
+    }
+  }
+  
+  // TODO: Error/exception
 }

@@ -87,6 +87,8 @@ public:
   /* Get list of devices and data items */
   std::list<Device *> getDevices();
   std::list<DataItem *> getDataItems();
+  
+  xmlpp::Node * getRootNode();
 };
 
 #endif

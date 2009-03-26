@@ -37,8 +37,12 @@
 Adapter::Adapter(std::string server, unsigned int port, std::string configXml)
 : Connector(server, port)
 {
+  // Load .xml configuration
+  mConfig = new XmlParser(configXml);
+  
   // Load devices from configuration
-  loadDevices(configXml);
+  mDevices = mConfig->getDevices();
+  mDataItems = mConfig->getDataItems();
   
   // Sequence number and sliding buffer for data
   mSequence = 1;
@@ -60,6 +64,7 @@ Adapter::~Adapter()
   
   delete mSlidingBuffer;
   delete mSequenceLock;
+  delete mConfig;
 }
 
 void Adapter::current(
@@ -105,6 +110,19 @@ std::list<ComponentEvent *> Adapter::sample(
   return results;
 }
 
+Device * Adapter::getDeviceByName(std::string name)
+{
+  std::list<Device *>::iterator device;
+  for (device=mDevices.begin(); device!=mDevices.end(); device++)
+  {
+    if ((*device)->getName() == name)
+    {
+      return *device;
+    }
+  }
+  return NULL;
+}
+
 std::list<Device *> Adapter::getDevices()
 {
   return mDevices;
@@ -113,6 +131,48 @@ std::list<Device *> Adapter::getDevices()
 std::list<DataItem *> Adapter::getDataItems()
 {
   return mDataItems;
+}
+
+std::list<DataItem *> Adapter::getDataItems(std::string path, xmlpp::Node * node)
+{
+  std::list<DataItem *> items;
+  
+  node = (node == NULL) ? mConfig->getRootNode() : node;
+  
+  xmlpp::NodeSet elements = node->find(path);
+  
+  for (unsigned int i=0; i<elements.size(); i++)
+  {
+    if (const xmlpp::Element * nodeElement = dynamic_cast<const xmlpp::Element*>(elements[i]))
+    {
+      std::string nodename = nodeElement->get_name();
+      if (nodename == "DataItem")
+      {
+        unsigned int id = atoi(nodeElement->get_attribute_value("id").c_str());
+        DataItem * item = getDataItemById(id);
+        if (item != NULL)
+        {
+          items.push_back(item);
+        }
+        else
+        {
+          std::cerr << "DATA ITEM NOT FOUND\n";
+        }
+      }
+      else if (nodename == "Components" or nodename == "DataItems")
+      {
+        std::list<DataItem *> toMerge = getDataItems("*", elements[i]);
+        items.merge(toMerge);
+      }
+      else // Hopefully "Component"
+      {
+        std::list<DataItem *> toMerge = getDataItems("Components/*|DataItems/*", elements[i]);
+        items.merge(toMerge);
+      }
+    }
+  }
+  
+  return items;
 }
 
 void Adapter::processData(std::string line)
@@ -156,18 +216,7 @@ void Adapter::thread()
 }
 
 /* Adapter protected methods */
-void Adapter::loadDevices(std::string configXml)
-{
-  // Load .xml configuration
-  XmlParser * mConfig = new XmlParser(configXml);
-  
-  mDevices = mConfig->getDevices();
-  mDataItems = mConfig->getDataItems();
-  
-  delete mConfig;
-}
-
-DataItem * Adapter::getDataItemByName(std::string name) throw (std::string)
+DataItem * Adapter::getDataItemByName(std::string name)
 {
   std::list<DataItem *>::iterator dataItem;
   for (dataItem = mDataItems.begin(); dataItem!=mDataItems.end(); dataItem++)
@@ -177,25 +226,37 @@ DataItem * Adapter::getDataItemByName(std::string name) throw (std::string)
       return (*dataItem);
     }
   }
-  throw (std::string) "DataItem '" + name + "' was not found";
+  return NULL;
 }
 
+DataItem * Adapter::getDataItemById(unsigned int id)
+{
+  std::list<DataItem *>::iterator dataItem;
+  for (dataItem = mDataItems.begin(); dataItem!=mDataItems.end(); dataItem++)
+  {
+    if ((*dataItem)->getId() == id)
+    {
+      return (*dataItem);
+    }
+  }
+  return NULL;
+}
 
 void Adapter::addToBuffer(std::string time, std::string key, std::string value)
 {
-  try
+  DataItem * d = getDataItemByName(key);
+  
+  if (d == NULL)
   {
-    DataItem * d = getDataItemByName(key);
-    
+    std::cerr << "Adapter.cpp: Could not find data item " << key << std::endl;
+  }
+  else
+  { 
     mSequenceLock->lock();
     ComponentEvent * event = new ComponentEvent(d, mSequence, time, value);
     (*mSlidingBuffer)[mSequence] = event;
     d->setLatestEvent(event);
     mSequence++;
     mSequenceLock->unlock();
-  }
-  catch (std::string msg)
-  {
-    std::cerr << "Adapter.cpp: " << msg << std::endl;
   }
 }
