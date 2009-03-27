@@ -43,6 +43,8 @@
 
 // External libraries
 #include "dlib/server.h"
+#include "dlib/sliding_buffer.h"
+
 #include "adapter.hpp"
 //#include "device.cpp"
 #include "component_event.hpp"
@@ -75,6 +77,15 @@ protected:
   void printError(std::string errorCode, std::string text);
   
 protected:
+  /* For access to the sequence number and sliding buffer, use the mutex */
+  dlib::mutex * mSequenceLock;
+  
+  /* Sequence number */
+  unsigned int mSequence;
+  
+  /* The sliding/circular buffer to hold all of the events/sample data */
+  dlib::sliding_buffer_kernel_1<ComponentEvent *> * mSlidingBuffer;
+  
   /* Class string stream to return XML on requests */
   std::ostringstream mXmlStream;
   
@@ -89,6 +100,7 @@ public:
   
   virtual ~HTTP();
   
+  /* Overridden method that is called per web request */  
   void on_request (
         const std::string& path,
         std::string& result,
@@ -104,6 +116,9 @@ public:
     );
   
   void addAdapter(std::string server, unsigned int port, std::string configXmlPath);
+  
+  /* Add ComponentEvent and specs to the SlidingBuffer */
+  void addToBuffer(std::string time, std::string key, std::string value);
 };
 
 

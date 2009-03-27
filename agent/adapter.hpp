@@ -38,12 +38,12 @@
 
 #include <map>
 #include <list>
+#include <ctime>
 #include <cmath>
 
 #include "xml_parser.hpp"
 
 #include "dlib/sockets.h"
-#include "dlib/sliding_buffer.h"
 #include "dlib/threads.h"
 
 #include "connector.hpp"
@@ -67,21 +67,15 @@ public:
   static const unsigned int SLIDING_BUFFER_SIZE = 131072;
 
 protected:
+  /* Adapter ID */
+  unsigned int mId;
+  
   /* Use the xml parser to  */
   XmlParser * mConfig;
   
   /* Arrays to keep track of all devices and dataItems */
   std::list<Device *> mDevices;
   std::list<DataItem *> mDataItems;
-  
-  /* For access to the sequence number and sliding buffer, use the mutex */
-  dlib::mutex * mSequenceLock;
-  
-  /* Sequence number */
-  unsigned int mSequence;
-  
-  /* The sliding/circular buffer to hold all of the events/sample data */
-  dlib::sliding_buffer_kernel_1<ComponentEvent *> * mSlidingBuffer;
   
 private:
   /* Inherited and is run as part of the threaded_object */
@@ -91,9 +85,7 @@ protected:
   /* */
   DataItem * getDataItemByName(std::string name);
   DataItem * getDataItemById(unsigned int id);
-  
-  /* Add ComponentEvent and specs to the SlidingBuffer */
-  void addToBuffer(std::string time, std::string key, std::string value);
+  bool hasDataItem(std::list<DataItem *> dataItems, unsigned int id);
   
 public:
   /* Load the adapter with the .xml file */
@@ -102,7 +94,8 @@ public:
   /* Destructor */
   virtual ~Adapter();
   
-  //void getSequenceNumbers(unsigned int * seq, unsigned int * firstSeq);
+  /*  */
+  unsigned int getId();
   
   void current(
     unsigned int * seq,
@@ -115,7 +108,7 @@ public:
     unsigned int * firstSeq,
     unsigned int start,
     unsigned int count,
-    std::string path = ""
+    std::list<DataItem *> dataItems
   );
   
   Device * getDeviceByName(std::string name);

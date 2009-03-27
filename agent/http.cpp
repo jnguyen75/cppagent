@@ -37,14 +37,23 @@
 HTTP::HTTP()
 {
   mXmlPrinter = new XmlPrinter(&mXmlStream);
+  
+  // Sequence number and sliding buffer for data
+  mSequence = 1;
+  mSlidingBuffer = new sliding_buffer_kernel_1<ComponentEvent *>();
+  mSlidingBuffer->set_size(SLIDING_BUFFER_EXP);
+  
+  // Mutex used for synchronized access to sliding buffer and sequence number
+  mSequenceLock = new dlib::mutex;
 }
 
 HTTP::~HTTP()
 {
   delete mXmlPrinter;
+  delete mSlidingBuffer;
+  delete mSequenceLock;
 }
 
-/* Overridden method that is called per web request */
 void HTTP::on_request(
     const std::string& path,
     std::string& result,
@@ -122,6 +131,25 @@ void HTTP::on_request(
 void HTTP::addAdapter(std::string server, unsigned int port, std::string configXmlPath)
 {
   mAdapters.push_back(new Adapter(server, port, configXmlPath));
+}
+
+void HTTP::addToBuffer(std::string time, std::string key, std::string value)
+{
+  DataItem * d = getDataItemByName(key);
+  
+  if (d == NULL)
+  {
+    std::cerr << "HTTP.cpp: Could not find data item " << key << std::endl;
+  }
+  else
+  { 
+    mSequenceLock->lock();
+    ComponentEvent * event = new ComponentEvent(d, mSequence, time, value);
+    (*mSlidingBuffer)[mSequence] = event;
+    d->setLatestEvent(event);
+    mSequence++;
+    mSequenceLock->unlock();
+  }
 }
 
 /* HTTP protected methods */
@@ -225,7 +253,7 @@ void HTTP::fetchData(std::list<DataItem *> dataItems, bool current, unsigned int
     std::list<Adapter *>::iterator first = mAdapters.begin();
     std::list<Device *> devices = (*first)->getDevices();
     
-    std::list<ComponentEvent *> results = (*first)->sample(&seq, &firstSeq, start, count, "");
+    std::list<ComponentEvent *> results = (*first)->sample(&seq, &firstSeq, start, count, dataItems);
     mXmlPrinter->printSample(1, Adapter::SLIDING_BUFFER_SIZE, seq, firstSeq, results);
   }
 }
@@ -336,10 +364,10 @@ int main()
   {
     HTTP * webServer = new HTTP();
     
+    webServer->addAdapter("agent.mtconnect.org", 7878, "../include/config_no_namespace.xml");
+    
     // create a thread that will listen for the user to end this program
     thread_function t(terminateServerThread, webServer);
-    
-    webServer->addAdapter("agent.mtconnect.org", 7878, "../include/config_no_namespace.xml");
 
     // make it listen on port 5000
     webServer->set_listening_port(5000);

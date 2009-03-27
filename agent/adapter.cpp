@@ -37,20 +37,15 @@
 Adapter::Adapter(std::string server, unsigned int port, std::string configXml)
 : Connector(server, port)
 {
+  // Set Adapter ID
+  unsigned int mId = time(NULL);
+  
   // Load .xml configuration
   mConfig = new XmlParser(configXml);
   
   // Load devices from configuration
   mDevices = mConfig->getDevices();
   mDataItems = mConfig->getDataItems();
-  
-  // Sequence number and sliding buffer for data
-  mSequence = 1;
-  mSlidingBuffer = new sliding_buffer_kernel_1<ComponentEvent *>();
-  mSlidingBuffer->set_size(SLIDING_BUFFER_EXP);
-  
-  // Mutex used for synchronized access to sliding buffer and sequence number
-  mSequenceLock = new dlib::mutex;
   
   // Will start threaded object: Adapter::thread()
   start();
@@ -62,9 +57,12 @@ Adapter::~Adapter()
   stop();
   wait();
   
-  delete mSlidingBuffer;
-  delete mSequenceLock;
   delete mConfig;
+}
+
+unsigned int Adapter::getId()
+{
+  return mId;
 }
 
 void Adapter::current(
@@ -86,7 +84,7 @@ std::list<ComponentEvent *> Adapter::sample(
     unsigned int * firstSeq,
     unsigned int start,
     unsigned int count,
-    std::string path
+    std::list<DataItem *> dataItems
   )
 {
   mSequenceLock->lock();
@@ -102,7 +100,16 @@ std::list<ComponentEvent *> Adapter::sample(
   
   for (unsigned int i = start; i<end; i++)
   {
-    results.push_back((*mSlidingBuffer)[i]);
+    // Filter out according to if it exists in the list
+    unsigned int dataId = (*mSlidingBuffer)[i]->getDataItem()->getId();
+    if (hasDataItem(dataItems, dataId))
+    {
+      results.push_back((*mSlidingBuffer)[i]);
+    }
+    else
+    {
+      // TODO: increment counter?
+    }
   }
   
   mSequenceLock->unlock();
@@ -242,21 +249,15 @@ DataItem * Adapter::getDataItemById(unsigned int id)
   return NULL;
 }
 
-void Adapter::addToBuffer(std::string time, std::string key, std::string value)
+bool Adapter::hasDataItem(std::list<DataItem *> dataItems, unsigned int id)
 {
-  DataItem * d = getDataItemByName(key);
-  
-  if (d == NULL)
+  std::list<DataItem *>::iterator dataItem;
+  for (dataItem = dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
   {
-    std::cerr << "Adapter.cpp: Could not find data item " << key << std::endl;
+    if ((*dataItem)->getId() == id)
+    {
+      return true;
+    }
   }
-  else
-  { 
-    mSequenceLock->lock();
-    ComponentEvent * event = new ComponentEvent(d, mSequence, time, value);
-    (*mSlidingBuffer)[mSequence] = event;
-    d->setLatestEvent(event);
-    mSequence++;
-    mSequenceLock->unlock();
-  }
+  return false;
 }

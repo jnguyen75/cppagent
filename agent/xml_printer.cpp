@@ -263,15 +263,8 @@ void XmlPrinter::printSample(
   
   std::list<xmlpp::Element *> elements;
   
-  std::cout << "NEXT SEQUENCE: " << nextSeq << std::endl;
-  std::cout << "FIRST SEQUENCE: " << firstSeq << std::endl;
-  
-  for 
-    (
-      std::list<ComponentEvent *>::iterator result=results.begin();
-      result != results.end();
-      result++
-    )
+  std::list<ComponentEvent *>::iterator result;
+  for (result=results.begin(); result!=results.end(); result++)
   {
     xmlpp::Element * element = searchListForElement(elements, (*result)->getDataItem()->getComponent()->getId());
     xmlpp::Element * child;
