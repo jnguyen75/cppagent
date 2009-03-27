@@ -89,7 +89,7 @@ public:
   
   virtual ~HTTP();
   
-  void on_request (
+  bool on_request (
         const std::string& path,
         std::string& result,
         const map_type& queries,
@@ -100,7 +100,8 @@ public:
         const std::string& foreign_ip,
         const std::string& local_ip,
         unsigned short foreign_port,
-        unsigned short local_port
+        unsigned short local_port,
+        std::ostream& out
     );
   
   void addAdapter(std::string server, unsigned int port, std::string configXmlPath);
