@@ -73,7 +73,8 @@ namespace dlib
             const std::string& foreign_ip,
             const std::string& local_ip,
             unsigned short foreign_port,
-            unsigned short local_port
+            unsigned short local_port,
+            std::ostream& out
         ) = 0;
         /*!
             requires

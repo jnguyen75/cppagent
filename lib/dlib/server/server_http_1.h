@@ -39,7 +39,7 @@ namespace dlib
 
     private:
 
-        virtual void on_request (
+        virtual bool on_request (
             const std::string& path,
             std::string& result,
             const map_type& queries,
@@ -50,7 +50,8 @@ namespace dlib
             const std::string& foreign_ip,
             const std::string& local_ip,
             unsigned short foreign_port,
-            unsigned short local_port
+            unsigned short local_port,
+            std::ostream& out
         ) = 0;
 
         unsigned char to_hex (
@@ -305,31 +306,15 @@ namespace dlib
                 map_type response_headers;
                 // if there wasn't a problem with the input stream at some point
                 // then lets trigger this request callback.
+                bool finished = true;
                 if (in)
-                    on_request(path,result,queries,cookies,new_cookies,incoming_headers, response_headers, foreign_ip,local_ip,foreign_port,local_port);
+                    finished = on_request(path,result,queries,cookies,new_cookies,incoming_headers, response_headers, foreign_ip,local_ip,foreign_port,local_port, out);
                 my_fault = true;
 
-                out << "HTTP/1.0 200 OK\r\n";
-                // only send this header if the user hasn't told us to send another kind
-                if (response_headers.is_in_domain("Content-Type") == false && 
-                    response_headers.is_in_domain("content-type") == false)
+                if (finished) 
                 {
-                    out << "Content-Type: text/xml\r\n";
+                    write_header(out, response_headers, new_cookies, result);
                 }
-                out << "Content-Length: " << result.size() << "\r\n";
-
-                // Set any new headers
-                response_headers.reset();
-                while (response_headers.move_next())
-                    out << response_headers.element().key() << ':' << response_headers.element().value() << "\r\n";
-
-                // set any cookies 
-                new_cookies.reset();
-                while (new_cookies.move_next())
-                {
-                    out << "Set-Cookie: " << new_cookies.element() << "\r\n";
-                }
-                out << "\r\n" << result;
             }
             catch (std::bad_alloc&)
             {
@@ -342,9 +327,40 @@ namespace dlib
             }
 
         }
+        
+        void write_header(std::ostream& out,
+                          map_type& response_headers,
+                          queue_type& new_cookies,
+                          const std::string& result) 
+        {
+            out << "HTTP/1.0 200 OK\r\n";
+            // only send this header if the user hasn't told us to send another kind
+            if (response_headers.is_in_domain("Content-Type") == false && 
+                response_headers.is_in_domain("content-type") == false)
+            {
+                out << "Content-Type: text/xml\r\n";
+            }
+            out << "Content-Length: " << result.size() << "\r\n";
 
-        const static logger dlog;
+            // Set any new headers
+            response_headers.reset();
+            while (response_headers.move_next())
+                out << response_headers.element().key() << ':' << response_headers.element().value() << "\r\n";
+
+            // set any cookies 
+            new_cookies.reset();
+            while (new_cookies.move_next())
+            {
+                out << "Set-Cookie: " << new_cookies.element() << "\r\n";
+            }
+            out << "\r\n" << result;
+
+        }
+        
+
+        const static logger dlog;    
     };
+    
 
     template <
         typename server_base,
