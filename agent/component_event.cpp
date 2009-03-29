@@ -212,5 +212,5 @@ ComponentEvent::ESimpleUnits ComponentEvent::getSimpleUnitsEnum(std::string name
     }
   }
   
-  // TODO: THROW
+  return (ComponentEvent::ESimpleUnits) -1;
 }

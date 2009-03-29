@@ -49,47 +49,31 @@
 #include "connector.hpp"
 #include "component_event.hpp"
 
-#include "axes.hpp"
-#include "controller.hpp"
+#include "agent.hpp"
 #include "component.hpp"
 #include "device.hpp"
 #include "data_item.hpp"
-#include "linear.hpp"
-#include "power.hpp"
-#include "spindle.hpp"
+
+class Agent;
 
 using namespace dlib;
 
 class Adapter : public Connector, public threaded_object
 {
-public:
-  static const unsigned int SLIDING_BUFFER_EXP = 17;
-  static const unsigned int SLIDING_BUFFER_SIZE = 131072;
-
 protected:
   /* Adapter ID */
   unsigned int mId;
   
-  /* Use the xml parser to  */
-  XmlParser * mConfig;
-  
-  /* Arrays to keep track of all devices and dataItems */
-  std::list<Device *> mDevices;
-  std::list<DataItem *> mDataItems;
+  /* Pointer to the agent */
+  Agent * mAgent;
   
 private:
   /* Inherited and is run as part of the threaded_object */
   void thread();
   
-protected:
-  /* */
-  DataItem * getDataItemByName(std::string name);
-  DataItem * getDataItemById(unsigned int id);
-  bool hasDataItem(std::list<DataItem *> dataItems, unsigned int id);
-  
 public:
   /* Load the adapter with the .xml file */
-  Adapter(std::string server, unsigned int port, std::string configXml);
+  Adapter(std::string server, unsigned int port, XmlParser * configXml);
   
   /* Destructor */
   virtual ~Adapter();
@@ -97,25 +81,7 @@ public:
   /*  */
   unsigned int getId();
   
-  void current(
-    unsigned int * seq,
-    unsigned int * firstSeq,
-    std::string path = ""
-  );
-  
-  std::list<ComponentEvent *> sample(
-    unsigned int * seq,
-    unsigned int * firstSeq,
-    unsigned int start,
-    unsigned int count,
-    std::list<DataItem *> dataItems
-  );
-  
-  Device * getDeviceByName(std::string name);
-  std::list<Device *> getDevices();
-  
-  std::list<DataItem *> getDataItems();
-  std::list<DataItem *> getDataItems(std::string path, xmlpp::Node * node = NULL);
+  void setAgent(Agent * agent);
   
   /* Inherited method for incoming data from the server */
   void processData(std::string line);

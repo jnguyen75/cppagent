@@ -187,7 +187,8 @@ Component * XmlParser::loadComponent(xmlpp::Node * component, Component::ECompon
         return new Power(attributes);
       case Component::SPINDLE:
         return new Spindle(attributes);
-      // TODO: other cases/error
+      default:
+        return NULL;
     }
   }
   

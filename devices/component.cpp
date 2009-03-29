@@ -186,11 +186,11 @@ Component::EComponentSpecs Component::getComponentEnum(std::string name)
   {
     if (name == Component::SComponentSpecs[i])
     {
-       return (Component::EComponentSpecs) i;
+      return (Component::EComponentSpecs) i;
     }
   }
   
-  // TODO: Error/exception
+  return (Component::EComponentSpecs) -1;
 }
 
 bool Component::hasNameAndId(std::map<std::string, std::string> attributes)

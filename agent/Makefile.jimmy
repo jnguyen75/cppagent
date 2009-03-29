@@ -22,7 +22,7 @@ vpath %.hpp ../devices
 vpath %.cpp ../devices
 
 SOURCES= \
-http.cpp \
+agent.cpp \
 adapter.cpp \
 component_event.cpp \
 connector.cpp \

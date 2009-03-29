@@ -31,8 +31,8 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef HTTP_HPP
-#define HTTP_HPP
+#ifndef AGENT_HPP
+#define AGENT_HPP
 
 // C++ libraries
 #include <iostream>
@@ -46,37 +46,52 @@
 #include "dlib/sliding_buffer.h"
 
 #include "adapter.hpp"
-//#include "device.cpp"
 #include "component_event.hpp"
 #include "xml_printer.hpp"
 
-// Connect to http://localhost:{SERVER_PORT}/
-#define SERVER_PORT 5000
-
 using namespace dlib;
 
+class Adapter;
+
 // Web server used from dlib example
-class HTTP : public server::http_1a_c
+class Agent : public server::http_1a_c
 {
+public:
+  static const unsigned int SERVER_PORT = 3000;
+  static const unsigned int SLIDING_BUFFER_EXP = 17;
+  static const unsigned int SLIDING_BUFFER_SIZE = 131072;
+  
 protected:
-  /* Methods to handle the 3 basic calls*/
-  void handleCurrent(const map_type& queries);
-  void handleProbe(const map_type& queries);
-  void handleSample(const map_type& queries);
-  
   /* Handle the device/path parameters for the xpath search */
-  std::list<DataItem *> devicesAndPath(const map_type& queries);
+  std::list<DataItem *> devicesAndPath(std::string path = "", std::string device = "");
   
-  Device * findDeviceByName(std::string name);
+  /* Get list of data items in path */
+  std::list<DataItem *> getDataItems(std::string path, xmlpp::Node * node = NULL);
   
-  void clearDevices();
-  
-  void fetchData(std::list<DataItem *> dataItems, bool current, unsigned int start = 0, unsigned int count = 100);
+  /* HTTP methods to handle the 3 basic calls*/
+  void handleCall(const map_type& queries, std::string call, std::string device = "");
+  void handleCurrent(std::list<DataItem *> dataItems, unsigned int frequency = 0);
+  void handleProbe(std::string device);
+  void handleSample(
+    std::list<DataItem *> dataItems,
+    unsigned int start,
+    unsigned int count,
+    unsigned int frequency
+  );
   
   /* Output an XML Error */
   void printError(std::string errorCode, std::string text);
   
+  /* Find devices/data items by name */
+  Device * getDeviceByName(std::string name);
+  DataItem * getDataItemByName(std::string name);
+  
+  /* retrieve the sequence number and the first sequence number in buffer */
+  void getSequenceNumbers(unsigned int * seq, unsigned int * firstSeq);
+  
 protected:
+  XmlParser * mConfig;
+  
   /* For access to the sequence number and sliding buffer, use the mutex */
   dlib::mutex * mSequenceLock;
   
@@ -91,32 +106,33 @@ protected:
   
   XmlPrinter * mXmlPrinter;
   
+  /* Lists of data */
   std::list<Adapter *> mAdapters;
-  
-  std::list<Device *> mDeviceList;
+  std::list<Device *> mDevices;
+  std::list<DataItem *> mDataItems;
   
 public:
-  HTTP();
+  Agent();
   
-  virtual ~HTTP();
+  virtual ~Agent();
   
   /* Overridden method that is called per web request */  
   bool on_request (
-        const std::string& path,
-        std::string& result,
-        const map_type& queries,
-        const map_type& cookies,
-        queue_type& new_cookies,
-        const map_type& incoming_headers,
-        map_type& response_headers,
-        const std::string& foreign_ip,
-        const std::string& local_ip,
-        unsigned short foreign_port,
-        unsigned short local_port,
-        std::ostream& out
-    );
+    const std::string& path,
+    std::string& result,
+    const map_type& queries,
+    const map_type& cookies,
+    queue_type& new_cookies,
+    const map_type& incoming_headers,
+    map_type& response_headers,
+    const std::string& foreign_ip,
+    const std::string& local_ip,
+    unsigned short foreign_port,
+    unsigned short local_port,
+    std::ostream& out
+  );
   
-  void addAdapter(std::string server, unsigned int port, std::string configXmlPath);
+  void addAdapter(std::string server, unsigned int port, std::string configXmlPath, unsigned int numAdapters = 1);
   
   /* Add ComponentEvent and specs to the SlidingBuffer */
   void addToBuffer(std::string time, std::string key, std::string value);

@@ -34,18 +34,11 @@
 #include "adapter.hpp"
 
 /* Adapter public methods */
-Adapter::Adapter(std::string server, unsigned int port, std::string configXml)
+Adapter::Adapter(std::string server, unsigned int port, XmlParser * configXml)
 : Connector(server, port)
 {
   // Set Adapter ID
-  unsigned int mId = time(NULL);
-  
-  // Load .xml configuration
-  mConfig = new XmlParser(configXml);
-  
-  // Load devices from configuration
-  mDevices = mConfig->getDevices();
-  mDataItems = mConfig->getDataItems();
+  mId = time(NULL);
   
   // Will start threaded object: Adapter::thread()
   start();
@@ -56,8 +49,6 @@ Adapter::~Adapter()
   // Will stop threaded object gracefully Adapter::thread()
   stop();
   wait();
-  
-  delete mConfig;
 }
 
 unsigned int Adapter::getId()
@@ -65,121 +56,9 @@ unsigned int Adapter::getId()
   return mId;
 }
 
-void Adapter::current(
-    unsigned int * seq,
-    unsigned int * firstSeq,
-    std::string path
-  )
+void Adapter::setAgent(Agent * agent)
 {
-  mSequenceLock->lock();
-  
-  *seq = mSequence;
-  *firstSeq = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
-  
-  mSequenceLock->unlock();
-}
-
-std::list<ComponentEvent *> Adapter::sample(
-    unsigned int * seq,
-    unsigned int * firstSeq,
-    unsigned int start,
-    unsigned int count,
-    std::list<DataItem *> dataItems
-  )
-{
-  mSequenceLock->lock();
-  
-  *seq = mSequence;
-  *firstSeq = (mSequence > mSlidingBuffer->size()) ? mSlidingBuffer->size() - mSequence : 1;
-  
-  std::list<ComponentEvent *> results;
-  
-  // START SHOULD BE BETWEEN 0 AND SEQUENCE NUMBER
-  start = (start <= *firstSeq) ? *firstSeq + 1  : start;
-  unsigned int end = (count + start >= mSequence) ? mSequence-1 : count+start;
-  
-  for (unsigned int i = start; i<end; i++)
-  {
-    // Filter out according to if it exists in the list
-    unsigned int dataId = (*mSlidingBuffer)[i]->getDataItem()->getId();
-    if (hasDataItem(dataItems, dataId))
-    {
-      results.push_back((*mSlidingBuffer)[i]);
-    }
-    else
-    {
-      // TODO: increment counter?
-    }
-  }
-  
-  mSequenceLock->unlock();
-  
-  return results;
-}
-
-Device * Adapter::getDeviceByName(std::string name)
-{
-  std::list<Device *>::iterator device;
-  for (device=mDevices.begin(); device!=mDevices.end(); device++)
-  {
-    if ((*device)->getName() == name)
-    {
-      return *device;
-    }
-  }
-  return NULL;
-}
-
-std::list<Device *> Adapter::getDevices()
-{
-  return mDevices;
-}
-
-std::list<DataItem *> Adapter::getDataItems()
-{
-  return mDataItems;
-}
-
-std::list<DataItem *> Adapter::getDataItems(std::string path, xmlpp::Node * node)
-{
-  std::list<DataItem *> items;
-  
-  node = (node == NULL) ? mConfig->getRootNode() : node;
-  
-  xmlpp::NodeSet elements = node->find(path);
-  
-  for (unsigned int i=0; i<elements.size(); i++)
-  {
-    if (const xmlpp::Element * nodeElement = dynamic_cast<const xmlpp::Element*>(elements[i]))
-    {
-      std::string nodename = nodeElement->get_name();
-      if (nodename == "DataItem")
-      {
-        unsigned int id = atoi(nodeElement->get_attribute_value("id").c_str());
-        DataItem * item = getDataItemById(id);
-        if (item != NULL)
-        {
-          items.push_back(item);
-        }
-        else
-        {
-          std::cerr << "DATA ITEM NOT FOUND\n";
-        }
-      }
-      else if (nodename == "Components" or nodename == "DataItems")
-      {
-        std::list<DataItem *> toMerge = getDataItems("*", elements[i]);
-        items.merge(toMerge);
-      }
-      else // Hopefully "Component"
-      {
-        std::list<DataItem *> toMerge = getDataItems("Components/*|DataItems/*", elements[i]);
-        items.merge(toMerge);
-      }
-    }
-  }
-  
-  return items;
+  mAgent = agent;
 }
 
 void Adapter::processData(std::string line)
@@ -190,8 +69,6 @@ void Adapter::processData(std::string line)
   getline(toParse, key, '|');
   std::string time = key;
   
-  //std::cout << "Time = " << time << std::endl;
-  
   getline(toParse, key, '|');
   std::string type = key;
   
@@ -201,16 +78,16 @@ void Adapter::processData(std::string line)
   if (type == "Alarm")
   {
     std::cout << "Alarm!" << std::endl;
-    addToBuffer(time, key, value);
+    mAgent->addToBuffer(time, key, value);
   }
   else // Key -> Value Pairings
   {
-    addToBuffer(time, key, value);
+    mAgent->addToBuffer(time, key, value);
     
     // Will be bypassed by single "Time|Item|Value" event
     while (getline(toParse, key, '|') and getline(toParse, value, '|'))
     {
-      addToBuffer(time, key, value);
+      mAgent->addToBuffer(time, key, value);
     }
   }
 }
@@ -220,44 +97,4 @@ void Adapter::thread()
 {
   std::cout << "Starting adapter thread to read data" << std::endl;
   connect();
-}
-
-/* Adapter protected methods */
-DataItem * Adapter::getDataItemByName(std::string name)
-{
-  std::list<DataItem *>::iterator dataItem;
-  for (dataItem = mDataItems.begin(); dataItem!=mDataItems.end(); dataItem++)
-  {
-    if ((*dataItem)->hasName(name))
-    {
-      return (*dataItem);
-    }
-  }
-  return NULL;
-}
-
-DataItem * Adapter::getDataItemById(unsigned int id)
-{
-  std::list<DataItem *>::iterator dataItem;
-  for (dataItem = mDataItems.begin(); dataItem!=mDataItems.end(); dataItem++)
-  {
-    if ((*dataItem)->getId() == id)
-    {
-      return (*dataItem);
-    }
-  }
-  return NULL;
-}
-
-bool Adapter::hasDataItem(std::list<DataItem *> dataItems, unsigned int id)
-{
-  std::list<DataItem *>::iterator dataItem;
-  for (dataItem = dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
-  {
-    if ((*dataItem)->getId() == id)
-    {
-      return true;
-    }
-  }
-  return false;
 }

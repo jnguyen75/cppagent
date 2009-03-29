@@ -257,5 +257,5 @@ DataItem::EType DataItem::getTypeEnum(std::string name)
     }
   }
   
-  // TODO: Error/exception
+  return (DataItem::EType) -1;
 }
