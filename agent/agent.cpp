@@ -91,7 +91,7 @@ bool Agent::on_request(
       {
         std::cout << path.substr(1, loc1-1) << std::endl;
         std::cout << path.substr(loc1+1, loc2-loc1-1) << std::endl;
-        handleCall(queries, path.substr(1, loc1-1), path.substr(loc1+1, loc2-loc1-1));
+        handleCall(out, queries, path.substr(1, loc1-1), path.substr(loc1+1, loc2-loc1-1));
       }
       else
       {
@@ -101,7 +101,7 @@ bool Agent::on_request(
     else
     {
       //std::string call = path.substr(1, loc1-1);
-      handleCall(queries, path.substr(1, loc1-1));
+      handleCall(out, queries, path.substr(1, loc1-1));
     }
     
     // Output the XML stream into the browser
@@ -152,7 +152,7 @@ void Agent::addToBuffer(std::string time, std::string key, std::string value)
 }
 
 /* Agent protected methods */
-std::list<DataItem *> Agent::devicesAndPath(std::string path, std::string device)
+std::string Agent::devicesAndPath(std::string path, std::string device)
 {
   std::string dataPath = "";
   
@@ -187,7 +187,7 @@ std::list<DataItem *> Agent::devicesAndPath(std::string path, std::string device
     dataPath = (!path.empty()) ? path : "//Devices/Device";
   }
   
-  return getDataItems(dataPath);
+  return dataPath;
 }
 
 std::list<DataItem *> Agent::getDataItems(std::string path, xmlpp::Node * node)
@@ -232,7 +232,7 @@ std::list<DataItem *> Agent::getDataItems(std::string path, xmlpp::Node * node)
 }
 
 
-void Agent::handleCall(const map_type& queries, std::string call, std::string device)
+void Agent::handleCall(std::ostream& out, const map_type& queries, std::string call, std::string device)
 {
   std::string deviceName;
   if (!device.empty())
@@ -248,7 +248,7 @@ void Agent::handleCall(const map_type& queries, std::string call, std::string de
   {
     std::string path = queries.is_in_domain("path") ? queries["path"] : "";
     unsigned int freq = queries.is_in_domain("frequency") ? atoi(queries["frequency"].c_str()) : 0;
-    handleCurrent(devicesAndPath(path, device), freq);
+    handleCurrent(out, devicesAndPath(path, device), freq);
   }
   else if (call == "probe")
   {
@@ -273,7 +273,7 @@ void Agent::handleCall(const map_type& queries, std::string call, std::string de
       start = 0;
     }
     
-    handleSample(devicesAndPath(path, device), start, count, freq);
+    handleSample(out, devicesAndPath(path, device), start, count, freq);
   }
   else
   {
@@ -281,18 +281,17 @@ void Agent::handleCall(const map_type& queries, std::string call, std::string de
   }
 }
 
-void Agent::handleCurrent(std::list<DataItem *> dataItems, unsigned int frequency)
+void Agent::handleCurrent(std::ostream& out, std::string path, unsigned int frequency)
 {
-  unsigned int seq, firstSeq;
-  getSequenceNumbers(&seq, &firstSeq);
+  std::list<DataItem *> dataItems = getDataItems(path);
+  
   if (frequency > 0)
   {
-    //stream
-    
+    streamData(out, dataItems, true, frequency);
   }
   else
   {
-    mXmlPrinter->printCurrent(1, SLIDING_BUFFER_SIZE, seq, firstSeq, dataItems);
+    fetchCurrentData(dataItems);
   }
 }
 
@@ -325,48 +324,97 @@ void Agent::handleProbe(std::string name)
 }
 
 void Agent::handleSample(
-    std::list<DataItem *> dataItems,
+    std::ostream& out,
+    std::string path,
     unsigned int start,
     unsigned int count,
     unsigned int frequency
   )
 {
+  std::list<DataItem *> dataItems = getDataItems(path);
   if (frequency > 0)
   {
-    // TODO
+    streamData(out, dataItems, false, frequency, start, count);
   }
   else
   {
-    std::list<ComponentEvent *> results;
-    
-    mSequenceLock->lock();
-  
-    unsigned int seq = mSequence;
-    unsigned int firstSeq = (mSequence > SLIDING_BUFFER_SIZE) ? SLIDING_BUFFER_SIZE - mSequence : 1;
-    
-  
-    // START SHOULD BE BETWEEN 0 AND SEQUENCE NUMBER
-    start = (start <= firstSeq) ? firstSeq + 1  : start;
-    unsigned int end = (count + start >= mSequence) ? mSequence-1 : count+start;
-    
-    for (unsigned int i = start; i<end; i++)
-    {
-      // Filter out according to if it exists in the list
-      std::string dataName = (*mSlidingBuffer)[i]->getDataItem()->getName();
-      if (getDataItemByName(dataName))
-      {
-        results.push_back((*mSlidingBuffer)[i]);
-      }
-      else
-      {
-        // TODO: increment counter?
-      }
-    }
-    
-    mSequenceLock->unlock();
-    
-    mXmlPrinter->printSample(1, SLIDING_BUFFER_SIZE, seq, firstSeq, results);
+    fetchSampleData(dataItems, start, count);
   }
+}
+
+void Agent::streamData(
+    std::ostream& out,
+    std::list<DataItem *> dataItems,
+    bool current,
+    unsigned int frequency,
+    unsigned int start,
+    unsigned int count
+  )
+{
+  std::string boundary = "--" + md5(Component::intToString(time(NULL)));
+  std::string contentType = "Content-type: text/xml";
+  std::string contentLength;
+  
+  while (out.good())
+  {
+    out << boundary << std::endl;
+    out << contentType << std::endl;
+    out << std::endl;
+    
+    mXmlStream.str("");
+    if (current)
+    {
+      fetchCurrentData(dataItems);
+    }
+    else
+    {
+      fetchSampleData(dataItems, start, count);
+    }
+    out << mXmlStream.str();
+    
+    out.flush();
+    dlib::sleep(frequency);
+  }
+}
+
+void Agent::fetchCurrentData(std::list<DataItem *> dataItems)
+{
+  unsigned int seq, firstSeq;
+  getSequenceNumbers(&seq, &firstSeq);
+  mXmlPrinter->printCurrent(1, SLIDING_BUFFER_SIZE, seq, firstSeq, dataItems);
+}
+
+void Agent::fetchSampleData(std::list<DataItem *> dataItems, unsigned int start, unsigned int count)
+{
+  std::list<ComponentEvent *> results;
+  
+  mSequenceLock->lock();
+
+  unsigned int seq = mSequence;
+  unsigned int firstSeq = (mSequence > SLIDING_BUFFER_SIZE) ? SLIDING_BUFFER_SIZE - mSequence : 1;
+  
+
+  // START SHOULD BE BETWEEN 0 AND SEQUENCE NUMBER
+  start = (start <= firstSeq) ? firstSeq + 1  : start;
+  unsigned int end = (count + start >= mSequence) ? mSequence-1 : count+start;
+  
+  for (unsigned int i = start; i<end; i++)
+  {
+    // Filter out according to if it exists in the list
+    std::string dataName = (*mSlidingBuffer)[i]->getDataItem()->getName();
+    if (getDataItemByName(dataName))
+    {
+      results.push_back((*mSlidingBuffer)[i]);
+    }
+    else
+    {
+      // TODO: increment counter?
+    }
+  }
+  
+  mSequenceLock->unlock();
+  
+  mXmlPrinter->printSample(1, SLIDING_BUFFER_SIZE, seq, firstSeq, results);
 }
 
 Device * Agent::getDeviceByName(std::string name)
@@ -436,9 +484,8 @@ int main()
     
     // create a thread that will listen for the user to end this program
     thread_function t(terminateServerThread, agent);
-
-    // make it listen on port 5000
-    agent->set_listening_port(5000);
+    
+    agent->set_listening_port(Agent::SERVER_PORT);
     agent->start();
   }
   catch (std::exception & e)

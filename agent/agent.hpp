@@ -41,7 +41,10 @@
 #include <string>
 #include <list>
 
+#include <ctime>
+
 // External libraries
+#include "dlib/md5.h"
 #include "dlib/server.h"
 #include "dlib/sliding_buffer.h"
 
@@ -63,24 +66,34 @@ public:
   
 protected:
   /* Handle the device/path parameters for the xpath search */
-  std::list<DataItem *> devicesAndPath(std::string path = "", std::string device = "");
+  std::string devicesAndPath(std::string path = "", std::string device = "");
   
   /* Get list of data items in path */
   std::list<DataItem *> getDataItems(std::string path, xmlpp::Node * node = NULL);
   
   /* HTTP methods to handle the 3 basic calls*/
-  void handleCall(const map_type& queries, std::string call, std::string device = "");
-  void handleCurrent(std::list<DataItem *> dataItems, unsigned int frequency = 0);
+  void handleCall(std::ostream& out, const map_type& queries, std::string call, std::string device = "");
+  void handleCurrent(std::ostream& out, std::string path, unsigned int frequency = 0);
   void handleProbe(std::string device);
   void handleSample(
-    std::list<DataItem *> dataItems,
+    std::ostream& out,
+    std::string path,
     unsigned int start,
     unsigned int count,
     unsigned int frequency
   );
   
-  /* Output an XML Error */
-  void printError(std::string errorCode, std::string text);
+  void streamData(
+    std::ostream& out,
+    std::list<DataItem *> dataItems,
+    bool current,
+    unsigned int frequency,
+    unsigned int start = 0,
+    unsigned int count = 0
+  );
+  
+  void fetchCurrentData(std::list<DataItem *> dataItems);
+  void fetchSampleData(std::list<DataItem *> dataItems, unsigned int start, unsigned int count);
   
   /* Find devices/data items by name */
   Device * getDeviceByName(std::string name);
@@ -88,6 +101,9 @@ protected:
   
   /* retrieve the sequence number and the first sequence number in buffer */
   void getSequenceNumbers(unsigned int * seq, unsigned int * firstSeq);
+  
+  /* Output an XML Error */
+  void printError(std::string errorCode, std::string text);
   
 protected:
   XmlParser * mConfig;
