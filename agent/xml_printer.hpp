@@ -34,62 +34,42 @@
 #ifndef XML_PRINTER_HPP
 #define XML_PRINTER_HPP
 
-#define TIME_BUFFER_SIZE 80
-
-#define MTCONNECT_XML_VERS "1.0"
-
-#include <iostream>
-#include <ctime>
-
-#include <stdio.h>
-#include <stdlib.h>
 #include <map>
 #include <list>
 
+#include <libxml++/libxml++.h>
+
 #include "component_event.hpp"
 #include "device.hpp"
-#include "data_item.hpp"
 
-// Include the LibXML Library
-#include <libxml++/libxml++.h>
+class DataItem;
+
+const std::string MTCONNECT_XML_VERS = "1.0";
 
 extern std::string intToString(unsigned int i);
 extern std::string floatToString(float i);
+extern std::string getCurrentTime();
 
-class XmlPrinter
-{ 
-protected:
-  /* Xml documents */
-  xmlpp::Document * mErrorXml;
-  xmlpp::Document * mSampleXml;
-  xmlpp::Document * mProbeXml;
-  
-protected:
+namespace XmlPrinter
+{
+  /***** Helper Methods *****/
   /* Initiate all documents */
-  void initErrorXml();
-  void initProbeXml();
-  void initSampleXml();
-  
-  xmlpp::Element * addRoot(
-    xmlpp::Document * doc,
+  xmlpp::Document * initXmlDoc(
     std::string rootName,
-    std::string xmlnsM
-  );
-  
-  xmlpp::Element * addHeader(
-    xmlpp::Document * doc,
+    std::string xmlnsM,
     unsigned int adapterId,
     unsigned int bufferSize,
     unsigned int nextSeq,
     unsigned int firstSeq = 0
   );
   
+  /* Function to parse and write XML */
+  std::string printNode(const xmlpp::Node* node, unsigned int indentation = 0);
+  
   void printProbeHelper(xmlpp::Element * element, Component * component);
   
   /* Simple helper function to put indentations into the XML stream */
   std::string printIndentation(unsigned int indentation);
-  
-  void getCurrentTime(char buffer[]);
   
   void addAttributes(
     xmlpp::Element * element,
@@ -101,21 +81,12 @@ protected:
     unsigned int name
   );
   
-  xmlpp::Element * searchChildrenForDeviceName(
+  xmlpp::Element * getDeviceStream(
     xmlpp::Element * element,
-    std::string name
+    Device * device
   );
   
-public:
-  /* Constructor to set the pointer to the correct stringstream */
-  XmlPrinter();
-  
-  /* Virtual destructor */
-  virtual ~XmlPrinter();
-  
-  /* Function to parse and write XML */
-  std::string printNode(const xmlpp::Node* node, unsigned int indentation = 0);
-  
+  /***** Main methods to call *****/
   std::string printError
   (
     unsigned int adapterId,
@@ -153,3 +124,4 @@ public:
 };
 
 #endif
+

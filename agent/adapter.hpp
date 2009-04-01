@@ -36,8 +36,6 @@
 
 #include <iostream>
 
-#include <ctime>
-
 #include "dlib/sockets.h"
 #include "dlib/threads.h"
 
@@ -65,7 +63,7 @@ private:
   
 public:
   /* Load the adapter with the .xml file */
-  Adapter(std::string server, unsigned int port);
+  Adapter(unsigned int id, std::string server, unsigned int port);
   
   /* Destructor */
   virtual ~Adapter();

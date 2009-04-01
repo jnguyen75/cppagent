@@ -34,7 +34,12 @@
 #include "agent.hpp"
 
 /* Agent public methods */
-Agent::Agent(std::string server, unsigned int port, std::string configXmlPath)
+Agent::Agent(
+    std::string server,
+    unsigned int port,
+    std::string configXmlPath,
+    unsigned int numAdapters
+  )
 {
   // Load the configuration for the Agent
   mConfig = new XmlParser(configXmlPath);
@@ -42,14 +47,14 @@ Agent::Agent(std::string server, unsigned int port, std::string configXmlPath)
   mDevices = mConfig->getDevices();
   mDataItems = mConfig->getDataItems();
   
-  // Add one adapter initially
-  Adapter * adapter = new Adapter(server, port);
-  adapter->setAgent(this);
-  mAdapterId = adapter->getId(); // FIXME: This is temporary
-  mAdapters.push_back(adapter);
+  mAdapterId = getCurrentTimeInSec();
   
-  // Have an xml printer ready and available
-  mXmlPrinter = new XmlPrinter();
+  for (unsigned int i=0; i<numAdapters; i++)
+  {
+    Adapter * adapter = new Adapter(mAdapterId, server, port);
+    adapter->setAgent(this);
+    mAdapters.push_back(adapter);
+  }
   
   // Sequence number and sliding buffer for data
   mSequence = 1;
@@ -62,7 +67,6 @@ Agent::Agent(std::string server, unsigned int port, std::string configXmlPath)
 
 Agent::~Agent()
 {
-  delete mXmlPrinter;
   delete mSlidingBuffer;
   delete mSequenceLock;
   delete mConfig;
@@ -126,22 +130,6 @@ bool Agent::on_request(
   
   return true;
 }
-
-/*void Agent::addAdapter(std::string server, unsigned int port, std::string configXmlPath, unsigned int numAdapters)
-{
-  mConfig = new XmlParser(configXmlPath);
-  
-  std::list<DataItem *> dataItems = mConfig->getDataItems();
-  mDevices = mConfig->getDevices();
-  mDataItems.merge(dataItems);
-
-  for (unsigned int i=0; i<numAdapters; i++)
-  {
-    Adapter * adapter = new Adapter(server, port, mConfig);
-    adapter->setAgent(this);
-    mAdapters.push_back(adapter);
-  }
-}*/
 
 void Agent::addToBuffer(std::string time, std::string key, std::string value)
 {
@@ -370,7 +358,12 @@ std::string Agent::handleProbe(std::string name)
   unsigned int seq, firstSeq;
   getSequenceNumbers(&seq, &firstSeq);
   
-  return mXmlPrinter->printProbe(1, SLIDING_BUFFER_SIZE, seq, mDeviceList);
+  return XmlPrinter::printProbe(
+    mAdapterId,
+    SLIDING_BUFFER_SIZE,
+    seq,
+    mDeviceList
+  );
 }
 
 bool Agent::handleSample(
@@ -432,8 +425,8 @@ std::string Agent::fetchCurrentData(std::list<DataItem *> dataItems)
 {
   unsigned int seq, firstSeq;
   getSequenceNumbers(&seq, &firstSeq);
-  return mXmlPrinter->printCurrent(
-      1,
+  return XmlPrinter::printCurrent(
+      mAdapterId,
       SLIDING_BUFFER_SIZE,
       seq,
       firstSeq,
@@ -475,7 +468,13 @@ std::string Agent::fetchSampleData(
   
   mSequenceLock->unlock();
   
-  return mXmlPrinter->printSample(1, SLIDING_BUFFER_SIZE, seq, firstSeq, results);
+  return XmlPrinter::printSample(
+    mAdapterId,
+    SLIDING_BUFFER_SIZE,
+    seq,
+    firstSeq,
+    results
+  );
 }
 
 Device * Agent::getDeviceByName(std::string name)
@@ -534,7 +533,7 @@ void Agent::getSequenceNumbers(unsigned int * seq, unsigned int * firstSeq)
 
 std::string Agent::printError(std::string errorCode, std::string text)
 {
-  return mXmlPrinter->printError(1, SLIDING_BUFFER_SIZE, 2, errorCode, text);
+  return XmlPrinter::printError(1, SLIDING_BUFFER_SIZE, 2, errorCode, text);
 }
 
 /***** Procedural Code *****/
@@ -553,7 +552,12 @@ int main()
   try
   {
     //Agent * agent = new Agent("128.32.164.245", 7878, "../include/new.xml");
-    Agent * agent = new Agent("agent.mtconnect.org", 7878, "../include/config_no_namespace.xml");
+    Agent * agent = new Agent(
+      "agent.mtconnect.org",
+      7878,
+      "../include/config_no_namespace.xml",
+      2
+    );
     
     // create a thread that will listen for the user to end this program
     thread_function t(terminateServerThread, agent);
@@ -568,3 +572,4 @@ int main()
   
   return 0;
 }
+

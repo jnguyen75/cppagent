@@ -34,11 +34,11 @@
 #include "adapter.hpp"
 
 /* Adapter public methods */
-Adapter::Adapter(std::string server, unsigned int port)
+Adapter::Adapter(unsigned int id, std::string server, unsigned int port)
 : Connector(server, port)
 {
   // Set Adapter ID
-  mId = time(NULL);
+  mId = id;
   
   // Will start threaded object: Adapter::thread()
   start();

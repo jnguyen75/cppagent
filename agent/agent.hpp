@@ -54,6 +54,7 @@
 #include "xml_printer.hpp"
 
 extern std::string intToString(unsigned int i);
+extern unsigned int getCurrentTimeInSec();
 
 class Adapter;
 class ComponentEvent;
@@ -141,8 +142,6 @@ protected:
   /* The sliding/circular buffer to hold all of the events/sample data */
   dlib::sliding_buffer_kernel_1<ComponentEvent *> * mSlidingBuffer;
   
-  XmlPrinter * mXmlPrinter;
-  
   /* Lists of data */
   unsigned int mAdapterId;
   std::list<Adapter *> mAdapters;
@@ -150,7 +149,12 @@ protected:
   std::list<DataItem *> mDataItems;
   
 public:
-  Agent(std::string server, unsigned int port, std::string configXmlPath);
+  Agent(
+    std::string server,
+    unsigned int port,
+    std::string configXmlPath,
+    unsigned int numAdapters
+  );
   
   virtual ~Agent();
   
@@ -169,8 +173,6 @@ public:
     unsigned short local_port,
     std::ostream& out
   );
-  
-  void addAdapter(unsigned int numAdapters = 1);
   
   /* Add ComponentEvent and specs to the SlidingBuffer */
   void addToBuffer(std::string time, std::string key, std::string value);

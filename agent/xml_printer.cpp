@@ -33,28 +33,257 @@
 
 #include "xml_printer.hpp"
 
-/* XmlPrinter public methods */
-XmlPrinter::XmlPrinter()
+std::string XmlPrinter::printError(
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    std::string errorCode,
+    std::string errorText
+  )
 {
-  try
-  {
-    initErrorXml();
-    initProbeXml();
-    initSampleXml();
-  }
-  catch (std::exception & e)
-  {
-    std::cout << "XmlPrinter.cpp: " << e.what() << std::endl;
-  }
-}
-
-XmlPrinter::~XmlPrinter()
-{
+  xmlpp::Document * mErrorXml = initXmlDoc(
+    "MTConnectStreams",
+    "urn:mtconnect.com:MTConnectError:0.9",
+    adapterId,
+    bufferSize,
+    nextSeq
+  );
+  
+  xmlpp::Element * error = mErrorXml->get_root_node()->add_child("Error");
+  error->set_attribute("errorCode", errorCode);
+  error->set_child_text(errorText);
+  
+  std::string toReturn = printNode(mErrorXml->get_root_node());
+  
   delete mErrorXml;
-  delete mProbeXml;
-  delete mSampleXml;
+  
+  return toReturn;
 }
 
+std::string XmlPrinter::printProbe(
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    std::list<Device *> deviceList
+  )
+{
+  xmlpp::Document * mProbeXml = initXmlDoc(
+    "MTConnectDevices",
+    "urn:mtconnect.com:MTConnectDevices:0.9",
+    adapterId,
+    bufferSize,
+    nextSeq
+  );
+  
+  xmlpp::Element * devices = mProbeXml->get_root_node()->add_child("Devices");
+  
+  std::list<Device *>::iterator d;
+  for (d=deviceList.begin(); d!=deviceList.end(); d++ )
+  {
+    xmlpp::Element * device = devices->add_child("Device");
+    printProbeHelper(device, *d);
+  }
+  
+  std::string toReturn = printNode(mProbeXml->get_root_node());
+  
+  delete mProbeXml;
+  
+  return toReturn;
+}
+
+std::string XmlPrinter::printCurrent(
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    unsigned int firstSeq,
+    std::list<DataItem *> dataItems
+  )
+{
+  xmlpp::Document * mSampleXml = initXmlDoc(
+    "MTConnectStreams",
+    "urn:mtconnect.com:MTConnectStreams:0.9",
+    adapterId,
+    bufferSize,
+    nextSeq
+  );
+  
+  xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
+  
+  std::list<xmlpp::Element *> elements;
+  
+  std::list<DataItem *>::iterator dataItem;
+  for (dataItem=dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
+  {
+    if ((*dataItem)->getLatestEvent() != NULL)
+    {
+      Component * component = (*dataItem)->getComponent();
+      
+      xmlpp::Element * deviceStream = getDeviceStream(streams,
+        component->getDevice());
+      
+      xmlpp::Element * element = searchParentsForId(elements,
+        component->getId());
+      
+      xmlpp::Element * child;
+      
+      if (element == NULL)
+      {
+        
+        xmlpp::Element * componentStream =
+          deviceStream->add_child("ComponentStream");
+        
+        componentStream->set_attribute("component", component->getClass());
+        componentStream->set_attribute("name", component->getName());
+        componentStream->set_attribute("componentId",
+          intToString(component->getId()));
+        
+        bool sample = (*dataItem)->isSample();
+        
+        std::string dataName = (sample) ? "Samples" : "Events";
+        
+        xmlpp::Element * data = componentStream->add_child(dataName);
+        
+        elements.push_back(data);
+        
+        child = data->add_child((*dataItem)->getTypeString(false));
+      }
+      else
+      {
+        child = element->add_child((*dataItem)->getTypeString(false));
+      }
+      
+      if ((*dataItem)->isSample())
+      {
+        child->add_child_text(floatToString((*dataItem)->getLatestEvent()->getFValue()));
+      }
+      else
+      {
+        child->add_child_text((*dataItem)->getLatestEvent()->getSValue());
+      }
+      
+      addAttributes(child, (*dataItem)->getLatestEvent()->getAttributes());
+    }
+  }
+  
+  
+  std::string toReturn = printNode(mSampleXml->get_root_node());
+  
+  delete mSampleXml;
+  
+  return toReturn;
+}
+
+std::string XmlPrinter::printSample(
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    unsigned int firstSeq,
+    std::list<ComponentEvent *> results
+  )
+{
+  xmlpp::Document * mSampleXml = initXmlDoc(
+    "MTConnectStreams",
+    "urn:mtconnect.com:MTConnectStreams:0.9",
+    adapterId,
+    bufferSize,
+    nextSeq
+  );
+    
+  xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
+  
+  std::list<xmlpp::Element *> elements;
+  
+  std::list<ComponentEvent *>::iterator result;
+  for (result=results.begin(); result!=results.end(); result++)
+  {
+    Component * component = (*result)->getDataItem()->getComponent();
+    
+    xmlpp::Element * element = searchParentsForId(elements, component->getId());
+    xmlpp::Element * child;
+    
+    if (element == NULL)
+    {
+      
+      xmlpp::Element * deviceStream = getDeviceStream(streams,
+        component->getDevice());
+      
+      xmlpp::Element * componentStream = deviceStream->add_child("ComponentStream");
+      
+      componentStream->set_attribute("component", component->getClass());
+      componentStream->set_attribute("name", component->getName());
+      componentStream->set_attribute("componentId", intToString(component->getId()));
+      
+      bool sample = (*result)->getDataItem()->isSample();
+      
+      std::string dataName = (sample) ? "Samples" : "Events";
+      
+      xmlpp::Element * data = componentStream->add_child(dataName);
+      
+      elements.push_back(data);
+      
+      child = data->add_child((*result)->getDataItem()->getTypeString(false));
+    }
+    else
+    {
+      child = element->add_child((*result)->getDataItem()->getTypeString(false));
+    }
+    
+    if ((*result)->getDataItem()->isSample())
+    {
+      child->add_child_text(floatToString((*result)->getFValue()));
+    }
+    else
+    {
+      child->add_child_text((*result)->getSValue());
+    }
+    
+    addAttributes(child, (*result)->getAttributes());
+  }
+  
+  std::string toReturn = printNode(mSampleXml->get_root_node());
+  
+  delete mSampleXml;
+  
+  return toReturn;
+}
+
+/* XmlPrinter Protected Methods */
+xmlpp::Document * XmlPrinter::initXmlDoc(
+    std::string rootName,
+    std::string xmlnsM,
+    unsigned int adapterId,
+    unsigned int bufferSize,
+    unsigned int nextSeq,
+    unsigned int firstSeq
+  )
+{
+  xmlpp::Document * doc = new xmlpp::Document;
+  
+  // Root
+  xmlpp::Element * root = doc->create_root_node(rootName);
+  root->set_attribute("xmlns:m", xmlnsM);
+  root->set_attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+  root->set_attribute("xmlns", "urn:mtconnect.com:MTConnectError:1.0");
+  root->set_attribute("xsi:schemaLocation",
+    "urn:mtconnect.com:MTConnectError:1.0 /schemas/MTConnectError.xsd");
+  
+  // Header
+  xmlpp::Element * header = doc->get_root_node()->add_child("Header");
+  header->set_attribute("creationTime", getCurrentTime());
+  header->set_attribute("sender", "localhost");
+  header->set_attribute("instanceId", intToString(adapterId));
+  header->set_attribute("bufferSize", intToString(bufferSize));
+  header->set_attribute("version", MTCONNECT_XML_VERS);
+  header->set_attribute("nextSequence", intToString(nextSeq));
+  
+  if (firstSeq > 0)
+  {
+    header->set_attribute("firstSequence", intToString(firstSeq));
+    header->set_attribute("lastSequence", intToString(nextSeq - 1));
+  }
+  
+  return doc;
+}
 
 std::string XmlPrinter::printNode(
     const xmlpp::Node* node,
@@ -132,273 +361,6 @@ std::string XmlPrinter::printNode(
   return toReturn;
 }
 
-std::string XmlPrinter::printError(
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    std::string errorCode,
-    std::string errorText
-  )
-{  
-  xmlpp::Element * header = addHeader(mErrorXml, adapterId, bufferSize, nextSeq);
-  
-  xmlpp::Element * error = mErrorXml->get_root_node()->add_child("Error");
-  error->set_attribute("errorCode", errorCode);
-  error->set_child_text(errorText);
-  
-  std::string toReturn = printNode(mErrorXml->get_root_node());
-  
-  mErrorXml->get_root_node()->remove_child(header);
-  mErrorXml->get_root_node()->remove_child(error);
-  
-  return toReturn;
-}
-
-std::string XmlPrinter::printProbe(
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    std::list<Device *> deviceList
-  )
-{  
-  xmlpp::Element * header = addHeader(mProbeXml, adapterId, bufferSize, nextSeq);
-  
-  xmlpp::Element * devices = mProbeXml->get_root_node()->add_child("Devices");
-  
-  std::list<Device *>::iterator d;
-  for (d=deviceList.begin(); d!=deviceList.end(); d++ )
-  {
-    xmlpp::Element * device = devices->add_child("Device");
-    printProbeHelper(device, *d);
-  }
-  
-  std::string toReturn = printNode(mProbeXml->get_root_node());
-  
-  mProbeXml->get_root_node()->remove_child(header);
-  mProbeXml->get_root_node()->remove_child(devices);
-  
-  return toReturn;
-}
-
-std::string XmlPrinter::printCurrent(
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    unsigned int firstSeq,
-    std::list<DataItem *> dataItems
-  )
-{
-  xmlpp::Element * header = addHeader(mSampleXml, adapterId, bufferSize, nextSeq, firstSeq);
-  xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
-  
-  std::list<xmlpp::Element *> elements;
-  
-  std::list<DataItem *>::iterator dataItem;
-  for (dataItem=dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
-  {
-    if ((*dataItem)->getLatestEvent() != NULL)
-    {
-      Device * device = (*dataItem)->getComponent()->getDevice();
-      
-      xmlpp::Element * deviceStream;
-      deviceStream = searchChildrenForDeviceName(streams, device->getName());
-      
-      if (deviceStream == NULL)
-      {
-        deviceStream = streams->add_child("DeviceStream");
-        deviceStream->set_attribute("name", device->getName());
-        deviceStream->set_attribute("uuid", device->getUuid());
-      }
-      
-      xmlpp::Element * element = searchParentsForId(elements, (*dataItem)->getComponent()->getId());
-      xmlpp::Element * child;
-      
-      if (element == NULL)
-      {
-        Component * component = (*dataItem)->getComponent();
-        
-        xmlpp::Element * componentStream = deviceStream->add_child("ComponentStream");
-        
-        componentStream->set_attribute("component", component->getClass());
-        componentStream->set_attribute("name", component->getName());
-        componentStream->set_attribute("componentId", intToString(component->getId()));
-        
-        bool sample = (*dataItem)->isSample();
-        
-        std::string dataName = (sample) ? "Samples" : "Events";
-        
-        xmlpp::Element * data = componentStream->add_child(dataName);
-        
-        elements.push_back(data);
-        
-        child = data->add_child((*dataItem)->getTypeString(false));
-      }
-      else
-      {
-        child = element->add_child((*dataItem)->getTypeString(false));
-      }
-      
-      if ((*dataItem)->isSample())
-      {
-        child->add_child_text(floatToString((*dataItem)->getLatestEvent()->getFValue()));
-      }
-      else
-      {
-        child->add_child_text((*dataItem)->getLatestEvent()->getSValue());
-      }
-      
-      addAttributes(child, (*dataItem)->getLatestEvent()->getAttributes());
-    }
-  }
-  
-  
-  std::string toReturn = printNode(mSampleXml->get_root_node());
-  
-  // This will recursively remove and get rid of its children  
-  mSampleXml->get_root_node()->remove_child(streams);
-  mSampleXml->get_root_node()->remove_child(header);
-  
-  return toReturn;
-}
-
-std::string XmlPrinter::printSample(
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    unsigned int firstSeq,
-    std::list<ComponentEvent *> results
-  )
-{
-  xmlpp::Element * header = addHeader(mSampleXml, adapterId, bufferSize, nextSeq, firstSeq);
-    
-  xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
-  
-  std::list<xmlpp::Element *> elements;
-  
-  std::list<ComponentEvent *>::iterator result;
-  for (result=results.begin(); result!=results.end(); result++)
-  {
-    xmlpp::Element * element = searchParentsForId(elements, (*result)->getDataItem()->getComponent()->getId());
-    xmlpp::Element * child;
-    
-    if (element == NULL)
-    {
-      Component * component = (*result)->getDataItem()->getComponent();
-      
-      
-      Device * device = (*result)->getDataItem()->getComponent()->getDevice();
-      
-      xmlpp::Element * deviceStream;
-      deviceStream = searchChildrenForDeviceName(streams, device->getName());
-      
-      if (deviceStream == NULL)
-      {
-        deviceStream = streams->add_child("DeviceStream");
-        deviceStream->set_attribute("name", device->getName());
-        deviceStream->set_attribute("uuid", device->getUuid());
-      }
-      
-      xmlpp::Element * componentStream = deviceStream->add_child("ComponentStream");
-      
-      componentStream->set_attribute("component", component->getClass());
-      componentStream->set_attribute("name", component->getName());
-      componentStream->set_attribute("componentId", intToString(component->getId()));
-      
-      bool sample = (*result)->getDataItem()->isSample();
-      
-      std::string dataName = (sample) ? "Samples" : "Events";
-      
-      xmlpp::Element * data = componentStream->add_child(dataName);
-      
-      elements.push_back(data);
-      
-      child = data->add_child((*result)->getDataItem()->getTypeString(false));
-    }
-    else
-    {
-      child = element->add_child((*result)->getDataItem()->getTypeString(false));
-    }
-    
-    if ((*result)->getDataItem()->isSample())
-    {
-      child->add_child_text(floatToString((*result)->getFValue()));
-    }
-    else
-    {
-      child->add_child_text((*result)->getSValue());
-    }
-    
-    addAttributes(child, (*result)->getAttributes());
-  }
-  
-  std::string toReturn = printNode(mSampleXml->get_root_node());
-  
-  // This will recursively remove and get rid of its children  
-  mSampleXml->get_root_node()->remove_child(streams);
-  mSampleXml->get_root_node()->remove_child(header);
-  
-  return toReturn;
-}
-
-/* XmlPrinter Protected Methods */
-void XmlPrinter::initErrorXml()
-{
-  mErrorXml = new xmlpp::Document;
-  addRoot(mErrorXml, "MTConnectStreams", "urn:mtconnect.com:MTConnectError:0.9");
-}
-
-void XmlPrinter::initProbeXml()
-{
-  mProbeXml = new xmlpp::Document;
-  addRoot(mProbeXml, "MTConnectDevices", "urn:mtconnect.com:MTConnectDevices:0.9");
-}
-
-void XmlPrinter::initSampleXml()
-{
-  mSampleXml = new xmlpp::Document;
-  addRoot(mSampleXml, "MTConnectStreams", "urn:mtconnect.com:MTConnectStreams:0.9");
-}
-
-xmlpp::Element * XmlPrinter::addRoot(xmlpp::Document * doc, std::string rootName, std::string xmlnsM)
-{
-  xmlpp::Element * root = doc->create_root_node(rootName);
-  
-  root->set_attribute("xmlns:m", xmlnsM);
-  root->set_attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-  root->set_attribute("xmlns", "urn:mtconnect.com:MTConnectError:1.0");
-  root->set_attribute("xsi:schemaLocation", "urn:mtconnect.com:MTConnectError:1.0 /schemas/MTConnectError.xsd");
-  
-  return root;
-}
-
-xmlpp::Element * XmlPrinter::addHeader(
-    xmlpp::Document * doc,
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    unsigned int firstSeq
-  )
-{
-  char timeBuffer [TIME_BUFFER_SIZE];
-  getCurrentTime(timeBuffer);
-  
-  xmlpp::Element * header = doc->get_root_node()->add_child("Header");
-  header->set_attribute("creationTime", timeBuffer);
-  header->set_attribute("sender", "localhost");
-  header->set_attribute("instanceId", intToString(adapterId));
-  header->set_attribute("bufferSize", intToString(bufferSize));
-  header->set_attribute("version", MTCONNECT_XML_VERS);
-  header->set_attribute("nextSequence", intToString(nextSeq));
-  
-  if (firstSeq > 0)
-  {
-    header->set_attribute("firstSequence", intToString(firstSeq));
-    header->set_attribute("lastSequence", intToString(nextSeq - 1));
-  }
-  
-  return header;
-}
-
 void XmlPrinter::printProbeHelper(xmlpp::Element * element, Component * component)
 {
   addAttributes(element, component->getAttributes());
@@ -457,31 +419,21 @@ std::string XmlPrinter::printIndentation(unsigned int indentation)
   return indents;
 }
 
-void XmlPrinter::getCurrentTime(char buffer[])
+void XmlPrinter::addAttributes(
+    xmlpp::Element * element,
+    std::map<std::string, std::string> attributes
+  )
 {
-  time_t rawtime;
-  struct tm * timeinfo;
-
-  time ( &rawtime );
-  timeinfo = gmtime ( &rawtime );
-
-  strftime (buffer, TIME_BUFFER_SIZE, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
-}
-
-void XmlPrinter::addAttributes(xmlpp::Element * element, std::map<std::string, std::string> attributes)
-{
-  for (std::map<std::string, std::string>::iterator attribute=attributes.begin();
-        attribute!=attributes.end();
-        attribute++
-      )
+  std::map<std::string, std::string>::iterator attribute;
+  for (attribute=attributes.begin(); attribute!=attributes.end(); attribute++)
   {
     element->set_attribute(attribute->first, attribute->second);
   }
 }
 
-xmlpp::Element * XmlPrinter::searchChildrenForDeviceName(
+xmlpp::Element * XmlPrinter::getDeviceStream(
     xmlpp::Element * element,
-    std::string name
+    Device * device
   )
 {
   xmlpp::Node::NodeList children = element->get_children();
@@ -491,13 +443,18 @@ xmlpp::Element * XmlPrinter::searchChildrenForDeviceName(
     xmlpp::Element * nodeElement;
     nodeElement = dynamic_cast<xmlpp::Element *>(*child);
     
-    if (nodeElement and nodeElement->get_attribute_value("name") == name)
+    if (nodeElement and
+      nodeElement->get_attribute_value("name") == device->getName())
     {
       return nodeElement;
     }
   }
   
-  return NULL;
+  // No element for device found, create a new one
+  xmlpp::Element * deviceStream = element->add_child("DeviceStream");
+  deviceStream->set_attribute("name", device->getName());
+  deviceStream->set_attribute("uuid", device->getUuid());
+  return deviceStream;
 }
 
 xmlpp::Element * XmlPrinter::searchParentsForId(
