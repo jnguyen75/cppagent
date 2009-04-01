@@ -53,26 +53,28 @@
 // Include the LibXML Library
 #include <libxml++/libxml++.h>
 
+extern std::string intToString(unsigned int i);
+extern std::string floatToString(float i);
+
 class XmlPrinter
 { 
 protected:
-  /* Pointer to the stream to write to XML */
-  std::ostringstream * mXmlStream;
-  
+  /* Xml documents */
   xmlpp::Document * mErrorXml;
-  
   xmlpp::Document * mSampleXml;
-  
   xmlpp::Document * mProbeXml;
   
 protected:
+  /* Initiate all documents */
   void initErrorXml();
-  
   void initProbeXml();
-  
   void initSampleXml();
   
-  xmlpp::Element * addRoot(xmlpp::Document * doc, std::string rootName, std::string xmlnsM);
+  xmlpp::Element * addRoot(
+    xmlpp::Document * doc,
+    std::string rootName,
+    std::string xmlnsM
+  );
   
   xmlpp::Element * addHeader(
     xmlpp::Document * doc,
@@ -85,29 +87,36 @@ protected:
   void printProbeHelper(xmlpp::Element * element, Component * component);
   
   /* Simple helper function to put indentations into the XML stream */
-  void printIndentation(unsigned int indentation);
+  std::string printIndentation(unsigned int indentation);
   
   void getCurrentTime(char buffer[]);
   
-  void addAttributes(xmlpp::Element * element, std::map<std::string, std::string> attributes);
+  void addAttributes(
+    xmlpp::Element * element,
+    std::map<std::string, std::string> attributes
+  );
   
-  xmlpp::Element * searchListForElement(std::list<xmlpp::Element *> elements, unsigned int name);
+  xmlpp::Element * searchParentsForId(
+    std::list<xmlpp::Element *> elements,
+    unsigned int name
+  );
   
-  std::string intToString(unsigned int i);
-  
-  std::string floatToString(float i);
+  xmlpp::Element * searchChildrenForDeviceName(
+    xmlpp::Element * element,
+    std::string name
+  );
   
 public:
   /* Constructor to set the pointer to the correct stringstream */
-  XmlPrinter(std::ostringstream * xmlStream);
+  XmlPrinter();
   
   /* Virtual destructor */
   virtual ~XmlPrinter();
   
   /* Function to parse and write XML */
-  void printNode(const xmlpp::Node* node, unsigned int indentation = 0);
+  std::string printNode(const xmlpp::Node* node, unsigned int indentation = 0);
   
-  void printError
+  std::string printError
   (
     unsigned int adapterId,
     unsigned int bufferSize,
@@ -116,7 +125,7 @@ public:
     std::string errorText
   );
   
-  void printProbe
+  std::string printProbe
   (
     unsigned int adapterId,
     unsigned int bufferSize,
@@ -124,7 +133,7 @@ public:
     std::list<Device *> devices
   );
   
-  void printCurrent
+  std::string printCurrent
   (
     unsigned int adapterId,
     unsigned int bufferSize,
@@ -133,7 +142,7 @@ public:
     std::list<DataItem *> dataItems
   );
   
-  void printSample
+  std::string printSample
   (
     unsigned int adapterId,
     unsigned int bufferSize,

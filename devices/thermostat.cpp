@@ -1,3 +1,4 @@
+
 /*
 * Copyright (c) 2008, AMT – The Association For Manufacturing Technology (“AMT”)
 * All rights reserved.
@@ -31,20 +32,17 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef CONTROLLER_HPP
-#define CONTROLLER_HPP
+#include "thermostat.hpp"
 
-#include "component.hpp"
+/* Thermostat public methods */
+Thermostat::Thermostat(std::map<std::string, std::string> attributes)
+: Component(attributes)
+{
 
-class Controller : public Component
-{ 
-public:
-  /* Constructor that sets variables from an attribute map */
-  Controller(std::map<std::string, std::string> attributes);
-  
-  /* Inherited method that returns name of the class */
-  const std::string getClass() const;
-};
+}
 
-#endif
+const std::string Thermostat::getClass() const
+{
+  return "Thermostat";
+}
 

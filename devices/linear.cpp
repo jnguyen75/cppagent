@@ -41,7 +41,7 @@ Linear::Linear(std::map<std::string, std::string> attributes)
 
 }
 
-std::string Linear::getClass()
+const std::string Linear::getClass() const
 {
   return "Linear";
 }

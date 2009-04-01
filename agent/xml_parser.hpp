@@ -37,14 +37,16 @@
 #include <iostream>
 #include <list>
 
+#include "component.hpp"
+
 #include "axes.hpp"
 #include "controller.hpp"
-#include "component.hpp"
 #include "device.hpp"
 #include "data_item.hpp"
 #include "linear.hpp"
 #include "power.hpp"
 #include "spindle.hpp"
+#include "thermostat.hpp"
 
 // Include the LibXML Library
 #include <libxml++/libxml++.h>
@@ -60,13 +62,13 @@ protected:
   std::list<DataItem *> mDataItems;
 
 protected:
-  std::map<std::string, std::string> getAttributes(const xmlpp::Node * node);
+  std::map<std::string, std::string> getAttributes(const xmlpp::Element * element);
   
   /* Main method to process the nodes and return the objects */
   Component * handleComponent(xmlpp::Node * component, Component * parent = NULL);
   
   /* Helper to handle/return each component of the device */
-  Component * loadComponent(xmlpp::Node * component, Component::EComponentSpecs spec);
+  Component * loadComponent(xmlpp::Node * node, Component::EComponentSpecs spec);
   
   /* Load the data items */
   void loadDataItem(xmlpp::Node * dataItems, Component * component);
@@ -85,10 +87,10 @@ public:
   virtual ~XmlParser();
   
   /* Get list of devices and data items */
-  std::list<Device *> getDevices();
-  std::list<DataItem *> getDataItems();
+  std::list<Device *> getDevices() const;
+  std::list<DataItem *> getDataItems() const;
   
-  xmlpp::Node * getRootNode();
+  xmlpp::Node * getRootNode() const;
 };
 
 #endif

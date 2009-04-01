@@ -31,16 +31,16 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef CONTROLLER_HPP
-#define CONTROLLER_HPP
+#ifndef THERMOSTAT_HPP
+#define THERMOSTAT_HPP
 
 #include "component.hpp"
 
-class Controller : public Component
+class Thermostat : public Component
 { 
 public:
   /* Constructor that sets variables from an attribute map */
-  Controller(std::map<std::string, std::string> attributes);
+  Thermostat(std::map<std::string, std::string> attributes);
   
   /* Inherited method that returns name of the class */
   const std::string getClass() const;

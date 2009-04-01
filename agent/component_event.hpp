@@ -41,12 +41,15 @@
 #include <iostream>
 #include <cmath>
 
+extern std::string intToString(unsigned int i);
+
 class DataItem;
 
 /* Component Event */
 class ComponentEvent
 {
 public:
+  /* Enumeration for the simple units for simple conversions */
   enum ESimpleUnits
   {
     INCH,
@@ -98,25 +101,25 @@ protected:
   /* Convert a simple value from native units to MTConnect units */
   float convertSimple(std::string units, float v);
   
-  //void
-  
 public:
   /* Initialize the ComponentEvent with the type of event, sequence number, time and value */
   ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value);
   
-  std::map<std::string, std::string> getAttributes();
-  
   /* Virtual destructor */
   virtual ~ComponentEvent();
   
-  DataItem * getDataItem();
+  /* Extract the component event data into a map */
+  std::map<std::string, std::string> getAttributes();
   
-  /* Get value, whatever the value may be*/
-  float getFValue();
-  std::string getSValue();
+  DataItem * getDataItem() const;
+  
+  /* Get the value */
+  float getFValue() const;
+  std::string getSValue() const;
   
 public:
   static ComponentEvent::ESimpleUnits getSimpleUnitsEnum(std::string name);
 };
 
 #endif
+

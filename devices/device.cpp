@@ -38,27 +38,18 @@
 Device::Device(std::map<std::string, std::string> attributes)
 : Component(attributes)
 {
-  // Necessary
-  mUuid = attributes["uuid"];
   mIso841Class = atoi(attributes["iso841Class"].c_str());
-
-  if (!attributes["sampleRate"].empty())
-  {
-    mSampleRate = atof(attributes["sampleRate"].c_str());
-  }
 }
 
-std::string Device::getClass()
+const std::string Device::getClass() const
 {
   return "Device";
 }
 
-
 std::map<std::string, std::string> Device::getAttributes()
 {
   std::map<std::string, std::string> attributes = Component::getAttributes();
-  
   attributes["iso841Class"] = intToString(mIso841Class);
-  
   return attributes;
 }
+

@@ -79,26 +79,26 @@ std::map<std::string, std::string> ComponentEvent::getAttributes()
 {
   std::map<std::string, std::string> attributes;
   
-  attributes["dataItemId"] = Component::intToString(mDataItem->getId());
+  attributes["dataItemId"] = intToString(mDataItem->getId());
   attributes["timestamp"] = mTime;
   attributes["subType"] = mDataItem->getSubType();
   attributes["name"] = mDataItem->getName();
-  attributes["sequence"] = Component::intToString(mSequence);
+  attributes["sequence"] = intToString(mSequence);
   
   return attributes;
 }
 
-DataItem * ComponentEvent::getDataItem()
+DataItem * ComponentEvent::getDataItem() const
 {
   return mDataItem;
 }
 
-float ComponentEvent::getFValue()
+float ComponentEvent::getFValue() const
 {
   return fValue;
 }
 
-std::string ComponentEvent::getSValue()
+std::string ComponentEvent::getSValue() const
 {
   return sValue;
 }
@@ -109,10 +109,9 @@ void ComponentEvent::convertValue(std::string value)
   // Check if the type is an alarm or if it doesn't have units
   if (mDataItem->getType() == DataItem::ALARM or mDataItem->getNativeUnits().empty())
   {
-    // TODO: Convert to upper case, split into array??
     sValue = value;
     return;
-  } // Else
+  }
   
   std::string units = mDataItem->getNativeUnits();
   std::string::size_type slashLoc = units.find('/');
@@ -214,3 +213,4 @@ ComponentEvent::ESimpleUnits ComponentEvent::getSimpleUnitsEnum(std::string name
   
   return (ComponentEvent::ESimpleUnits) -1;
 }
+

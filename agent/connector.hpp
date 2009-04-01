@@ -34,20 +34,20 @@
 #ifndef CONNECTOR_HPP
 #define CONNECTOR_HPP
 
-// Include the DLIB libraries
 #include "dlib/sockets.h"
 #include "dlib/server.h"
-
-/* Size of buffer to read at a time from the socket */
-#define SOCKET_BUFFER_SIZE 80
-
-/* Size of buffer to search in the buffer stream */
-#define LINE_BUFFER_SIZE 1024
 
 using namespace dlib;
 
 class Connector
 {
+private:
+  /* Size of buffer to read at a time from the socket */  
+  static const unsigned int SOCKET_BUFFER_SIZE = 80;
+  
+  /* Size of buffer to search in the buffer stream */  
+  static const unsigned int LINE_BUFFER_SIZE = 1024;
+  
 protected:
   /* Name of the server to connect to */
   std::string mServer;
@@ -61,7 +61,8 @@ protected:
 public:
   /* Instantiate the server by assigning it a server and port */
   Connector(std::string server, unsigned int port);
-    virtual ~Connector();
+  
+  virtual ~Connector();
   
   /*
    *  Blocking call to connect to the server/port
@@ -69,9 +70,7 @@ public:
    */
   void connect();
   
-  /*
-   *  Method to handle what to do with each line of data from Socket
-   */
+  /* Method to handle what to do with each line of data from Socket */
   virtual void processData(std::string line) = 0;
 };
 

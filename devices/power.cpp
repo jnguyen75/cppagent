@@ -41,7 +41,7 @@ Power::Power(std::map<std::string, std::string> attributes)
 
 }
 
-std::string Power::getClass()
+const std::string Power::getClass() const
 {
   return "Power";
 }

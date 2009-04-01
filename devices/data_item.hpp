@@ -38,20 +38,23 @@
 #include <iostream>
 
 #include "component.hpp"
-#include "../agent/component_event.hpp"
+//#include "../agent/component_event.hpp"
 
-class Component;
+extern std::string intToString(unsigned int i);
 
+//class Component;
 class ComponentEvent;
 
 class DataItem
 {
 public:
-  enum Category
+  /* Enumeration for data item category */
+  enum ECategory
   {
     SAMPLE,
     EVENT
   };
+  
   
   enum EType
   {
@@ -101,7 +104,7 @@ protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
   std::string mSubType;
   
   /* Category of data item */
-  Category mCategory;
+  ECategory mCategory;
   
   /* Native units of data item */
   std::string mNativeUnits;
@@ -124,50 +127,42 @@ protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
   /* Component that data item is associated with */  
   Component * mComponent;
   
+  /* Pointer to the latest component event that occured for this data item */
   ComponentEvent * mLatestEvent;
   
 public:
   /* Construct a data item with appropriate attributes mapping */
   DataItem(std::map<std::string, std::string> attributes);
   
+  /* Get a map of all the attributes of this data item */
   std::map<std::string, std::string> getAttributes();
   
-  /* Get ID of data item */
-  unsigned int getId();
-  
-  /* Get name of data item */
-  std::string getName();
-  
-  std::string getSource();
+  /* Getter methods for data item specs */
+  unsigned int getId() const;
+  std::string getName() const;
+  std::string getSource() const;
+  DataItem::EType getType() const;
+  std::string getTypeString(bool uppercase) const;
+  std::string getSubType() const;
+  std::string getNativeUnits() const;
+  float getNativeScale() const;
   
   /* Returns if data item has this name (or source name) */
   bool hasName(std::string name);
   
-  /* Get type of data item */
-  DataItem::EType getType();
-  std::string getTypeString(bool uppercase);
-  std::string getSubType();
-  
-  Category getCategory();
-  
+  /* Returns true if data item is */
   bool isSample();
-  
-  /* Get native units of data item */
-  std::string getNativeUnits();
-  
-  /* Get native scale of data item */
-  float getNativeScale();
   
   /* Add a source (extra information) to data item */
   void addSource(std::string source);
   
   /* Set/get component that data item is associated with */
   void setComponent(Component * component);
-  Component * getComponent();
+  Component * getComponent() const;
   
   /* Set/get latest component event the data item is associated with */
   void setLatestEvent(ComponentEvent * event);
-  ComponentEvent * getLatestEvent();
+  ComponentEvent * getLatestEvent() const;
   
 public:
   /* Get the enumeration corresponding to the string */
@@ -175,5 +170,4 @@ public:
 };
 
 #endif
-
 

@@ -43,18 +43,24 @@
 
 #include <ctime>
 
-// External libraries
 #include "dlib/md5.h"
 #include "dlib/server.h"
 #include "dlib/sliding_buffer.h"
 
+#include <libxml++/libxml++.h>
+
 #include "adapter.hpp"
-#include "component_event.hpp"
+#include "xml_parser.hpp"
 #include "xml_printer.hpp"
 
-using namespace dlib;
+extern std::string intToString(unsigned int i);
 
 class Adapter;
+class ComponentEvent;
+class DataItem;
+class Device;
+
+using namespace dlib;
 
 // Web server used from dlib example
 class Agent : public server::http_1a_c
@@ -72,11 +78,28 @@ protected:
   std::list<DataItem *> getDataItems(std::string path, xmlpp::Node * node = NULL);
   
   /* HTTP methods to handle the 3 basic calls*/
-  void handleCall(std::ostream& out, const map_type& queries, std::string call, std::string device = "");
-  void handleCurrent(std::ostream& out, std::string path, unsigned int frequency = 0);
-  void handleProbe(std::string device);
-  void handleSample(
+  bool handleCall(
     std::ostream& out,
+    std::string& result,
+    const map_type& queries,
+    std::string call,
+    std::string device = ""
+  );
+  
+  bool handleCurrent(
+    std::ostream& out,
+    std::string& result,
+    std::string path,
+    unsigned int frequency = 0
+  );
+  
+  std::string handleProbe(
+    std::string device
+  );
+  
+  bool handleSample(
+    std::ostream& out,
+    std::string& result,
     std::string path,
     unsigned int start,
     unsigned int count,
@@ -92,18 +115,19 @@ protected:
     unsigned int count = 0
   );
   
-  void fetchCurrentData(std::list<DataItem *> dataItems);
-  void fetchSampleData(std::list<DataItem *> dataItems, unsigned int start, unsigned int count);
+  std::string fetchCurrentData(std::list<DataItem *> dataItems);
+  std::string fetchSampleData(std::list<DataItem *> dataItems, unsigned int start, unsigned int count);
   
   /* Find devices/data items by name */
   Device * getDeviceByName(std::string name);
   DataItem * getDataItemByName(std::string name);
+  bool hasDataItem(std::list<DataItem *> dataItems, std::string name);
   
   /* retrieve the sequence number and the first sequence number in buffer */
   void getSequenceNumbers(unsigned int * seq, unsigned int * firstSeq);
   
   /* Output an XML Error */
-  void printError(std::string errorCode, std::string text);
+  std::string printError(std::string errorCode, std::string text);
   
 protected:
   XmlParser * mConfig;
@@ -117,18 +141,16 @@ protected:
   /* The sliding/circular buffer to hold all of the events/sample data */
   dlib::sliding_buffer_kernel_1<ComponentEvent *> * mSlidingBuffer;
   
-  /* Class string stream to return XML on requests */
-  std::ostringstream mXmlStream;
-  
   XmlPrinter * mXmlPrinter;
   
   /* Lists of data */
+  unsigned int mAdapterId;
   std::list<Adapter *> mAdapters;
   std::list<Device *> mDevices;
   std::list<DataItem *> mDataItems;
   
 public:
-  Agent();
+  Agent(std::string server, unsigned int port, std::string configXmlPath);
   
   virtual ~Agent();
   
@@ -148,7 +170,7 @@ public:
     std::ostream& out
   );
   
-  void addAdapter(std::string server, unsigned int port, std::string configXmlPath, unsigned int numAdapters = 1);
+  void addAdapter(unsigned int numAdapters = 1);
   
   /* Add ComponentEvent and specs to the SlidingBuffer */
   void addToBuffer(std::string time, std::string key, std::string value);

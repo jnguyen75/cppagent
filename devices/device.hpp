@@ -36,16 +36,22 @@
 
 #include "component.hpp"
 
+class Component;
+
 class Device : public Component
 { 
 protected:
+  /* The iso841Class of the device */
   unsigned int mIso841Class;
   
 public:
+  /* Constructor that sets variables from an attribute map */
   Device(std::map<std::string, std::string> attributes);
   
-  std::string getClass();
+  /* Inherited method that returns name of the class */
+  const std::string getClass() const;
   
+  /* Retrieve the attributes of the device in an attribute map */
   std::map<std::string, std::string> getAttributes();
 };
 

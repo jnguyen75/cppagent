@@ -42,6 +42,7 @@ const std::string Component::SComponentSpecs[NumComponentSpecs] = {
   "Linear",
   "Power",
   "Spindle",
+  "Thermostat",
   // Component details
   "Components",
   "DataItem",
@@ -124,14 +125,35 @@ std::map<std::string, std::string> Component::getDescription()
   return description;
 }
 
-unsigned int Component::getId()
+unsigned int Component::getId() const
 {
   return mId;
 }
 
-std::string Component::getName()
+std::string Component::getName() const
 {
   return mName;
+}
+
+std::string Component::getUuid() const
+{
+  return mUuid;
+}
+
+Device * Component::getDevice() const
+{
+  if (getClass() == "Device")
+  {
+    return (Device *) (this);
+  }
+  else if (mParent != NULL)
+  {
+    return mParent->getDevice();
+  }
+  else // Should never get here
+  {
+    return NULL;
+  }
 }
 
 void Component::setParent(Component * parent)
@@ -139,7 +161,7 @@ void Component::setParent(Component * parent)
   mParent = parent;
 }
 
-Component * Component::getParent()
+Component * Component::getParent() const
 {
   return mParent;
 }
@@ -149,7 +171,7 @@ void Component::addChild(Component * child)
   mChildren.push_back(child);
 }
 
-std::list<Component *> Component::getChildren()
+std::list<Component *> Component::getChildren() const
 {
   return mChildren;
 }
@@ -159,27 +181,12 @@ void Component::addDataItem(DataItem * dataItem)
   mDataItems.push_back(dataItem);
 }
 
-std::list<DataItem *> Component::getDataItems()
+std::list<DataItem *> Component::getDataItems() const
 {
   return mDataItems;
 }  
 
 /* Component public static methods */
-std::string Component::intToString(unsigned int i)
-{
-  std::ostringstream stm;
-  stm << i;
-  return stm.str();
-}
-
-std::string Component::floatToString(float f)
-{
-  std::ostringstream stm;
-  stm << f;
-  return stm.str();
-}
-
-
 Component::EComponentSpecs Component::getComponentEnum(std::string name)
 {
   for (unsigned int i=0; i<Component::NumComponentSpecs; i++)
@@ -193,7 +200,3 @@ Component::EComponentSpecs Component::getComponentEnum(std::string name)
   return (Component::EComponentSpecs) -1;
 }
 
-bool Component::hasNameAndId(std::map<std::string, std::string> attributes)
-{
-  return !attributes["name"].empty() and !attributes["id"].empty();
-}

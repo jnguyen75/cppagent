@@ -34,14 +34,14 @@
 
 #include "controller.hpp"
 
-/* Spindle public methods */
+/* Controller public methods */
 Controller::Controller(std::map<std::string, std::string> attributes)
 : Component(attributes)
 {
 
 }
 
-std::string Controller::getClass()
+const std::string Controller::getClass() const
 {
   return "Controller";
 }

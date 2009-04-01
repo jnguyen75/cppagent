@@ -35,8 +35,9 @@ spindle.cpp \
 linear.cpp \
 controller.cpp \
 power.cpp \
+thermostat.cpp \
 xml_printer.cpp \
-dlib.cpp
+globals.cpp
 
 OBJS=$(SOURCES:%.cpp=%.o)
 LIBS=$(LIBRARIES:%=-l%)
@@ -55,5 +56,5 @@ agent: $(OBJS)
 	@echo Compiling $<
 	@g++ -c ${CXXFLAGS} $<
 
-http.o: adapter.hpp connector.hpp component_event.hpp axes.hpp controller.hpp device.hpp \
-	data_item.hpp linear.hpp power.hpp spindle.hpp xml_printer.hpp
+agent.o: adapter.hpp connector.hpp component_event.hpp axes.hpp controller.hpp device.hpp \
+	data_item.hpp linear.hpp power.hpp thermostat.hpp spindle.hpp xml_printer.hpp

@@ -51,7 +51,7 @@ void Connector::connect()
   try
   {
     // Connect to server:port, failure will throw dlib::socket_error exception
-    // Using a smart pointer to ensure connection is deleted if exception is thrown
+    // Using a smart pointer to ensure connection is deleted if exception thrown
     scoped_ptr<connection> con(dlib::connect(mServer, mPort));
     
     // Make sure connection buffer is clear
@@ -69,10 +69,6 @@ void Connector::connect()
     { 
       // Give a null terminator for the end of buffer
       sockBuf[status] = '\0';
-      
-      // ### TAKE ME OUT ###
-      //std::cout << "Received: " << sockBuf << std::endl;
-      //::sleep(1);
       
       // Append the temporary buffer to the socket buffer
       mBuffer += sockBuf;
@@ -116,3 +112,4 @@ void Connector::connect()
     std::cout << "Connection Exception: " << e.what() << std::endl;
   }
 }
+

@@ -28,8 +28,9 @@ spindle.cpp \
 linear.cpp \
 controller.cpp \
 power.cpp \
+thermostat.cpp \
 xml_printer.cpp \
-dlib.cpp
+globals.cpp
 
 OBJS=$(SOURCES:%.cpp=%.o)
 LIBS=$(LIBRARIES:%=-l%)
@@ -46,4 +47,4 @@ agent: $(OBJS)
 	g++ -c ${CXXFLAGS} $< 
 
 agent.o: adapter.hpp connector.hpp component_event.hpp axes.hpp controller.hpp device.hpp \
-	data_item.hpp linear.hpp power.hpp spindle.hpp xml_printer.hpp
+	data_item.hpp linear.hpp power.hpp spindle.hpp thermostat.hpp xml_printer.hpp

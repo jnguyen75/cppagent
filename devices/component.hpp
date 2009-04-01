@@ -34,17 +34,17 @@
 #ifndef COMPONENT_HPP
 #define COMPONENT_HPP
 
-#include <list>
-#include <map>
-#include <string>
-
 #include <iostream>
 #include <sstream>
+#include <string>
+#include <list>
+#include <map>
 
-#include "data_item.hpp"
+extern std::string intToString(unsigned int i);
+extern std::string floatToString(float f);
 
-// Forward Declaration
 class DataItem;
+class Device;
 
 class Component
 {
@@ -60,6 +60,7 @@ public:
     LINEAR,
     POWER,
     SPINDLE,
+    THERMOSTAT,
     // Component details
     COMPONENTS,
     DATA_ITEM,
@@ -69,9 +70,8 @@ public:
     TEXT
   };
   
-  static const unsigned int NumComponentSpecs = 12;
+  static const unsigned int NumComponentSpecs = 13;
   static const std::string SComponentSpecs[];
-  
   
 protected:
   /* Component specs */
@@ -106,8 +106,10 @@ public:
   /* Take in mapping of attributes */
   Component(std::map<std::string, std::string> attributes);
   
-  virtual std::string getClass() = 0;
+  /* Return what part of the component it is */
+  virtual const std::string getClass() const = 0;
   
+  /* Return a map of attributes of all the component specs */
   virtual std::map<std::string, std::string> getAttributes();
   
   /* Add/get description specifications using an attribute map */
@@ -115,33 +117,29 @@ public:
   std::map<std::string, std::string> getDescription();
   
   /* Getter methods for the component ID/Name */
-  unsigned int getId();
-  std::string getName();
+  unsigned int getId() const;
+  std::string getName() const;
+  std::string getUuid() const;
+  
+  /* Get the device that any component is associated with */
+  Device * getDevice() const;
   
   /* Set/Get the component's parent component */
   void setParent(Component * parent);
-  Component * getParent();
+  Component * getParent() const;
   
   /* Add to/get the component's list of children */
   void addChild(Component * child);
-  std::list<Component *> getChildren();
+  std::list<Component *> getChildren() const;
   
   /* Add to/get the component's list of data items */
   void addDataItem(DataItem * dataItem);
-  std::list<DataItem *> getDataItems();
+  std::list<DataItem *> getDataItems() const;
   
 public:
-  /* Simple methods to convert float/int to strings */
-  static std::string intToString(unsigned int i);
-  static std::string floatToString(float i);
-  
   /* Get the enumeration corresponding to the string */
   static Component::EComponentSpecs getComponentEnum(std::string name);
-  
-  /* Error checking to check attributes if there is a name & ID keys */
-  static bool hasNameAndId(std::map<std::string, std::string> attributes);
 };
 
 #endif
-
 

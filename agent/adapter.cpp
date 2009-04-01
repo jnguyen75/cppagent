@@ -34,7 +34,7 @@
 #include "adapter.hpp"
 
 /* Adapter public methods */
-Adapter::Adapter(std::string server, unsigned int port, XmlParser * configXml)
+Adapter::Adapter(std::string server, unsigned int port)
 : Connector(server, port)
 {
   // Set Adapter ID
@@ -51,7 +51,7 @@ Adapter::~Adapter()
   wait();
 }
 
-unsigned int Adapter::getId()
+unsigned int Adapter::getId() const
 {
   return mId;
 }
@@ -77,14 +77,19 @@ void Adapter::processData(std::string line)
   
   if (type == "Alarm")
   {
-    std::cout << "Alarm!" << std::endl;
-    mAgent->addToBuffer(time, key, value);
+    std::string alarmValue = toUpperCase(value);
+    
+    while (getline(toParse, value, '|'))
+    {
+      alarmValue += "|" + toUpperCase(value);
+    }
+    
+    mAgent->addToBuffer(time, key, alarmValue);
   }
   else // Key -> Value Pairings
   {
     mAgent->addToBuffer(time, key, value);
     
-    // Will be bypassed by single "Time|Item|Value" event
     while (getline(toParse, key, '|') and getline(toParse, value, '|'))
     {
       mAgent->addToBuffer(time, key, value);
@@ -98,3 +103,4 @@ void Adapter::thread()
   std::cout << "Starting adapter thread to read data" << std::endl;
   connect();
 }
+

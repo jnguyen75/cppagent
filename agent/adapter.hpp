@@ -36,23 +36,15 @@
 
 #include <iostream>
 
-#include <map>
-#include <list>
 #include <ctime>
-#include <cmath>
-
-#include "xml_parser.hpp"
 
 #include "dlib/sockets.h"
 #include "dlib/threads.h"
 
-#include "connector.hpp"
-#include "component_event.hpp"
-
 #include "agent.hpp"
-#include "component.hpp"
-#include "device.hpp"
-#include "data_item.hpp"
+#include "connector.hpp"
+
+extern std::string toUpperCase(std::string text);
 
 class Agent;
 
@@ -73,14 +65,15 @@ private:
   
 public:
   /* Load the adapter with the .xml file */
-  Adapter(std::string server, unsigned int port, XmlParser * configXml);
+  Adapter(std::string server, unsigned int port);
   
   /* Destructor */
   virtual ~Adapter();
   
-  /*  */
-  unsigned int getId();
+  /* Get the adapter ID */
+  unsigned int getId() const;
   
+  /* Set pointer to the agent */
   void setAgent(Agent * agent);
   
   /* Inherited method for incoming data from the server */
@@ -88,3 +81,4 @@ public:
 };
 
 #endif
+

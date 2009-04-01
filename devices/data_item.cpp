@@ -115,9 +115,11 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
     mUnits = attributes["units"];
   }
   
-  mNativeScale = (!attributes["nativeScale"].empty()) ? atof(attributes["nativeScale"].c_str()) : 0.0f;
+  mNativeScale = (!attributes["nativeScale"].empty()) ?
+    atof(attributes["nativeScale"].c_str()) : 0.0f;
   
-  mSignificantDigits = (!attributes["significantDigits"].empty()) ? atoi(attributes["significantDigits"].c_str()) : 0;
+  mSignificantDigits = (!attributes["significantDigits"].empty()) ?
+    atoi(attributes["significantDigits"].c_str()) : 0;
   
   if (!attributes["coordinateSystem"].empty())
   {
@@ -132,7 +134,7 @@ std::map<std::string, std::string> DataItem::getAttributes()
 {
   std::map<std::string, std::string> attributes;
   
-  attributes["id"] = Component::intToString(mId);
+  attributes["id"] = intToString(mId);
   attributes["name"] = mName;
   attributes["type"] = mType;
   
@@ -153,9 +155,9 @@ std::map<std::string, std::string> DataItem::getAttributes()
     attributes["units"] = mUnits;
   }
   
-  attributes["nativeScale"] = Component::floatToString(mNativeScale);
+  attributes["nativeScale"] = floatToString(mNativeScale);
   
-  attributes["significantDigits"] = Component::intToString(mSignificantDigits);
+  attributes["significantDigits"] = intToString(mSignificantDigits);
   
   if (!mCoordinateSystem.empty())
   {
@@ -166,19 +168,44 @@ std::map<std::string, std::string> DataItem::getAttributes()
 }
 
 
-unsigned int DataItem::getId()
+unsigned int DataItem::getId() const
 {
   return mId;
 }
 
-std::string DataItem::getName()
+std::string DataItem::getName() const
 {
   return mName;
 }
 
-std::string DataItem::getSource()
+std::string DataItem::getSource() const
 {
   return mSource;
+}
+
+DataItem::EType DataItem::getType() const
+{
+  return mType;
+}
+
+std::string DataItem::getTypeString(bool uppercase) const
+{
+  return (uppercase) ? STypeUpper[mType] : STypeCamel[mType];
+}
+
+std::string DataItem::getSubType() const
+{
+  return mSubType;
+}
+
+std::string DataItem::getNativeUnits() const
+{
+  return mNativeUnits;
+}
+
+float DataItem::getNativeScale() const
+{
+  return mNativeScale;
 }
 
 bool DataItem::hasName(std::string name)
@@ -186,39 +213,9 @@ bool DataItem::hasName(std::string name)
   return mName == name || (!mSource.empty() && mSource == name);
 }
 
-DataItem::EType DataItem::getType()
-{
-  return mType;
-}
-
-std::string DataItem::getTypeString(bool uppercase)
-{
-  return (uppercase) ? STypeUpper[mType] : STypeCamel[mType];
-}
-
-std::string DataItem::getSubType()
-{
-  return mSubType;
-}
-
-DataItem::Category DataItem::getCategory()
-{
-  return mCategory;
-}
-
 bool DataItem::isSample()
 {
   return mCategory == SAMPLE;
-}
-
-std::string DataItem::getNativeUnits()
-{
-  return mNativeUnits;
-}
-
-float DataItem::getNativeScale()
-{
-  return mNativeScale;
 }
 
 void DataItem::addSource(std::string source)
@@ -231,7 +228,7 @@ void DataItem::setComponent(Component * component)
   mComponent = component;
 }
 
-Component * DataItem::getComponent()
+Component * DataItem::getComponent() const
 {
   return mComponent;
 }
@@ -241,7 +238,7 @@ void DataItem::setLatestEvent(ComponentEvent * event)
   mLatestEvent = event;
 }
 
-ComponentEvent * DataItem::getLatestEvent()
+ComponentEvent * DataItem::getLatestEvent() const
 {
   return mLatestEvent;
 }
@@ -259,3 +256,4 @@ DataItem::EType DataItem::getTypeEnum(std::string name)
   
   return (DataItem::EType) -1;
 }
+

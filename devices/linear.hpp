@@ -38,14 +38,13 @@
 
 class Linear : public Component
 { 
-protected:
-  /* Protected member variables */
-  
 public:
+  /* Constructor that sets variables from an attribute map */
   Linear(std::map<std::string, std::string> attributes);
   
-  std::string getClass();
-  
+  /* Inherited method that returns name of the class */
+  const std::string getClass() const;
 };
 
 #endif
+

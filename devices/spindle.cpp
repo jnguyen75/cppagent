@@ -41,7 +41,7 @@ Spindle::Spindle(std::map<std::string, std::string> attributes)
 
 }
 
-std::string Spindle::getClass()
+const std::string Spindle::getClass() const
 {
   return "Spindle";
 }
