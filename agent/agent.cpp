@@ -399,22 +399,20 @@ void Agent::streamData(
 {
   std::string boundary = "--" + md5(intToString(time(NULL)));
   std::string contentType = "Content-type: text/xml";
-  std::string contentLength;
   
   while (out.good())
   {
     out << boundary << std::endl;
     out << contentType << std::endl;
-    out << std::endl;
     
-    if (current)
-    {
-      out << fetchCurrentData(dataItems);
-    }
-    else
-    {
-      out << fetchSampleData(dataItems, start, count);
-    }
+    std::string content = (current) ?
+      fetchCurrentData(dataItems) : fetchSampleData(dataItems, start, count);
+    
+    out << "Content-length: " << content.length() << std::endl;
+    
+    out << std::endl;
+    out << content;
+    
     
     out.flush();
     dlib::sleep(frequency);
@@ -460,9 +458,10 @@ std::string Agent::fetchSampleData(
     {
       results.push_back((*mSlidingBuffer)[i]);
     }
-    else
+    else if (end < mSequence)
     {
       // TODO: increment counter?
+      end++;
     }
   }
   
