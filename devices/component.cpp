@@ -60,12 +60,13 @@ Component::Component(std::map<std::string, std::string> attributes)
   mName = attributes["name"];
   
   mUuid = attributes["uuid"];
-  mSampleRate = (attributes["sampleRate"].empty()) ? 0.0f : atof(attributes["sampleRate"].c_str());
+  mSampleRate = (attributes["sampleRate"].empty()) ?
+    0.0f : atof(attributes["sampleRate"].c_str());
   
   mParent = NULL;
 }
 
-std::map<std::string, std::string> Component::getAttributes()
+std::map<std::string, std::string> Component::getAttributes() const
 {
   std::map<std::string, std::string> attributes;
   
@@ -103,7 +104,7 @@ void Component::addDescription(std::map<std::string, std::string> attributes)
   }
 }
 
-std::map<std::string, std::string> Component::getDescription()
+std::map<std::string, std::string> Component::getDescription() const
 {
   std::map<std::string, std::string> description;
   
@@ -187,7 +188,7 @@ std::list<DataItem *> Component::getDataItems() const
 }  
 
 /* Component public static methods */
-Component::EComponentSpecs Component::getComponentEnum(std::string name)
+Component::EComponentSpecs Component::getComponentEnum(const std::string name)
 {
   for (unsigned int i=0; i<Component::NumComponentSpecs; i++)
   {

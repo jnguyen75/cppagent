@@ -131,6 +131,9 @@ protected:
   std::string printError(std::string errorCode, std::string text);
   
 protected:
+  
+  unsigned int mInstanceId;
+  
   XmlParser * mConfig;
   
   /* For access to the sequence number and sliding buffer, use the mutex */
@@ -143,18 +146,12 @@ protected:
   dlib::sliding_buffer_kernel_1<ComponentEvent *> * mSlidingBuffer;
   
   /* Lists of data */
-  unsigned int mAdapterId;
   std::list<Adapter *> mAdapters;
   std::list<Device *> mDevices;
   std::list<DataItem *> mDataItems;
   
 public:
-  Agent(
-    std::string server,
-    unsigned int port,
-    std::string configXmlPath,
-    unsigned int numAdapters
-  );
+  Agent(std::string configXmlPath);
   
   virtual ~Agent();
   
@@ -173,6 +170,8 @@ public:
     unsigned short local_port,
     std::ostream& out
   );
+  
+  void addAdapter(const std::string host, const unsigned int port);
   
   /* Add ComponentEvent and specs to the SlidingBuffer */
   void addToBuffer(std::string time, std::string key, std::string value);

@@ -35,7 +35,7 @@
 #include "spindle.hpp"
 
 /* Spindle public methods */
-Spindle::Spindle(std::map<std::string, std::string> attributes)
+Spindle::Spindle(const std::map<std::string, std::string> attributes)
 : Component(attributes)
 {
 

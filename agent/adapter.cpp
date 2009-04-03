@@ -34,12 +34,9 @@
 #include "adapter.hpp"
 
 /* Adapter public methods */
-Adapter::Adapter(unsigned int id, std::string server, unsigned int port)
+Adapter::Adapter(std::string server, unsigned int port)
 : Connector(server, port)
 {
-  // Set Adapter ID
-  mId = id;
-  
   // Will start threaded object: Adapter::thread()
   start();
 }
@@ -49,11 +46,6 @@ Adapter::~Adapter()
   // Will stop threaded object gracefully Adapter::thread()
   stop();
   wait();
-}
-
-unsigned int Adapter::getId() const
-{
-  return mId;
 }
 
 void Adapter::setAgent(Agent * agent)

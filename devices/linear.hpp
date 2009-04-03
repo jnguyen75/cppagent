@@ -40,7 +40,7 @@ class Linear : public Component
 { 
 public:
   /* Constructor that sets variables from an attribute map */
-  Linear(std::map<std::string, std::string> attributes);
+  Linear(const std::map<std::string, std::string> attributes);
   
   /* Inherited method that returns name of the class */
   const std::string getClass() const;

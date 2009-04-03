@@ -35,7 +35,7 @@
 #include "axes.hpp"
 
 /* Axes public methods */
-Axes::Axes(std::map<std::string, std::string> attributes)
+Axes::Axes(const std::map<std::string, std::string> attributes)
 : Component(attributes)
 {
 

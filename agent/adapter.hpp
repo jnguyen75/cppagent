@@ -51,9 +51,6 @@ using namespace dlib;
 class Adapter : public Connector, public threaded_object
 {
 protected:
-  /* Adapter ID */
-  unsigned int mId;
-  
   /* Pointer to the agent */
   Agent * mAgent;
   
@@ -63,13 +60,10 @@ private:
   
 public:
   /* Load the adapter with the .xml file */
-  Adapter(unsigned int id, std::string server, unsigned int port);
+  Adapter(std::string server, unsigned int port);
   
   /* Destructor */
   virtual ~Adapter();
-  
-  /* Get the adapter ID */
-  unsigned int getId() const;
   
   /* Set pointer to the agent */
   void setAgent(Agent * agent);

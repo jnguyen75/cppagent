@@ -35,7 +35,7 @@
 #include "linear.hpp"
 
 /* Spindle public methods */
-Linear::Linear(std::map<std::string, std::string> attributes)
+Linear::Linear(const std::map<std::string, std::string> attributes)
 : Component(attributes)
 {
 

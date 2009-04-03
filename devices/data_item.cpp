@@ -130,7 +130,7 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
   mLatestEvent = NULL;
 }
 
-std::map<std::string, std::string> DataItem::getAttributes()
+std::map<std::string, std::string> DataItem::getAttributes() const
 {
   std::map<std::string, std::string> attributes;
   
@@ -208,7 +208,7 @@ float DataItem::getNativeScale() const
   return mNativeScale;
 }
 
-bool DataItem::hasName(std::string name)
+bool DataItem::hasName(const std::string name)
 {
   return mName == name || (!mSource.empty() && mSource == name);
 }
@@ -218,7 +218,7 @@ bool DataItem::isSample()
   return mCategory == SAMPLE;
 }
 
-void DataItem::addSource(std::string source)
+void DataItem::addSource(const std::string source)
 {
   mSource = source;
 }
@@ -244,7 +244,7 @@ ComponentEvent * DataItem::getLatestEvent() const
 }
 
 /* DataItem public static methods */
-DataItem::EType DataItem::getTypeEnum(std::string name)
+DataItem::EType DataItem::getTypeEnum(const std::string name)
 {
   for (unsigned int i=0; i<DataItem::NumTypes; i++)
   {

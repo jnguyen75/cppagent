@@ -34,12 +34,7 @@
 #include "agent.hpp"
 
 /* Agent public methods */
-Agent::Agent(
-    std::string server,
-    unsigned int port,
-    std::string configXmlPath,
-    unsigned int numAdapters
-  )
+Agent::Agent(std::string configXmlPath)
 {
   // Load the configuration for the Agent
   mConfig = new XmlParser(configXmlPath);
@@ -47,14 +42,7 @@ Agent::Agent(
   mDevices = mConfig->getDevices();
   mDataItems = mConfig->getDataItems();
   
-  mAdapterId = getCurrentTimeInSec();
-  
-  for (unsigned int i=0; i<numAdapters; i++)
-  {
-    Adapter * adapter = new Adapter(mAdapterId, server, port);
-    adapter->setAgent(this);
-    mAdapters.push_back(adapter);
-  }
+  mInstanceId = getCurrentTimeInSec();
   
   // Sequence number and sliding buffer for data
   mSequence = 1;
@@ -129,6 +117,13 @@ bool Agent::on_request(
   }
   
   return true;
+}
+
+void Agent::addAdapter(const std::string host, const unsigned int port)
+{
+  Adapter * adapter = new Adapter(host, port);
+  adapter->setAgent(this);
+  mAdapters.push_back(adapter);
 }
 
 void Agent::addToBuffer(std::string time, std::string key, std::string value)
@@ -359,7 +354,7 @@ std::string Agent::handleProbe(std::string name)
   getSequenceNumbers(&seq, &firstSeq);
   
   return XmlPrinter::printProbe(
-    mAdapterId,
+    mInstanceId,
     SLIDING_BUFFER_SIZE,
     seq,
     mDeviceList
@@ -424,7 +419,7 @@ std::string Agent::fetchCurrentData(std::list<DataItem *> dataItems)
   unsigned int seq, firstSeq;
   getSequenceNumbers(&seq, &firstSeq);
   return XmlPrinter::printCurrent(
-      mAdapterId,
+      mInstanceId,
       SLIDING_BUFFER_SIZE,
       seq,
       firstSeq,
@@ -468,7 +463,7 @@ std::string Agent::fetchSampleData(
   mSequenceLock->unlock();
   
   return XmlPrinter::printSample(
-    mAdapterId,
+    mInstanceId,
     SLIDING_BUFFER_SIZE,
     seq,
     firstSeq,
@@ -550,13 +545,11 @@ int main()
 {
   try
   {
-    //Agent * agent = new Agent("128.32.164.245", 7878, "../include/new.xml");
-    Agent * agent = new Agent(
-      "agent.mtconnect.org",
-      7878,
-      "../include/config_no_namespace.xml",
-      2
-    );
+    //Agent * agent = new Agent("../include/config2.xml");
+    //agent->addAdapter("128.32.164.245", 7878);
+    
+    Agent * agent = new Agent("../include/config_no_namespace.xml");
+    agent->addAdapter("agent.mtconnect.org", 7878);
     
     // create a thread that will listen for the user to end this program
     thread_function t(terminateServerThread, agent);

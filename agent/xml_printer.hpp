@@ -44,8 +44,6 @@
 
 class DataItem;
 
-const std::string MTCONNECT_XML_VERS = "1.0";
-
 extern std::string intToString(unsigned int i);
 extern std::string floatToString(float i);
 extern std::string getCurrentTime();
@@ -57,19 +55,22 @@ namespace XmlPrinter
   xmlpp::Document * initXmlDoc(
     std::string rootName,
     std::string xmlnsM,
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    unsigned int firstSeq = 0
+    const unsigned int adapterId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
+    const unsigned int firstSeq = 0
   );
   
   /* Function to parse and write XML */
-  std::string printNode(const xmlpp::Node* node, unsigned int indentation = 0);
+  std::string printNode(
+    const xmlpp::Node* node, 
+    const unsigned int indentation = 0
+  );
   
   void printProbeHelper(xmlpp::Element * element, Component * component);
   
   /* Simple helper function to put indentations into the XML stream */
-  std::string printIndentation(unsigned int indentation);
+  std::string printIndentation(const unsigned int indentation);
   
   void addAttributes(
     xmlpp::Element * element,
@@ -78,7 +79,7 @@ namespace XmlPrinter
   
   xmlpp::Element * searchParentsForId(
     std::list<xmlpp::Element *> elements,
-    unsigned int name
+    const unsigned int name
   );
   
   xmlpp::Element * getDeviceStream(
@@ -89,36 +90,36 @@ namespace XmlPrinter
   /***** Main methods to call *****/
   std::string printError
   (
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
+    const unsigned int adapterId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
     std::string errorCode,
     std::string errorText
   );
   
   std::string printProbe
   (
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
+    const unsigned int adapterId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
     std::list<Device *> devices
   );
   
   std::string printCurrent
   (
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    unsigned int firstSeq,
+    const unsigned int adapterId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
+    const unsigned int firstSeq,
     std::list<DataItem *> dataItems
   );
   
   std::string printSample
   (
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    unsigned int firstSeq,
+    const unsigned int adapterId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
+    const unsigned int firstSeq,
     std::list<ComponentEvent *> results
   );
 };

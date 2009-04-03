@@ -135,7 +135,7 @@ public:
   DataItem(std::map<std::string, std::string> attributes);
   
   /* Get a map of all the attributes of this data item */
-  std::map<std::string, std::string> getAttributes();
+  std::map<std::string, std::string> getAttributes() const;
   
   /* Getter methods for data item specs */
   unsigned int getId() const;
@@ -148,13 +148,13 @@ public:
   float getNativeScale() const;
   
   /* Returns if data item has this name (or source name) */
-  bool hasName(std::string name);
+  bool hasName(const std::string name);
   
   /* Returns true if data item is */
   bool isSample();
   
   /* Add a source (extra information) to data item */
-  void addSource(std::string source);
+  void addSource(const std::string source);
   
   /* Set/get component that data item is associated with */
   void setComponent(Component * component);
@@ -166,7 +166,7 @@ public:
   
 public:
   /* Get the enumeration corresponding to the string */
-  static DataItem::EType getTypeEnum(std::string name);
+  static DataItem::EType getTypeEnum(const std::string name);
 };
 
 #endif

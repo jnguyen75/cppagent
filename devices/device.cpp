@@ -46,7 +46,7 @@ const std::string Device::getClass() const
   return "Device";
 }
 
-std::map<std::string, std::string> Device::getAttributes()
+std::map<std::string, std::string> Device::getAttributes() const
 {
   std::map<std::string, std::string> attributes = Component::getAttributes();
   attributes["iso841Class"] = intToString(mIso841Class);

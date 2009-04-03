@@ -35,7 +35,7 @@
 #include "thermostat.hpp"
 
 /* Thermostat public methods */
-Thermostat::Thermostat(std::map<std::string, std::string> attributes)
+Thermostat::Thermostat(const std::map<std::string, std::string> attributes)
 : Component(attributes)
 {
 

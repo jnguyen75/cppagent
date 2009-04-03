@@ -40,7 +40,7 @@ class Thermostat : public Component
 { 
 public:
   /* Constructor that sets variables from an attribute map */
-  Thermostat(std::map<std::string, std::string> attributes);
+  Thermostat(const std::map<std::string, std::string> attributes);
   
   /* Inherited method that returns name of the class */
   const std::string getClass() const;

@@ -110,11 +110,11 @@ public:
   virtual const std::string getClass() const = 0;
   
   /* Return a map of attributes of all the component specs */
-  virtual std::map<std::string, std::string> getAttributes();
+  virtual std::map<std::string, std::string> getAttributes() const;
   
   /* Add/get description specifications using an attribute map */
   void addDescription(std::map<std::string, std::string> attributes);
-  std::map<std::string, std::string> getDescription();
+  std::map<std::string, std::string> getDescription() const;
   
   /* Getter methods for the component ID/Name */
   unsigned int getId() const;
@@ -138,7 +138,7 @@ public:
   
 public:
   /* Get the enumeration corresponding to the string */
-  static Component::EComponentSpecs getComponentEnum(std::string name);
+  static Component::EComponentSpecs getComponentEnum(const std::string name);
 };
 
 #endif

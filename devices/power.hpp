@@ -40,7 +40,7 @@ class Power : public Component
 {  
 public:
   /* Constructor that sets variables from an attribute map */
-  Power(std::map<std::string, std::string> attributes);
+  Power(const std::map<std::string, std::string> attributes);
   
   /* Inherited method that returns name of the class */
   const std::string getClass() const;

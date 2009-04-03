@@ -40,7 +40,7 @@ class Controller : public Component
 { 
 public:
   /* Constructor that sets variables from an attribute map */
-  Controller(std::map<std::string, std::string> attributes);
+  Controller(const std::map<std::string, std::string> attributes);
   
   /* Inherited method that returns name of the class */
   const std::string getClass() const;

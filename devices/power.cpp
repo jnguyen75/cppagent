@@ -35,7 +35,7 @@
 #include "power.hpp"
 
 /* Spindle public methods */
-Power::Power(std::map<std::string, std::string> attributes)
+Power::Power(const std::map<std::string, std::string> attributes)
 : Component(attributes)
 {
 

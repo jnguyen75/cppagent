@@ -33,10 +33,11 @@
 
 #include "xml_printer.hpp"
 
+/* XmlPrinter public methods */
 std::string XmlPrinter::printError(
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
+    const unsigned int adapterId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
     std::string errorCode,
     std::string errorText
   )
@@ -61,9 +62,9 @@ std::string XmlPrinter::printError(
 }
 
 std::string XmlPrinter::printProbe(
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
+    const unsigned int adapterId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
     std::list<Device *> deviceList
   )
 {
@@ -92,10 +93,10 @@ std::string XmlPrinter::printProbe(
 }
 
 std::string XmlPrinter::printCurrent(
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    unsigned int firstSeq,
+    const unsigned int adapterId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
+    const unsigned int firstSeq,
     std::list<DataItem *> dataItems
   )
 {
@@ -174,10 +175,10 @@ std::string XmlPrinter::printCurrent(
 }
 
 std::string XmlPrinter::printSample(
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    unsigned int firstSeq,
+    const unsigned int adapterId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
+    const unsigned int firstSeq,
     std::list<ComponentEvent *> results
   )
 {
@@ -251,10 +252,10 @@ std::string XmlPrinter::printSample(
 xmlpp::Document * XmlPrinter::initXmlDoc(
     std::string rootName,
     std::string xmlnsM,
-    unsigned int adapterId,
-    unsigned int bufferSize,
-    unsigned int nextSeq,
-    unsigned int firstSeq
+    const unsigned int adapterId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
+    const unsigned int firstSeq
   )
 {
   xmlpp::Document * doc = new xmlpp::Document;
@@ -273,7 +274,7 @@ xmlpp::Document * XmlPrinter::initXmlDoc(
   header->set_attribute("sender", "localhost");
   header->set_attribute("instanceId", intToString(adapterId));
   header->set_attribute("bufferSize", intToString(bufferSize));
-  header->set_attribute("version", MTCONNECT_XML_VERS);
+  header->set_attribute("version", "1.0");
   header->set_attribute("nextSequence", intToString(nextSeq));
   
   if (firstSeq > 0)
@@ -287,7 +288,7 @@ xmlpp::Document * XmlPrinter::initXmlDoc(
 
 std::string XmlPrinter::printNode(
     const xmlpp::Node* node,
-    unsigned int indentation
+    const unsigned int indentation
   )
 {
   // Constant node data determined for each node
@@ -459,7 +460,7 @@ xmlpp::Element * XmlPrinter::getDeviceStream(
 
 xmlpp::Element * XmlPrinter::searchParentsForId(
     std::list<xmlpp::Element *> elements,
-    unsigned int componentId
+    const unsigned int componentId
   )
 {
   std::list<xmlpp::Element *>::iterator element;
