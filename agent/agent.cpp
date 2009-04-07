@@ -455,7 +455,6 @@ std::string Agent::fetchSampleData(
     }
     else if (end < mSequence)
     {
-      // TODO: increment counter?
       end++;
     }
   }

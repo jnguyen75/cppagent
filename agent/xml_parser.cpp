@@ -199,7 +199,6 @@ Component * XmlParser::loadComponent(
 
 void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent)
 {
-  // TODO: Error check attributes
   const xmlpp::Element* nodeElement =
     dynamic_cast<const xmlpp::Element*>(dataItem);
   DataItem * d = new DataItem(getAttributes(nodeElement));

@@ -38,7 +38,6 @@
 #include <iostream>
 
 #include "component.hpp"
-//#include "../agent/component_event.hpp"
 
 extern std::string intToString(unsigned int i);
 

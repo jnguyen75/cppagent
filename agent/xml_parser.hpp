@@ -73,9 +73,6 @@ protected:
   /* Load the data items */
   void loadDataItem(xmlpp::Node * dataItems, Component * component);
   
-  /* Find a DataItem by name, throw an exception */
-  DataItem * getDataItemByName(std::string name) throw (std::string);
-  
   /* Helper method to perform loading on children and set up relationships */
   void handleChildren(xmlpp::Node * components, Component * parent = NULL);
   
