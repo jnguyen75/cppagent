@@ -40,7 +40,7 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../devices/component.hpp"
+#include "../../devices/device.hpp"
 
 class DeviceTest : public CppUnit::TestFixture
 {
@@ -49,11 +49,11 @@ class DeviceTest : public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  Device * a;
+  Device * a, * b;
   
 protected:
   void testGetAttributes();
-  void testge  
+  void testGetClass();
   
 public:
   void setUp();

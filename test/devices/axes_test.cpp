@@ -31,57 +31,70 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#include "device_test.hpp"
+#include "axes_test.hpp"
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(DeviceTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(AxesTest);
 
-void DeviceTest::setUp()
+void AxesTest::setUp()
 {
   std::map<std::string, std::string> attributes1;
   attributes1["id"] = 3;
-  attributes1["name"] = "DeviceTestA";
+  attributes1["name"] = "AxesTestA";
   attributes1["uuid"] = "UniversalUniqueIdA";
   attributes1["sampleRate"] = 100.11;
-  attributes1["iso841Class"] = 12;
   
-  a = new Device(attributes1);
+  a = new Axes(attributes1);
   
   std::map<std::string, std::string> attributes2;
   attributes2["id"] = 5;
-  attributes2["name"] = "DeviceTestB";
+  attributes2["name"] = "AxesTestB";
   attributes2["uuid"] = "UniversalUniqueIdB";
-  attributes2["iso841Class"] = 24;
   
-  b = new Device(attributes2);
+  b = new Axes(attributes2);
 }
 
-void DeviceTest::tearDown()
+void AxesTest::tearDown()
 {
   delete a;
   delete b;
 }
 
-void DeviceTest::testGetAttributes()
+void AxesTest::testGetters()
+{
+  CPPUNIT_ASSERT_EQUAL(a->getId(), (unsigned) 3);
+  CPPUNIT_ASSERT_EQUAL(a->getName(), (std::string) "AxesTestA");
+  CPPUNIT_ASSERT_EQUAL(a->getUuid(), (std::string) "UniversalUniqueIdA");
+  CPPUNIT_ASSERT_EQUAL(b->getId(), (unsigned) 5);
+  CPPUNIT_ASSERT_EQUAL(b->getName(), (std::string) "AxesTestB");
+  CPPUNIT_ASSERT_EQUAL(b->getUuid(), (std::string) "UniversalUniqueIdB");
+}
+
+void AxesTest::testGetAttributes()
 {
   std::map<std::string, std::string> attributes1 = a->getAttributes();
-  CPPUNIT_ASSERT_EQUAL(attributes1["id"], 3);
-  CPPUNIT_ASSERT_EQUAL(attributes1["name"], "DeviceTestA");
-  CPPUNIT_ASSERT_EQUAL(attributes1["uuid"], "UniversalUniqueIdA");
-  CPPUNIT_ASSERT_EQUAL(attributes1["sampleRate"], 100.11);
-  CPPUNIT_ASSERT_EQUAL(attributes1["iso841Class"], 12);
+  CPPUNIT_ASSERT_EQUAL(attributes1["id"], (std::string) "3");
+  CPPUNIT_ASSERT_EQUAL(attributes1["name"], (std::string) "AxesTestA");
+  CPPUNIT_ASSERT_EQUAL(attributes1["uuid"], (std::string) "UniversalUniqueIdA");
+  CPPUNIT_ASSERT_EQUAL(attributes1["sampleRate"], (std::string) "100.11");
+  CPPUNIT_ASSERT_EQUAL(attributes1["iso841Class"], (std::string) "12");
   
   std::map<std::string, std::string> attributes2 = b->getAttributes();
-  CPPUNIT_ASSERT_EQUAL(attributes2["id"], 5);
-  CPPUNIT_ASSERT_EQUAL(attributes2["name"], "DeviceTestB");
-  CPPUNIT_ASSERT_EQUAL(attributes2["uuid"], "UniversalUniqueIdB");
-  CPPUNIT_ASSERT_EQUAL(attributes2["sampleRate"], 0.0);
-  CPPUNIT_ASSERT_EQUAL(attributes2["iso841Class"], 24);
+  CPPUNIT_ASSERT_EQUAL(attributes2["name"], (std::string) "AxesTestB");
+  CPPUNIT_ASSERT_EQUAL(attributes2["id"], (std::string) "5");
+  CPPUNIT_ASSERT_EQUAL(attributes2["uuid"], (std::string) "UniversalUniqueIdB");
+  CPPUNIT_ASSERT_EQUAL(attributes2["sampleRate"], (std::string) "0.0");
+  CPPUNIT_ASSERT_EQUAL(attributes2["iso841Class"], (std::string) "24");
 }
 
-void DeviceTest::testGetClass()
+void AxesTest::testGetClass()
 {
-  CPPUNIT_ASSERT_EQUAL("Device", a->getClass());
-  CPPUNIT_ASSERT_EQUAL("Device", b->getClass());
+  CPPUNIT_ASSERT_EQUAL(a->getClass(), (std::string) "Axes");
+  CPPUNIT_ASSERT_EQUAL(b->getClass(), (std::string) "Axes");
 }
 
+void AxesTest::testDescription()
+{
+  std::map<std::string, std::string> getDescription = a->getDescription();
+  CPPUNIT_ASSERT_EQUAL(getDescription.size(), (size_t) 0);
+}

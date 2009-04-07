@@ -31,8 +31,8 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef COMPONENT_TEST_HPP
-#define COMPONENT_TEST_HPP
+#ifndef AXES_TEST_HPP
+#define AXES_TEST_HPP
 
 #include <map>
 #include <string>
@@ -40,20 +40,24 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../devices/component.hpp"
+#include "../../devices/axes.hpp"
 
-class ComponentTest : public CppUnit::TestFixture
+class AxesTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( ComponentTest );
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST_SUITE_END ();
+  CPPUNIT_TEST_SUITE(AxesTest);
+  CPPUNIT_TEST(testGetters);
+  CPPUNIT_TEST(testGetAttributes);
+  CPPUNIT_TEST(testGetClass);
+  CPPUNIT_TEST_SUITE_END();
   
 protected:
-  Component * a;
+  Axes * a, * b;
   
 protected:
-  //void testConstructor();
-  
+  void testGetters();
+  void testGetAttributes();
+  void testGetClass();
+  void testDescription();
   
 public:
   void setUp();
