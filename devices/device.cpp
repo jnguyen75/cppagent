@@ -35,6 +35,11 @@
 #include "device.hpp"
 
 /* Device public methods */
+Device::Device()
+{
+
+}
+
 Device::Device(std::map<std::string, std::string> attributes)
 : Component(attributes)
 {

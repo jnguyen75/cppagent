@@ -256,7 +256,7 @@ bool Agent::handleCall(
     
     return handleCurrent(out, result, devicesAndPath(path, deviceName), freq);
   }
-  else if (call == "probe")
+  else if (call == "probe" || call.empty())
   {
     result = handleProbe(deviceName);
     return true;

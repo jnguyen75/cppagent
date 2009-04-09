@@ -53,6 +53,11 @@ const std::string Component::SComponentSpecs[NumComponentSpecs] = {
 };
 
 /* Component public methods */
+Component::Component()
+{
+
+}
+
 Component::Component(std::map<std::string, std::string> attributes)
 {
   // TODO: Error checking..?

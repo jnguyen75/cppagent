@@ -41,6 +41,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "../../devices/axes.hpp"
+//#include "../../devices/device.hpp"
 
 class AxesTest : public CppUnit::TestFixture
 {
@@ -48,6 +49,9 @@ class AxesTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testGetters);
   CPPUNIT_TEST(testGetAttributes);
   CPPUNIT_TEST(testGetClass);
+  CPPUNIT_TEST(testDescription);
+  CPPUNIT_TEST(testParents);
+  CPPUNIT_TEST(testChildren);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
@@ -58,6 +62,8 @@ protected:
   void testGetAttributes();
   void testGetClass();
   void testDescription();
+  void testParents();
+  void testChildren();
   
 public:
   void setUp();

@@ -39,18 +39,16 @@ CPPUNIT_TEST_SUITE_REGISTRATION(AxesTest);
 void AxesTest::setUp()
 {
   std::map<std::string, std::string> attributes1;
-  attributes1["id"] = 3;
+  attributes1["id"] = "3";
   attributes1["name"] = "AxesTestA";
   attributes1["uuid"] = "UniversalUniqueIdA";
-  attributes1["sampleRate"] = 100.11;
-  
+  attributes1["sampleRate"] = "100.11";
   a = new Axes(attributes1);
   
   std::map<std::string, std::string> attributes2;
-  attributes2["id"] = 5;
+  attributes2["id"] = "5";
   attributes2["name"] = "AxesTestB";
   attributes2["uuid"] = "UniversalUniqueIdB";
-  
   b = new Axes(attributes2);
 }
 
@@ -77,14 +75,12 @@ void AxesTest::testGetAttributes()
   CPPUNIT_ASSERT_EQUAL(attributes1["name"], (std::string) "AxesTestA");
   CPPUNIT_ASSERT_EQUAL(attributes1["uuid"], (std::string) "UniversalUniqueIdA");
   CPPUNIT_ASSERT_EQUAL(attributes1["sampleRate"], (std::string) "100.11");
-  CPPUNIT_ASSERT_EQUAL(attributes1["iso841Class"], (std::string) "12");
   
   std::map<std::string, std::string> attributes2 = b->getAttributes();
   CPPUNIT_ASSERT_EQUAL(attributes2["name"], (std::string) "AxesTestB");
   CPPUNIT_ASSERT_EQUAL(attributes2["id"], (std::string) "5");
   CPPUNIT_ASSERT_EQUAL(attributes2["uuid"], (std::string) "UniversalUniqueIdB");
-  CPPUNIT_ASSERT_EQUAL(attributes2["sampleRate"], (std::string) "0.0");
-  CPPUNIT_ASSERT_EQUAL(attributes2["iso841Class"], (std::string) "24");
+  CPPUNIT_ASSERT(attributes2["sampleRate"].empty());
 }
 
 void AxesTest::testGetClass()
@@ -95,6 +91,64 @@ void AxesTest::testGetClass()
 
 void AxesTest::testDescription()
 {
-  std::map<std::string, std::string> getDescription = a->getDescription();
-  CPPUNIT_ASSERT_EQUAL(getDescription.size(), (size_t) 0);
+  std::map<std::string, std::string> getDescription, addDescription;
+  
+  getDescription = a->getDescription();
+  CPPUNIT_ASSERT(getDescription.empty());
+  
+  addDescription["manufacturer"] = "MANU";
+  addDescription["serialNumber"] = "SERIAL";
+  a->addDescription(addDescription);
+  getDescription = a->getDescription();
+  
+  CPPUNIT_ASSERT_EQUAL(getDescription.size(), (size_t) 2);
+  CPPUNIT_ASSERT_EQUAL(getDescription["manufacturer"], (std::string) "MANU");
+  CPPUNIT_ASSERT_EQUAL(getDescription["serialNumber"], (std::string) "SERIAL");
+  CPPUNIT_ASSERT(getDescription["station"].empty());
+  
+  addDescription["station"] = "STAT";
+  a->addDescription(addDescription);
+  getDescription = a->getDescription();
+  CPPUNIT_ASSERT_EQUAL(getDescription.size(), (size_t) 3);
+  CPPUNIT_ASSERT_EQUAL(getDescription["manufacturer"], (std::string) "MANU");
+  CPPUNIT_ASSERT_EQUAL(getDescription["serialNumber"], (std::string) "SERIAL");
+  CPPUNIT_ASSERT_EQUAL(getDescription["station"], (std::string) "STAT");
 }
+
+void AxesTest::testParents()
+{
+  CPPUNIT_ASSERT(a->getParent() == NULL);
+  
+  //Device * parent = new Device;
+  //TODO: create devices
+}
+
+void AxesTest::testChildren()
+{
+  std::map<std::string, std::string> attributes1, attributes2;
+  
+  attributes1["id"] = "7";
+  attributes1["name"] = "child1";
+  attributes1["uuid"] = "UniversalUniqueIdA";
+  
+  attributes2["id"] = "9";
+  attributes2["name"] = "child2";
+  attributes2["uuid"] = "UniversalUniqueIdB";
+  
+  CPPUNIT_ASSERT(a->getChildren().empty());
+  
+  a->addChild(new Axes(attributes1));
+  a->addChild(new Axes(attributes2));
+  
+  CPPUNIT_ASSERT_EQUAL(a->getChildren().size(), (size_t) 2);
+  std::list<Component *>::iterator child = a->getChildren().begin();
+  CPPUNIT_ASSERT_EQUAL((*child)->getId(), (unsigned) 6);
+  CPPUNIT_ASSERT_EQUAL((*child)->getName(), (std::string) "child1");
+  
+  child++;
+  CPPUNIT_ASSERT_EQUAL((*child)->getId(), (unsigned) 9);
+  CPPUNIT_ASSERT_EQUAL((*child)->getName(), (std::string) "child2");
+  
+}
+
+
