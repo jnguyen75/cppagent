@@ -141,14 +141,14 @@ void AxesTest::testChildren()
   a->addChild(new Axes(attributes2));
   
   CPPUNIT_ASSERT_EQUAL(a->getChildren().size(), (size_t) 2);
-  std::list<Component *>::iterator child = a->getChildren().begin();
-  CPPUNIT_ASSERT_EQUAL((*child)->getId(), (unsigned) 6);
-  CPPUNIT_ASSERT_EQUAL((*child)->getName(), (std::string) "child1");
-  
-  child++;
-  CPPUNIT_ASSERT_EQUAL((*child)->getId(), (unsigned) 9);
-  CPPUNIT_ASSERT_EQUAL((*child)->getName(), (std::string) "child2");
-  
+  CPPUNIT_ASSERT_EQUAL(a->getChildren().front()->getId(), (unsigned) 7);
+  CPPUNIT_ASSERT_EQUAL(a->getChildren().front()->getName(), (std::string) "child1");
+  CPPUNIT_ASSERT_EQUAL(a->getChildren().back()->getId(), (unsigned) 9);
+  CPPUNIT_ASSERT_EQUAL(a->getChildren().back()->getName(), (std::string) "child2");
 }
 
+void AxesTest::testDataItems()
+{
+  //TODO
+}
 

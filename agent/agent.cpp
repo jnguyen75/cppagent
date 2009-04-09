@@ -251,10 +251,25 @@ bool Agent::handleCall(
   if (call == "current")
   {
     std::string path = queries.is_in_domain("path") ? queries["path"] : "";
-    unsigned int freq = queries.is_in_domain("frequency") ?
+    int freq = queries.is_in_domain("frequency") ?
       atoi(queries["frequency"].c_str()) : 0;
     
-    return handleCurrent(out, result, devicesAndPath(path, deviceName), freq);
+    if (freq < 0)
+    {
+      result = printError(
+          "QUERY_ERROR",
+          "Query parameters cannot be a negative integer."
+        );
+      return true;
+    }
+    
+    return handleStream(
+        out,
+        result,
+        devicesAndPath(path, deviceName),
+        true,
+        freq
+      );
   }
   else if (call == "probe" || call.empty())
   {
@@ -266,13 +281,13 @@ bool Agent::handleCall(
     std::string path = queries.is_in_domain("path") ?
       queries["path"] : "";
     
-    unsigned int count = (queries.is_in_domain("count")) ?
+    int count = (queries.is_in_domain("count")) ?
       atoi(queries["count"].c_str()) : 100;
     
-    unsigned int freq = (queries.is_in_domain("frequency")) ?
+    int freq = (queries.is_in_domain("frequency")) ?
       atoi(queries["frequency"].c_str()) : 0;
     
-    unsigned int start;
+    int start;
     if (queries.is_in_domain("start"))
     {
       start = atoi(queries["start"].c_str());
@@ -286,13 +301,23 @@ bool Agent::handleCall(
       start = 0;
     }
     
-    return handleSample(
+    if (count < 0 or freq < 0 or start < 0)
+    {
+      result = printError(
+          "QUERY_ERROR",
+          "Query parameters cannot be a negative integer."
+        );
+      return true;
+    }
+    
+    return handleStream(
         out,
         result,
         devicesAndPath(path, deviceName),
+        false,
+        freq,
         start,
-        count,
-        freq
+        count
       );
   }
   else
@@ -301,27 +326,6 @@ bool Agent::handleCall(
         "ROUTING_ERROR",
         "The path '/" + call + "' does not exist."
       );
-    return true;
-  }
-}
-
-bool Agent::handleCurrent(
-    std::ostream& out,
-    std::string& result,
-    std::string path,
-    unsigned int frequency
-  )
-{
-  std::list<DataItem *> dataItems = getDataItems(path);
-  
-  if (frequency > 0)
-  {
-    streamData(out, dataItems, true, frequency);
-    return false;
-  }
-  else
-  {
-    result = fetchCurrentData(dataItems);
     return true;
   }
 }
@@ -350,35 +354,41 @@ std::string Agent::handleProbe(std::string name)
     mDeviceList = mDevices;
   }
   
-  unsigned int seq, firstSeq;
-  getSequenceNumbers(&seq, &firstSeq);
-  
   return XmlPrinter::printProbe(
     mInstanceId,
     SLIDING_BUFFER_SIZE,
-    seq,
+    mSequence,
     mDeviceList
   );
 }
 
-bool Agent::handleSample(
+bool Agent::handleStream(
     std::ostream& out,
     std::string& result,
     std::string path,
+    bool current,
+    unsigned int frequency,
     unsigned int start,
-    unsigned int count,
-    unsigned int frequency
+    unsigned int count
   )
 {
   std::list<DataItem *> dataItems = getDataItems(path);
   if (frequency > 0)
   {
-    streamData(out, dataItems, false, frequency, start, count);
+    if (current)
+    {
+      streamData(out, dataItems, true, frequency);
+    }
+    else
+    {
+      streamData(out, dataItems, false, frequency, start, count);
+    }
     return false;
   }
   else
   {
-    result = fetchSampleData(dataItems, start, count);
+    result = (current) ?
+      fetchCurrentData(dataItems) : fetchSampleData(dataItems, start, count);
     return true;
   }
 }
@@ -416,15 +426,20 @@ void Agent::streamData(
 
 std::string Agent::fetchCurrentData(std::list<DataItem *> dataItems)
 {
-  unsigned int seq, firstSeq;
-  getSequenceNumbers(&seq, &firstSeq);
-  return XmlPrinter::printCurrent(
+  mSequenceLock->lock();
+  unsigned int firstSeq = (mSequence > SLIDING_BUFFER_SIZE) ?
+    SLIDING_BUFFER_SIZE - mSequence : 1;
+  
+  std::string toReturn = XmlPrinter::printCurrent(
       mInstanceId,
       SLIDING_BUFFER_SIZE,
-      seq,
+      mSequence,
       firstSeq,
       dataItems
     );
+  
+  mSequenceLock->unlock();
+  return toReturn;
 }
 
 std::string Agent::fetchSampleData(
@@ -462,12 +477,12 @@ std::string Agent::fetchSampleData(
   mSequenceLock->unlock();
   
   return XmlPrinter::printSample(
-    mInstanceId,
-    SLIDING_BUFFER_SIZE,
-    seq,
-    firstSeq,
-    results
-  );
+      mInstanceId,
+      SLIDING_BUFFER_SIZE,
+      seq,
+      firstSeq,
+      results
+    );
 }
 
 Device * Agent::getDeviceByName(std::string name)
@@ -513,20 +528,15 @@ bool Agent::hasDataItem(std::list<DataItem *> dataItems, std::string name)
   return false;
 }
 
-void Agent::getSequenceNumbers(unsigned int * seq, unsigned int * firstSeq)
-{
-  mSequenceLock->lock();
-  
-  *seq = mSequence;
-  *firstSeq = (mSequence > SLIDING_BUFFER_SIZE) ?
-    SLIDING_BUFFER_SIZE - mSequence : 1;
-  
-  mSequenceLock->unlock();
-}
-
 std::string Agent::printError(std::string errorCode, std::string text)
 {
-  return XmlPrinter::printError(1, SLIDING_BUFFER_SIZE, 2, errorCode, text);
+  return XmlPrinter::printError(
+      mInstanceId,
+      SLIDING_BUFFER_SIZE,
+      mSequence,
+      errorCode,
+      text
+    );
 }
 
 /***** Procedural Code *****/
@@ -547,7 +557,7 @@ int main()
     //Agent * agent = new Agent("../include/config2.xml");
     //agent->addAdapter("128.32.164.245", 7878);
     
-    Agent * agent = new Agent("../include/config_no_namespace.xml");
+    Agent * agent = new Agent("../include/agent.mtconnect.org.xml");
     agent->addAdapter("agent.mtconnect.org", 7878);
     
     // create a thread that will listen for the user to end this program

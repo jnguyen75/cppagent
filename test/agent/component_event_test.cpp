@@ -31,22 +31,22 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#include "adapter_test.hpp"
+#include "component_event_test.hpp"
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(AdapterTest);
 
-void AdapterTest::setUp()
+void ComponentEventTest::setUp()
 {
   a = new Adapter("agent.mtconnect.org", 7878);
 }
 
-void AdapterTest::tearDown()
+void ComponentEventTest::tearDown()
 {
   delete a;
 }
 
-void testProcessData()
+void testConvertValue()
 {
   
 }

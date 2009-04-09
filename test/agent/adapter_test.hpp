@@ -41,16 +41,19 @@
 
 class AdapterTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE( AdapterTest );
-  CPPUNIT_TEST( testConstructor );
-  CPPUNIT_TEST_SUITE_END ();
+  CPPUNIT_TEST_SUITE(AdapterTest);
+  CPPUNIT_TEST(testProcessData);
+  CPPUNIT_TEST_SUITE_END();
+  
 protected:
+  Adapter * a;
+  
+protected:
+  void testProcessData();
   
 public:
   void setUp();
   void tearDown();
-  
-  void testConstructor();
 };
 
 #endif

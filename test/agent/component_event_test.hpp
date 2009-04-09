@@ -31,23 +31,30 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#include "adapter_test.hpp"
+#ifndef ADAPTER_TEST_HPP
+#define ADAPTER_TEST_HPP
 
-// Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(AdapterTest);
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
 
-void AdapterTest::setUp()
+#include "../../agent/component_event.hpp"
+
+class ComponentEventTest : public CppUnit::TestFixture
 {
-  a = new Adapter("agent.mtconnect.org", 7878);
-}
-
-void AdapterTest::tearDown()
-{
-  delete a;
-}
-
-void testProcessData()
-{
+  CPPUNIT_TEST_SUITE(ComponentEventTest);
+  CPPUNIT_TEST(testProcessData);
+  CPPUNIT_TEST_SUITE_END();
   
-}
+protected:
+  ComponentEvent * a;
+  
+protected:
+  
+  
+public:
+  void setUp();
+  void tearDown();
+};
+
+#endif
 

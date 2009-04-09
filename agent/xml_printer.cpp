@@ -35,7 +35,7 @@
 
 /* XmlPrinter public methods */
 std::string XmlPrinter::printError(
-    const unsigned int adapterId,
+    const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     std::string errorCode,
@@ -44,8 +44,8 @@ std::string XmlPrinter::printError(
 {
   xmlpp::Document * mErrorXml = initXmlDoc(
     "MTConnectStreams",
-    "urn:mtconnect.com:MTConnectError:0.9",
-    adapterId,
+    "urn:mtconnect.com:MTConnectError:1.0",
+    instanceId,
     bufferSize,
     nextSeq
   );
@@ -62,7 +62,7 @@ std::string XmlPrinter::printError(
 }
 
 std::string XmlPrinter::printProbe(
-    const unsigned int adapterId,
+    const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     std::list<Device *> deviceList
@@ -70,8 +70,8 @@ std::string XmlPrinter::printProbe(
 {
   xmlpp::Document * mProbeXml = initXmlDoc(
     "MTConnectDevices",
-    "urn:mtconnect.com:MTConnectDevices:0.9",
-    adapterId,
+    "urn:mtconnect.com:MTConnectDevices:1.0",
+    instanceId,
     bufferSize,
     nextSeq
   );
@@ -93,7 +93,7 @@ std::string XmlPrinter::printProbe(
 }
 
 std::string XmlPrinter::printCurrent(
-    const unsigned int adapterId,
+    const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq,
@@ -102,8 +102,8 @@ std::string XmlPrinter::printCurrent(
 {
   xmlpp::Document * mSampleXml = initXmlDoc(
     "MTConnectStreams",
-    "urn:mtconnect.com:MTConnectStreams:0.9",
-    adapterId,
+    "urn:mtconnect.com:MTConnectStreams:1.0",
+    instanceId,
     bufferSize,
     nextSeq
   );
@@ -175,7 +175,7 @@ std::string XmlPrinter::printCurrent(
 }
 
 std::string XmlPrinter::printSample(
-    const unsigned int adapterId,
+    const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq,
@@ -184,8 +184,8 @@ std::string XmlPrinter::printSample(
 {
   xmlpp::Document * mSampleXml = initXmlDoc(
     "MTConnectStreams",
-    "urn:mtconnect.com:MTConnectStreams:0.9",
-    adapterId,
+    "urn:mtconnect.com:MTConnectStreams:1.0",
+    instanceId,
     bufferSize,
     nextSeq
   );
@@ -252,7 +252,7 @@ std::string XmlPrinter::printSample(
 xmlpp::Document * XmlPrinter::initXmlDoc(
     std::string rootName,
     std::string xmlnsM,
-    const unsigned int adapterId,
+    const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq
@@ -272,7 +272,7 @@ xmlpp::Document * XmlPrinter::initXmlDoc(
   xmlpp::Element * header = doc->get_root_node()->add_child("Header");
   header->set_attribute("creationTime", getCurrentTime());
   header->set_attribute("sender", "localhost");
-  header->set_attribute("instanceId", intToString(adapterId));
+  header->set_attribute("instanceId", intToString(instanceId));
   header->set_attribute("bufferSize", intToString(bufferSize));
   header->set_attribute("version", "1.0");
   header->set_attribute("nextSequence", intToString(nextSeq));

@@ -52,6 +52,7 @@ class AxesTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testDescription);
   CPPUNIT_TEST(testParents);
   CPPUNIT_TEST(testChildren);
+  CPPUNIT_TEST(testDataItems);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
@@ -64,6 +65,7 @@ protected:
   void testDescription();
   void testParents();
   void testChildren();
+  void testDataItems();
   
 public:
   void setUp();
