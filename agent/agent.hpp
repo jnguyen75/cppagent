@@ -67,7 +67,7 @@ using namespace dlib;
 class Agent : public server::http_1a_c
 {
 public:
-  static const unsigned int SERVER_PORT = 3000;
+  static const unsigned int SERVER_PORT = 8080;
   static const unsigned int SLIDING_BUFFER_EXP = 17;
   static const unsigned int SLIDING_BUFFER_SIZE = 131072;
   
