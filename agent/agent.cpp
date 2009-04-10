@@ -32,6 +32,8 @@
 */
 
 #include "agent.hpp"
+#include "fcntl.h"
+#include "sys/stat.h"
 
 /* Agent public methods */
 Agent::Agent(std::string configXmlPath)
@@ -550,19 +552,18 @@ void terminateServerThread(Agent * server)
   delete server;
 }
 
-void signal_handler(sig)
-int sig;
+void signal_handler(int sig)
 {
-	switch(sig) {
-	case SIGHUP:
-		log_message(LOG_FILE,"hangup signal catched");
-		break;
-		
-	case SIGTERM:
-		log_message(LOG_FILE,"terminate signal catched");
-		exit(0);
-		break;
-	}
+  switch(sig) {
+  case SIGHUP:
+    std::cout << "hangup signal catched";
+    break;
+    
+  case SIGTERM:
+    std::cout << "terminate signal catched";
+    exit(0);
+    break;
+  }
 }
 
 void daemonize()
@@ -586,9 +587,10 @@ void daemonize()
   close(1);
   close(2);
   umask(027); /* set newly created file permissions */
-  i = open("agent.log",O_WRONLY); dup(i); dup(i); /* handle standart I/O
+  i = open("agent.log", O_WRONLY | O_CREAT, 0640);
+  dup(i); /* handle standart I/O */
   
-  chdir(RUNNING_DIR); /* change running directory */
+  // chdir(RUNNING_DIR); /* change running directory */
 
   // Create the pid file.
   lfp = open("agent.pid", O_RDWR|O_CREAT, 0640);
@@ -613,6 +615,8 @@ void daemonize()
 
 int main()
 {
+  daemonize();
+  
   try
   {
     //Agent * agent = new Agent("../include/config2.xml");
