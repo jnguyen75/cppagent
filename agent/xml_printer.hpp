@@ -55,7 +55,7 @@ namespace XmlPrinter
   xmlpp::Document * initXmlDoc(
     std::string rootName,
     std::string xmlnsM,
-    const unsigned int adapterId,
+    const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq = 0
@@ -90,7 +90,7 @@ namespace XmlPrinter
   /***** Main methods to call *****/
   std::string printError
   (
-    const unsigned int adapterId,
+    const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     std::string errorCode,
@@ -99,7 +99,7 @@ namespace XmlPrinter
   
   std::string printProbe
   (
-    const unsigned int adapterId,
+    const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     std::list<Device *> devices
@@ -107,7 +107,7 @@ namespace XmlPrinter
   
   std::string printCurrent
   (
-    const unsigned int adapterId,
+    const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq,
@@ -116,7 +116,7 @@ namespace XmlPrinter
   
   std::string printSample
   (
-    const unsigned int adapterId,
+    const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq,

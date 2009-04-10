@@ -18,8 +18,17 @@ CXXFLAGS = -g -Wall $(INCLUDE_DIRECTORIES:%=-I%) -DDLIB_NO_GUI_SUPPORT
 LDFLAGS = $(LIB_DIRECTORIES:%=-L%)
 LIBRARIES=  xml++-2.6 xml2 pthread z m glibmm-2.4 gobject-2.0 sigc-2.0 glib-2.0 #intl iconv 
 
+CPPUNIT_PATH=../lib/cppunit-1.12.1
+
+vpath %.hpp ../agent
+vpath %.cpp ../agent
 vpath %.hpp ../devices
 vpath %.cpp ../devices
+vpath %.hpp agent
+vpath %.cpp agent
+vpath %.hpp devices
+vpath %.cpp devices
+
 
 SOURCES= \
 agent.cpp \
@@ -37,7 +46,8 @@ controller.cpp \
 power.cpp \
 thermostat.cpp \
 xml_printer.cpp \
-globals.cpp
+globals.cpp \
+axes_test.cpp
 
 OBJS=$(SOURCES:%.cpp=%.o)
 LIBS=$(LIBRARIES:%=-l%)
@@ -54,7 +64,7 @@ agent: $(OBJS)
 
 %.o: %.cpp %.hpp
 	@echo Compiling $<
-	@g++ -c ${CXXFLAGS} $<
+	@g++ -c ${CXXFLAGS} -I${CPPUNIT_PATH}/include $<
 
 agent.o: adapter.hpp connector.hpp component_event.hpp axes.hpp controller.hpp device.hpp \
 	data_item.hpp linear.hpp power.hpp thermostat.hpp spindle.hpp xml_printer.hpp

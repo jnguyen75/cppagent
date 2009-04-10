@@ -31,23 +31,29 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#include "adapter_test.hpp"
+#ifndef Globals_TEST_HPP
+#define Globals_TEST_HPP
 
-// Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(AdapterTest);
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
 
-void AdapterTest::setUp()
+#include "../../agent/globals.cpp"
+
+extern std::string intToString(unsigned int i);
+
+class GlobalsTest : public CppUnit::TestFixture
 {
-  a = new Adapter("agent.mtconnect.org", 7878);
-}
-
-void AdapterTest::tearDown()
-{
-  delete a;
-}
-
-void testProcessData()
-{
+  CPPUNIT_TEST_SUITE(GlobalsTest);
+  CPPUNIT_TEST(testIntToString);
+  CPPUNIT_TEST_SUITE_END();
   
-}
+protected:
+  void testIntToString();
+  
+public:
+  void setUp();
+  void tearDown();
+};
+
+#endif
 

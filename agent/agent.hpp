@@ -87,24 +87,18 @@ protected:
     std::string device = ""
   );
   
-  bool handleCurrent(
-    std::ostream& out,
-    std::string& result,
-    std::string path,
-    unsigned int frequency = 0
-  );
-  
   std::string handleProbe(
     std::string device
   );
   
-  bool handleSample(
+  bool handleStream(
     std::ostream& out,
     std::string& result,
     std::string path,
-    unsigned int start,
-    unsigned int count,
-    unsigned int frequency
+    bool current,  
+    unsigned int frequency,
+    unsigned int start = 0,
+    unsigned int count = 0
   );
   
   void streamData(
@@ -123,9 +117,6 @@ protected:
   Device * getDeviceByName(std::string name);
   DataItem * getDataItemByName(std::string name);
   bool hasDataItem(std::list<DataItem *> dataItems, std::string name);
-  
-  /* retrieve the sequence number and the first sequence number in buffer */
-  void getSequenceNumbers(unsigned int * seq, unsigned int * firstSeq);
   
   /* Output an XML Error */
   std::string printError(std::string errorCode, std::string text);
