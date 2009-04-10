@@ -540,6 +540,67 @@ void terminateServerThread(Agent * server)
   delete server;
 }
 
+void signal_handler(sig)
+int sig;
+{
+	switch(sig) {
+	case SIGHUP:
+		log_message(LOG_FILE,"hangup signal catched");
+		break;
+		
+	case SIGTERM:
+		log_message(LOG_FILE,"terminate signal catched");
+		exit(0);
+		break;
+	}
+}
+
+void daemonize()
+{
+  int i,lfp;
+  char str[10];
+  if(getppid()==1) return; /* already a daemon */
+  
+  i=fork();
+  if (i<0) exit(1); /* fork error */
+  if (i>0) exit(0); /* parent exits */
+  
+  /* child (daemon) continues */
+  setsid(); /* obtain a new process group */
+
+  // Close stdin
+  close(0);
+  open("/dev/null", O_RDONLY);
+
+  // Redirect stdout and stderr to another file.
+  close(1);
+  close(2);
+  umask(027); /* set newly created file permissions */
+  i = open("agent.log",O_WRONLY); dup(i); dup(i); /* handle standart I/O
+  
+  chdir(RUNNING_DIR); /* change running directory */
+
+  // Create the pid file.
+  lfp = open("agent.pid", O_RDWR|O_CREAT, 0640);
+  if (lfp<0) exit(1); /* can not open */
+
+  // Lock the pid file.
+  if (lockf(lfp, F_TLOCK, 0)<0) exit(0); /* can not lock */
+  
+  /* first instance continues */
+  sprintf(str,"%d\n", getpid());
+  write(lfp, str, strlen(str)); /* record pid to lockfile */
+  
+  signal(SIGCHLD,SIG_IGN); /* ignore child */
+  signal(SIGTSTP,SIG_IGN); /* ignore tty signals */
+  signal(SIGTTOU,SIG_IGN);
+  signal(SIGTTIN,SIG_IGN);
+  
+  signal(SIGHUP,signal_handler); /* catch hangup signal */
+  signal(SIGTERM,signal_handler); /* catch kill signal */
+}
+
+
 int main()
 {
   try
@@ -551,7 +612,7 @@ int main()
     agent->addAdapter("agent.mtconnect.org", 7878);
     
     // create a thread that will listen for the user to end this program
-    thread_function t(terminateServerThread, agent);
+    //thread_function t(terminateServerThread, agent);
     
     agent->set_listening_port(Agent::SERVER_PORT);
     agent->start();
