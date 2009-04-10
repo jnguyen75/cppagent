@@ -556,11 +556,11 @@ void signal_handler(int sig)
 {
   switch(sig) {
   case SIGHUP:
-    std::cout << "hangup signal catched";
+    std::cout << "hangup signal catched" << std::endl;
     break;
     
   case SIGTERM:
-    std::cout << "terminate signal catched";
+    std::cout << "terminate signal catched" << std::endl;
     exit(0);
     break;
   }
@@ -574,7 +574,12 @@ void daemonize()
   
   i=fork();
   if (i<0) exit(1); /* fork error */
-  if (i>0) exit(0); /* parent exits */
+  if (i>0)
+  {
+    std::cout << "Parent process now exiting, child process started" << std::endl;
+    exit(0); /* parent exits */
+  }
+  
   
   /* child (daemon) continues */
   setsid(); /* obtain a new process group */
