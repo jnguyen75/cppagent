@@ -88,8 +88,7 @@ namespace XmlPrinter
   );
   
   /***** Main methods to call *****/
-  std::string printError
-  (
+  std::string printError(
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
@@ -97,16 +96,14 @@ namespace XmlPrinter
     std::string errorText
   );
   
-  std::string printProbe
-  (
+  std::string printProbe(
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     std::list<Device *> devices
   );
   
-  std::string printCurrent
-  (
+  std::string printCurrent(
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,

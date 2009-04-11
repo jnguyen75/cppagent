@@ -36,8 +36,16 @@
 /* Agent public methods */
 Agent::Agent(std::string configXmlPath)
 {
-  // Load the configuration for the Agent
-  mConfig = new XmlParser(configXmlPath);
+  try
+  {
+    // Load the configuration for the Agent
+    mConfig = new XmlParser(configXmlPath);
+  }
+  catch (std::exception & e)
+  {
+    std::cerr << "Agent: Error loading .xml configuration" << std::endl;
+    exit(1);
+  }
   
   mDevices = mConfig->getDevices();
   mDataItems = mConfig->getDataItems();

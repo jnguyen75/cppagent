@@ -31,32 +31,30 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef Globals_TEST_HPP
-#define Globals_TEST_HPP
+#ifndef XML_PRINTER_TEST_HPP
+#define XML_PRINTER_TEST_HPP
+
+#include <map>
+#include <string>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../agent/globals.cpp"
+#include <libxml++/libxml++.h>
 
-extern std::string intToString(unsigned int i);
+//#include "../../devices/axes.hpp"
+//#include "../../devices/device.hpp"
 
-class GlobalsTest : public CppUnit::TestFixture
+class XmlPrinterTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE(GlobalsTest);
-  CPPUNIT_TEST(testIntToString);
-  CPPUNIT_TEST(testFloatToString);
-  CPPUNIT_TEST(testToUpperCase);
-  CPPUNIT_TEST(testTime);
-  CPPUNIT_TEST(testTimeInSec);
+  CPPUNIT_TEST_SUITE(XmlPrinterTest);
+  CPPUNIT_TEST();
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  void testIntToString();
-  void testFloatToString();
-  void testToUpperCase();
-  void testTime();
-  void testTimeInSec();
+  
+protected:
+  void testConstructor();
   
 public:
   void setUp();

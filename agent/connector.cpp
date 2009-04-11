@@ -109,7 +109,7 @@ void Connector::connect()
   }
   catch (std::exception & e)
   {
-    std::cout << "Connection Exception: " << e.what() << std::endl;
+    std::cerr << "Connection Exception: " << e.what() << std::endl;
   }
 }
 

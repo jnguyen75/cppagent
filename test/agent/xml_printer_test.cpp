@@ -31,37 +31,20 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef Globals_TEST_HPP
-#define Globals_TEST_HPP
+#include "xml_printer_test.hpp"
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
+// Registers the fixture into the 'registry'
+CPPUNIT_TEST_SUITE_REGISTRATION(XmlPrinterTest);
 
-#include "../../agent/globals.cpp"
-
-extern std::string intToString(unsigned int i);
-
-class GlobalsTest : public CppUnit::TestFixture
+void XmlPrinterTest::setUp()
 {
-  CPPUNIT_TEST_SUITE(GlobalsTest);
-  CPPUNIT_TEST(testIntToString);
-  CPPUNIT_TEST(testFloatToString);
-  CPPUNIT_TEST(testToUpperCase);
-  CPPUNIT_TEST(testTime);
-  CPPUNIT_TEST(testTimeInSec);
-  CPPUNIT_TEST_SUITE_END();
-  
-protected:
-  void testIntToString();
-  void testFloatToString();
-  void testToUpperCase();
-  void testTime();
-  void testTimeInSec();
-  
-public:
-  void setUp();
-  void tearDown();
-};
+}
 
-#endif
+void XmlPrinterTest::tearDown()
+{
+}
+
+void XmlPrinterTest::testConstructor()
+{
+}
 
