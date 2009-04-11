@@ -105,7 +105,8 @@ std::string XmlPrinter::printCurrent(
     "urn:mtconnect.com:MTConnectStreams:1.0",
     instanceId,
     bufferSize,
-    nextSeq
+    nextSeq,
+    firstSeq
   );
   
   xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
@@ -187,7 +188,8 @@ std::string XmlPrinter::printSample(
     "urn:mtconnect.com:MTConnectStreams:1.0",
     instanceId,
     bufferSize,
-    nextSeq
+    nextSeq,
+    firstSeq
   );
     
   xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
@@ -280,7 +282,7 @@ xmlpp::Document * XmlPrinter::initXmlDoc(
   if (firstSeq > 0)
   {
     header->set_attribute("firstSequence", intToString(firstSeq));
-    header->set_attribute("lastSequence", intToString(nextSeq - 1));
+    //header->set_attribute("lastSequence", intToString(nextSeq - 1));
   }
   
   return doc;

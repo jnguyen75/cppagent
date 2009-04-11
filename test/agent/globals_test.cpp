@@ -49,8 +49,8 @@ void GlobalsTest::testIntToString()
   CPPUNIT_ASSERT_EQUAL(intToString(12345), (std::string) "12345");
   CPPUNIT_ASSERT_EQUAL(intToString(0), (std::string) "0");
   CPPUNIT_ASSERT_EQUAL(intToString(987654321), (std::string) "987654321");
-}
 
+}
 void GlobalsTest::testFloatToString()
 {
   CPPUNIT_ASSERT_EQUAL(floatToString(12345), (std::string) "12345");
@@ -58,4 +58,42 @@ void GlobalsTest::testFloatToString()
   CPPUNIT_ASSERT_EQUAL(floatToString(98.7654321), (std::string) "98.7654321");
 }
 
+void GlobalsTest::testToUpperCase()
+{
+  CPPUNIT_ASSERT_EQUAL(toUpperCase("string"), (std::string) "STRING");
+  CPPUNIT_ASSERT_EQUAL(toUpperCase("STRINGstring"), (std::string) "STRINGSTRING");
+  CPPUNIT_ASSERT_EQUAL(toUpperCase("a|bb|ccc|ddd-ef"), (std::string) "A|BB|CCC|DDD-EF");
+}
+
+void GlobalsTest::testTime()
+{
+  std::string time1 = getCurrentTime();
+  std::string time2 = getCurrentTime();
+  
+  CPPUNIT_ASSERT(!time1.empty());
+  CPPUNIT_ASSERT(!time2.empty());
+  CPPUNIT_ASSERT(time1 == time2);
+  
+  sleep(1);
+  
+  std::string time3 = getCurrentTime();
+  CPPUNIT_ASSERT(!time3.empty());
+  CPPUNIT_ASSERT(time1 != time3);
+}
+
+void GlobalsTest::testTimeInSec()
+{
+  unsigned int time1 = getCurrentTime();
+  unsigned int time2 = getCurrentTime();
+  
+  CPPUNIT_ASSERT(time1 > 0);
+  CPPUNIT_ASSERT(time2 > 0);
+  CPPUNIT_ASSERT(time1 == time2);
+  
+  sleep(1);
+  
+  std::string time3 = getCurrentTime();
+  CPPUNIT_ASSERT(!time3.empty());
+  CPPUNIT_ASSERT(time1 < time3);
+}
 
