@@ -32,6 +32,8 @@
 */
 
 #include "agent.hpp"
+#include "fcntl.h"
+#include "sys/stat.h"
 
 /* Agent public methods */
 Agent::Agent(std::string configXmlPath)
@@ -558,8 +560,76 @@ void terminateServerThread(Agent * server)
   delete server;
 }
 
+void signal_handler(int sig)
+{
+  switch(sig) {
+  case SIGHUP:
+    std::cout << "hangup signal catched" << std::endl;
+    break;
+    
+  case SIGTERM:
+    std::cout << "terminate signal catched" << std::endl;
+    exit(0);
+    break;
+  }
+}
+
+void daemonize()
+{
+  int i,lfp;
+  char str[10];
+  if(getppid()==1) return; /* already a daemon */
+  
+  i=fork();
+  if (i<0) exit(1); /* fork error */
+  if (i>0)
+  {
+    std::cout << "Parent process now exiting, child process started" << std::endl;
+    exit(0); /* parent exits */
+  }
+  
+  
+  /* child (daemon) continues */
+  setsid(); /* obtain a new process group */
+
+  // Close stdin
+  close(0);
+  open("/dev/null", O_RDONLY);
+
+  // Redirect stdout and stderr to another file.
+  close(1);
+  close(2);
+  umask(027); /* set newly created file permissions */
+  i = open("agent.log", O_WRONLY | O_CREAT, 0640);
+  dup(i); /* handle standart I/O */
+  
+  // chdir(RUNNING_DIR); /* change running directory */
+
+  // Create the pid file.
+  lfp = open("agent.pid", O_RDWR|O_CREAT, 0640);
+  if (lfp<0) exit(1); /* can not open */
+
+  // Lock the pid file.
+  if (lockf(lfp, F_TLOCK, 0)<0) exit(0); /* can not lock */
+  
+  /* first instance continues */
+  sprintf(str,"%d\n", getpid());
+  write(lfp, str, strlen(str)); /* record pid to lockfile */
+  
+  signal(SIGCHLD,SIG_IGN); /* ignore child */
+  signal(SIGTSTP,SIG_IGN); /* ignore tty signals */
+  signal(SIGTTOU,SIG_IGN);
+  signal(SIGTTIN,SIG_IGN);
+  
+  signal(SIGHUP,signal_handler); /* catch hangup signal */
+  signal(SIGTERM,signal_handler); /* catch kill signal */
+}
+
+
 int main()
 {
+  daemonize();
+  
   try
   {
     //Agent * agent = new Agent("../include/config2.xml");
@@ -569,7 +639,7 @@ int main()
     agent->addAdapter("agent.mtconnect.org", 7878);
     
     // create a thread that will listen for the user to end this program
-    thread_function t(terminateServerThread, agent);
+    //thread_function t(terminateServerThread, agent);
     
     agent->set_listening_port(Agent::SERVER_PORT);
     agent->start();
