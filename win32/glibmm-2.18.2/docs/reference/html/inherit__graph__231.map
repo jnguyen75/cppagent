@@ -1,0 +1,4 @@
+<area shape="rect" href="$classGlib_1_1PropertyProxy__Base.html" title="Glib::PropertyProxy_Base" alt="" coords="7,56,177,83">
+<area shape="rect" href="$classGlib_1_1PropertyProxy.html" title="A PropertyProxy can be used to get and set the value of an object&#39;s property..." alt="" coords="259,6,427,32">
+<area shape="rect" href="$classGlib_1_1PropertyProxy__ReadOnly.html" title="See PropertyProxy()." alt="" coords="227,56,459,83">
+<area shape="rect" href="$classGlib_1_1PropertyProxy__WriteOnly.html" title="See PropertyProxy()." alt="" coords="227,107,459,134">
