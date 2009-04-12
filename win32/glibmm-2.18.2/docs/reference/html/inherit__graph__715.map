@@ -1,0 +1,7 @@
+<area shape="rect" href="libstdc++.tag.xml$structstd_1_1unary__function.html" title="std::unary_function\&lt; _Arg, _Result \&gt;" alt="" coords="7,132,241,159">
+<area shape="rect" href="libstdc++.tag.xml$class____gnu__cxx_1_1binary__compose.html" title="__gnu_cxx::binary_compose\&lt; _Operation1, _Operation2, _Operation3 \&gt;" alt="" coords="291,6,728,32">
+<area shape="rect" href="libstdc++.tag.xml$class____gnu__cxx_1_1subtractive__rng.html" title="__gnu_cxx::subtractive_rng" alt="" coords="419,56,600,83">
+<area shape="rect" href="libstdc++.tag.xml$class____gnu__cxx_1_1unary__compose.html" title="__gnu_cxx::unary_compose\&lt; _Operation1, _Operation2 \&gt;" alt="" coords="332,107,687,134">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1pointer__to__unary__function.html" title="std::pointer_to_unary_function\&lt; _Arg, _Result \&gt;" alt="" coords="360,158,659,184">
+<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1___reference__wrapper__base_3_01___res(___t1_1_1_5)()_01const_01volatile_01_4.html" title="std::tr1::_Reference_wrapper_base\&lt; _Res(_T1::*)() const volatile \&gt;" alt="" coords="305,208,713,235">
+<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1___reference__wrapper__base_3_01___res(___t1_1_1_5)()_01volatile_01_4.html" title="std::tr1::_Reference_wrapper_base\&lt; _Res(_T1::*)() volatile \&gt;" alt="" coords="323,259,696,286">
