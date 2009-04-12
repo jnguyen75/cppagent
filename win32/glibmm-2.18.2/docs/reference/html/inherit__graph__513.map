@@ -1,0 +1,11 @@
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1ios__base.html" title="std::ios_base" alt="" coords="7,108,105,135">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__ios.html" title="std::basic_ios\&lt; _CharT, _Traits \&gt;" alt="" coords="156,108,369,135">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__istream.html" title="std::basic_istream\&lt; _CharT, _Traits \&gt;" alt="" coords="421,69,661,96">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__ostream.html" title="std::basic_ostream\&lt; _CharT, _Traits \&gt;" alt="" coords="420,145,663,172">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__ifstream.html" title="std::basic_ifstream\&lt; _CharT, _Traits \&gt;" alt="" coords="751,5,993,32">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__iostream.html" title="std::basic_iostream\&lt; _CharT, _Traits \&gt;" alt="" coords="748,107,996,133">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__istringstream.html" title="std::basic_istringstream\&lt; _CharT, _Traits, _Alloc \&gt;" alt="" coords="715,56,1029,83">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__fstream.html" title="std::basic_fstream\&lt; _CharT, _Traits \&gt;" alt="" coords="1117,81,1357,108">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__stringstream.html" title="std::basic_stringstream\&lt; _CharT, _Traits, _Alloc \&gt;" alt="" coords="1081,132,1393,159">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__ofstream.html" title="std::basic_ofstream\&lt; _CharT, _Traits \&gt;" alt="" coords="748,157,996,184">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__ostringstream.html" title="std::basic_ostringstream\&lt; _CharT, _Traits, _Alloc \&gt;" alt="" coords="712,208,1032,235">

@@ -1,0 +1,26 @@
+<area shape="rect" href="$classGio_1_1AppLaunchContext.html" title="This is used to handle, for instance, startup notification and launching of the new..." alt="" coords="468,5,628,32">
+<area shape="rect" href="$classGio_1_1Cancellable.html" title="Allows actions to be cancelled." alt="" coords="491,56,605,82">
+<area shape="rect" href="$classGio_1_1DesktopAppInfo.html" title="DesktopAppInfo is an implementation of AppInfo based on desktop files." alt="" coords="477,106,619,133">
+<area shape="rect" href="$classGio_1_1FileEnumerator.html" title="Enumerated Files Routines." alt="" coords="480,157,616,184">
+<area shape="rect" href="$classGio_1_1FileIcon.html" title="FileIcon specifies an icon by pointing to an image file to be used as icon." alt="" coords="500,208,596,234">
+<area shape="rect" href="$classGio_1_1FileInfo.html" title="FileInfo implements methods for getting information that all files should contain..." alt="" coords="503,258,593,285">
+<area shape="rect" href="$classGio_1_1FileMonitor.html" title="Monitors a file or directory for changes." alt="" coords="492,309,604,336">
+<area shape="rect" href="$classGio_1_1FilenameCompleter.html" title="Completes partial file and directory names given a partial string by looking in the..." alt="" coords="468,360,628,386">
+<area shape="rect" href="$classGio_1_1InputStream.html" title="Base class for implementing streaming input." alt="" coords="488,410,608,437">
+<area shape="rect" href="$classGio_1_1MountOperation.html" title="Authentication methods for mountable locations." alt="" coords="477,461,619,488">
+<area shape="rect" href="$classGio_1_1OutputStream.html" title="Base class for implementing streaming output." alt="" coords="483,512,613,538">
+<area shape="rect" href="$classGio_1_1ThemedIcon.html" title="Icon theming support ThemedIcon is an implementation of Gio::Icon that supports icon..." alt="" coords="488,562,608,589">
+<area shape="rect" href="$classGio_1_1VolumeMonitor.html" title="Monitors a file or directory for changes." alt="" coords="480,613,616,640">
+<area shape="rect" href="$classGlib_1_1ObjectBase.html" title="Glib::ObjectBase is a common base class for Objects and Interfaces." alt="" coords="160,309,280,336">
+<area shape="rect" href="$classsigc_1_1trackable.html" title="sigc::trackable" alt="" coords="5,309,112,336">
+<area shape="rect" href="$classGio_1_1FileInputStream.html" title="FileInputStream provides input streams that take their content from a file." alt="" coords="691,309,832,336">
+<area shape="rect" href="$classGio_1_1FilterInputStream.html" title="Filter Input Stream." alt="" coords="687,360,836,386">
+<area shape="rect" href="$classGio_1_1MemoryInputStream.html" title="MemoryInputStream implements InputStream for arbitrary memory chunks." alt="" coords="677,410,845,437">
+<area shape="rect" href="$classGio_1_1UnixInputStream.html" title="UnixInputStream implements InputStream for reading from a unix file descriptor, including..." alt="" coords="688,461,835,488">
+<area shape="rect" href="$classGio_1_1BufferedInputStream.html" title="The buffered input stream implements FilterInputStream and provides for buffered..." alt="" coords="899,360,1067,386">
+<area shape="rect" href="$classGio_1_1DataInputStream.html" title="An implementation of BufferedInputStream that allows for high&#45;level data manipulation..." alt="" coords="1125,360,1272,386">
+<area shape="rect" href="$classGio_1_1FileOutputStream.html" title="FileOutputStream provides output streams that write their content to a file." alt="" coords="685,512,837,538">
+<area shape="rect" href="$classGio_1_1FilterOutputStream.html" title="Filter Output Stream." alt="" coords="681,562,841,589">
+<area shape="rect" href="$classGio_1_1UnixOutputStream.html" title="UnixOutputStream implements OutputStream for writing to a a unix file descriptor..." alt="" coords="684,613,839,640">
+<area shape="rect" href="$classGio_1_1BufferedOutputStream.html" title="The buffered output stream implements FilterOutputStream and provides for buffered..." alt="" coords="893,562,1072,589">
+<area shape="rect" href="$classGio_1_1DataOutputStream.html" title="An implementation of BufferedOutputStream that allows for high&#45;level data manipulation..." alt="" coords="1120,562,1277,589">

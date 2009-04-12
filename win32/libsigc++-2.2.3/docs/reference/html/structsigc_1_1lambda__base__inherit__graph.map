@@ -1,0 +1,17 @@
+base referer
+rect $structsigc_1_1internal_1_1lambda__core_3_01T__type_00_01false_01_4.html 444,6 748,32
+rect $structsigc_1_1internal_1_1lambda__core_3_01T__type_00_01true_01_4.html 447,56 745,83
+rect $structsigc_1_1internal_1_1lambda__select1.html 491,107 701,134
+rect $structsigc_1_1internal_1_1lambda__select2.html 491,158 701,184
+rect $structsigc_1_1internal_1_1lambda__select3.html 491,208 701,235
+rect $structsigc_1_1internal_1_1lambda__select4.html 491,259 701,286
+rect $structsigc_1_1internal_1_1lambda__select5.html 491,310 701,336
+rect $structsigc_1_1internal_1_1lambda__select6.html 491,360 701,387
+rect $structsigc_1_1internal_1_1lambda__select7.html 491,411 701,438
+rect $structsigc_1_1lambda__group1.html 445,462 747,488
+rect $structsigc_1_1lambda__group2.html 416,512 776,539
+rect $structsigc_1_1lambda__group3.html 388,563 804,590
+rect $structsigc_1_1lambda__operator.html 415,614 777,640
+rect $structsigc_1_1lambda__operator__convert.html 399,664 793,691
+rect $structsigc_1_1lambda__operator__unary.html 427,715 765,742
+rect $structsigc_1_1adaptor__base.html 7,360 148,387
