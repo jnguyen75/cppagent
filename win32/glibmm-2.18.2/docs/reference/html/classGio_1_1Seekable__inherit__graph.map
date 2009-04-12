@@ -1,0 +1,6 @@
+<area shape="rect" href="$classGio_1_1FileInputStream.html" title="FileInputStream provides input streams that take their content from a file." alt="" coords="5,304,147,331">
+<area shape="rect" href="$classGio_1_1FileOutputStream.html" title="FileOutputStream provides output streams that write their content to a file." alt="" coords="171,304,323,331">
+<area shape="rect" href="$classGio_1_1MemoryInputStream.html" title="MemoryInputStream implements InputStream for arbitrary memory chunks." alt="" coords="347,304,515,331">
+<area shape="rect" href="$classGlib_1_1Interface.html" title="Glib::Interface" alt="" coords="195,155,299,181">
+<area shape="rect" href="$classGlib_1_1ObjectBase.html" title="Glib::ObjectBase is a common base class for Objects and Interfaces." alt="" coords="187,80,307,107">
+<area shape="rect" href="$classsigc_1_1trackable.html" title="sigc::trackable" alt="" coords="193,5,300,32">
