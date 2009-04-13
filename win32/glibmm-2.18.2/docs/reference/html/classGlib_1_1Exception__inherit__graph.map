@@ -1,0 +1,12 @@
+<area shape="rect" href="$classGlib_1_1Error.html" title="Glib::Error" alt="" coords="165,259,245,285">
+<area shape="rect" href="$classGio_1_1Error.html" title="Exception class for giomm errors." alt="" coords="325,5,403,32">
+<area shape="rect" href="$classGlib_1_1ConvertError.html" title="Exception class for charset conversion errors." alt="" coords="301,56,427,83">
+<area shape="rect" href="$classGlib_1_1FileError.html" title="Exception class for file&#45;related errors." alt="" coords="313,107,415,133">
+<area shape="rect" href="$classGlib_1_1IOChannelError.html" title="Exception class for IOChannel errors." alt="" coords="293,157,435,184">
+<area shape="rect" href="$classGlib_1_1KeyFileError.html" title="Exception class for KeyFile errors." alt="" coords="303,208,425,235">
+<area shape="rect" href="$classGlib_1_1MarkupError.html" title="Exception class for markup parsing errors." alt="" coords="303,259,425,285">
+<area shape="rect" href="$classGlib_1_1OptionError.html" title="Exception class for options." alt="" coords="305,309,423,336">
+<area shape="rect" href="$classGlib_1_1RegexError.html" title="Exception class for Regex." alt="" coords="305,360,423,387">
+<area shape="rect" href="$classGlib_1_1ShellError.html" title="Exception class for shell utility errors." alt="" coords="309,411,419,437">
+<area shape="rect" href="$classGlib_1_1SpawnError.html" title="Exception class for errors occuring when spawning processes." alt="" coords="304,461,424,488">
+<area shape="rect" href="$classGlib_1_1ThreadError.html" title="Exception class for thread&#45;related errors." alt="" coords="304,512,424,539">

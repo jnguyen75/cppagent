@@ -1,0 +1,8 @@
+<area shape="rect" href="libstdc++.tag.xml$struct____gnu__cxx_1_1___refcount___base.html" title="__gnu_cxx::_Refcount_Base" alt="" coords="61,30,248,57">
+<area shape="rect" href="libstdc++.tag.xml$struct____gnu__cxx_1_1___rope___rope_rep.html" title="__gnu_cxx::_Rope_RopeRep\&lt; _CharT, _Alloc \&gt;" alt="" coords="352,56,651,82">
+<area shape="rect" href="libstdc++.tag.xml$struct____gnu__cxx_1_1___rope___rope_concatenation.html" title="__gnu_cxx::_Rope_RopeConcatenation\&lt; _CharT, _Alloc \&gt;" alt="" coords="700,5,1057,32">
+<area shape="rect" href="libstdc++.tag.xml$struct____gnu__cxx_1_1___rope___rope_function.html" title="__gnu_cxx::_Rope_RopeFunction\&lt; _CharT, _Alloc \&gt;" alt="" coords="716,56,1041,82">
+<area shape="rect" href="libstdc++.tag.xml$struct____gnu__cxx_1_1___rope___rope_leaf.html" title="__gnu_cxx::_Rope_RopeLeaf\&lt; _CharT, _Alloc \&gt;" alt="" coords="729,106,1028,133">
+<area shape="rect" href="libstdc++.tag.xml$struct____gnu__cxx_1_1___rope___rope_substring.html" title="__gnu_cxx::_Rope_RopeSubstring\&lt; _CharT, _Alloc \&gt;" alt="" coords="1107,106,1437,133">
+<area shape="rect" href="libstdc++.tag.xml$struct____gnu__cxx_1_1___rope__rep__base.html" title="__gnu_cxx::_Rope_rep_base\&lt; _CharT, _Alloc \&gt;" alt="" coords="5,81,304,108">
+<area shape="rect" href="libstdc++.tag.xml$class____gnu__cxx_1_1char__producer.html" title="__gnu_cxx::char_producer\&lt; _CharT \&gt;" alt="" coords="759,157,999,184">

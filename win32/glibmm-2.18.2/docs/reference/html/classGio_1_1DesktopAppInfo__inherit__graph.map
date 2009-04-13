@@ -1,0 +1,5 @@
+<area shape="rect" href="$classGlib_1_1Object.html" title="Glib::Object" alt="" coords="5,229,96,256">
+<area shape="rect" href="$classGlib_1_1ObjectBase.html" title="Glib::ObjectBase is a common base class for Objects and Interfaces." alt="" coords="41,80,161,107">
+<area shape="rect" href="$classGlib_1_1Interface.html" title="Glib::Interface" alt="" coords="108,155,212,181">
+<area shape="rect" href="$classsigc_1_1trackable.html" title="sigc::trackable" alt="" coords="48,5,155,32">
+<area shape="rect" href="$classGio_1_1AppInfo.html" title="Application information, to describe applications installed on the system, and launch..." alt="" coords="120,229,213,256">
