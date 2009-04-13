@@ -1,0 +1,36 @@
+<area shape="rect" href="$classGlib_1_1Interface.html" title="Glib::Interface" alt="" coords="328,436,432,463">
+<area shape="rect" href="$classGlib_1_1Object.html" title="Glib::Object" alt="" coords="497,335,588,362">
+<area shape="rect" href="$classsigc_1_1trackable.html" title="sigc::trackable" alt="" coords="5,411,112,438">
+<area shape="rect" href="$classGio_1_1AppInfo.html" title="Application information, to describe applications installed on the system, and launch..." alt="" coords="496,31,589,58">
+<area shape="rect" href="$classGio_1_1AsyncResult.html" title="Provides a base class for implementing asynchronous function results." alt="" coords="481,436,604,463">
+<area shape="rect" href="$classGio_1_1Drive.html" title="Virtual File System drive management." alt="" coords="503,487,583,514">
+<area shape="rect" href="$classGio_1_1File.html" title="File and directory handling." alt="" coords="508,538,577,564">
+<area shape="rect" href="$classGio_1_1Icon.html" title="This is a very minimal interface for icons." alt="" coords="505,107,580,134">
+<area shape="rect" href="$classGio_1_1Mount.html" title="The Mount interface represents user&#45;visible mounts." alt="" coords="500,588,585,615">
+<area shape="rect" href="$classGio_1_1Seekable.html" title="Stream seeking interface." alt="" coords="683,563,787,590">
+<area shape="rect" href="$classGio_1_1Volume.html" title="The Volume interface represents user&#45;visible objects that can be mounted." alt="" coords="497,639,588,666">
+<area shape="rect" href="$classGio_1_1DesktopAppInfo.html" title="DesktopAppInfo is an implementation of AppInfo based on desktop files." alt="" coords="664,6,805,32">
+<area shape="rect" href="$classGio_1_1LoadableIcon.html" title="Extends the Icon interface and adds the ability to load icons from streams." alt="" coords="672,56,797,83">
+<area shape="rect" href="$classGio_1_1ThemedIcon.html" title="Icon theming support ThemedIcon is an implementation of Gio::Icon that supports icon..." alt="" coords="675,107,795,134">
+<area shape="rect" href="$classGio_1_1FileIcon.html" title="FileIcon specifies an icon by pointing to an image file to be used as icon." alt="" coords="900,107,996,134">
+<area shape="rect" href="$classGio_1_1FileInputStream.html" title="FileInputStream provides input streams that take their content from a file." alt="" coords="877,563,1019,590">
+<area shape="rect" href="$classGio_1_1FileOutputStream.html" title="FileOutputStream provides output streams that write their content to a file." alt="" coords="872,512,1024,539">
+<area shape="rect" href="$classGio_1_1MemoryInputStream.html" title="MemoryInputStream implements InputStream for arbitrary memory chunks." alt="" coords="864,614,1032,640">
+<area shape="rect" href="$classGio_1_1AppLaunchContext.html" title="This is used to handle, for instance, startup notification and launching of the new..." alt="" coords="655,208,815,235">
+<area shape="rect" href="$classGio_1_1Cancellable.html" title="Allows actions to be cancelled." alt="" coords="677,259,792,286">
+<area shape="rect" href="$classGio_1_1FileEnumerator.html" title="Enumerated Files Routines." alt="" coords="667,310,803,336">
+<area shape="rect" href="$classGio_1_1FileInfo.html" title="FileInfo implements methods for getting information that all files should contain..." alt="" coords="689,360,780,387">
+<area shape="rect" href="$classGio_1_1FileMonitor.html" title="Monitors a file or directory for changes." alt="" coords="679,411,791,438">
+<area shape="rect" href="$classGio_1_1FilenameCompleter.html" title="Completes partial file and directory names given a partial string by looking in the..." alt="" coords="655,462,815,488">
+<area shape="rect" href="$classGio_1_1InputStream.html" title="Base class for implementing streaming input." alt="" coords="675,614,795,640">
+<area shape="rect" href="$classGio_1_1MountOperation.html" title="Authentication methods for mountable locations." alt="" coords="664,664,805,691">
+<area shape="rect" href="$classGio_1_1OutputStream.html" title="Base class for implementing streaming output." alt="" coords="669,512,800,539">
+<area shape="rect" href="$classGio_1_1VolumeMonitor.html" title="Monitors a file or directory for changes." alt="" coords="667,715,803,742">
+<area shape="rect" href="$classGio_1_1FilterInputStream.html" title="Filter Input Stream." alt="" coords="873,664,1023,691">
+<area shape="rect" href="$classGio_1_1UnixInputStream.html" title="UnixInputStream implements InputStream for reading from a unix file descriptor, including..." alt="" coords="875,715,1021,742">
+<area shape="rect" href="$classGio_1_1BufferedInputStream.html" title="The buffered input stream implements FilterInputStream and provides for buffered..." alt="" coords="1085,664,1253,691">
+<area shape="rect" href="$classGio_1_1DataInputStream.html" title="An implementation of BufferedInputStream that allows for high&#45;level data manipulation..." alt="" coords="1312,664,1459,691">
+<area shape="rect" href="$classGio_1_1FilterOutputStream.html" title="Filter Output Stream." alt="" coords="868,411,1028,438">
+<area shape="rect" href="$classGio_1_1UnixOutputStream.html" title="UnixOutputStream implements OutputStream for writing to a a unix file descriptor..." alt="" coords="871,462,1025,488">
+<area shape="rect" href="$classGio_1_1BufferedOutputStream.html" title="The buffered output stream implements FilterOutputStream and provides for buffered..." alt="" coords="1080,411,1259,438">
+<area shape="rect" href="$classGio_1_1DataOutputStream.html" title="An implementation of BufferedOutputStream that allows for high&#45;level data manipulation..." alt="" coords="1307,411,1464,438">

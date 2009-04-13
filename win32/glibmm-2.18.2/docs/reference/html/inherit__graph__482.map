@@ -1,0 +1,5 @@
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__streambuf.html" title="std::basic_streambuf\&lt; _CharT, _Traits \&gt;" alt="" coords="5,56,261,83">
+<area shape="rect" href="libstdc++.tag.xml$class____gnu__cxx_1_1stdio__sync__filebuf.html" title="__gnu_cxx::stdio_sync_filebuf\&lt; _CharT, _Traits \&gt;" alt="" coords="309,6,619,32">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__filebuf.html" title="std::basic_filebuf\&lt; _CharT, _Traits \&gt;" alt="" coords="348,56,580,83">
+<area shape="rect" href="libstdc++.tag.xml$classstd_1_1basic__stringbuf.html" title="std::basic_stringbuf\&lt; _CharT, _Traits, _Alloc \&gt;" alt="" coords="319,107,609,134">
+<area shape="rect" href="libstdc++.tag.xml$class____gnu__cxx_1_1stdio__filebuf.html" title="__gnu_cxx::stdio_filebuf\&lt; _CharT, _Traits \&gt;" alt="" coords="667,56,941,83">

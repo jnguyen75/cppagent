@@ -3,6 +3,7 @@
 *.a
 .libs
 .deps
+.DS_Store
 example
 config.log
 config.h
