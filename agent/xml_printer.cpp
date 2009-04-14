@@ -43,8 +43,7 @@ std::string XmlPrinter::printError(
   )
 {
   xmlpp::Document * mErrorXml = initXmlDoc(
-    "MTConnectStreams",
-    "urn:mtconnect.com:MTConnectError:1.0",
+    "Error",
     instanceId,
     bufferSize,
     nextSeq
@@ -69,8 +68,7 @@ std::string XmlPrinter::printProbe(
   )
 {
   xmlpp::Document * mProbeXml = initXmlDoc(
-    "MTConnectDevices",
-    "urn:mtconnect.com:MTConnectDevices:1.0",
+    "Devices",
     instanceId,
     bufferSize,
     nextSeq
@@ -101,8 +99,7 @@ std::string XmlPrinter::printCurrent(
   )
 {
   xmlpp::Document * mSampleXml = initXmlDoc(
-    "MTConnectStreams",
-    "urn:mtconnect.com:MTConnectStreams:1.0",
+    "Streams",
     instanceId,
     bufferSize,
     nextSeq,
@@ -184,8 +181,7 @@ std::string XmlPrinter::printSample(
   )
 {
   xmlpp::Document * mSampleXml = initXmlDoc(
-    "MTConnectStreams",
-    "urn:mtconnect.com:MTConnectStreams:1.0",
+    "Streams",
     instanceId,
     bufferSize,
     nextSeq,
@@ -252,8 +248,7 @@ std::string XmlPrinter::printSample(
 
 /* XmlPrinter Protected Methods */
 xmlpp::Document * XmlPrinter::initXmlDoc(
-    std::string rootName,
-    std::string xmlnsM,
+    const std::string xmlType,
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
@@ -262,13 +257,17 @@ xmlpp::Document * XmlPrinter::initXmlDoc(
 {
   xmlpp::Document * doc = new xmlpp::Document;
   
+  std::string rootName = "MTConnect" + xmlType;
+  std::string xmlns = "urn:mtconnect.com:MTConnect" + xmlType + ":1.0";
+  std::string xsi = "urn:mtconnect.com:MTConnect" + xmlType +
+    ":1.0 /schemas/MTConnect" + xmlType + ".xsd";
+  
   // Root
   xmlpp::Element * root = doc->create_root_node(rootName);
-  root->set_attribute("xmlns:m", xmlnsM);
+  root->set_attribute("xmlns:m", xmlns);
   root->set_attribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-  root->set_attribute("xmlns", "urn:mtconnect.com:MTConnectError:1.0");
-  root->set_attribute("xsi:schemaLocation",
-    "urn:mtconnect.com:MTConnectError:1.0 /schemas/MTConnectError.xsd");
+  root->set_attribute("xmlns", xmlns);
+  root->set_attribute("xsi:schemaLocation", xsi);
   
   // Header
   xmlpp::Element * header = doc->get_root_node()->add_child("Header");

@@ -41,11 +41,17 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "../../devices/device.hpp"
+#include "../../devices/data_item.hpp"
 
 class DeviceTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(DeviceTest);
-  CPPUNIT_TEST(testConstructor);
+  CPPUNIT_TEST(testGetAttributes);
+  CPPUNIT_TEST(testGetClass);
+  CPPUNIT_TEST(testDescription);
+  CPPUNIT_TEST(testParents);
+  CPPUNIT_TEST(testChildren);
+  CPPUNIT_TEST(testDataItems);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
@@ -54,6 +60,10 @@ protected:
 protected:
   void testGetAttributes();
   void testGetClass();
+  void testDescription();
+  void testParents();
+  void testChildren();
+  void testDataItems();
   
 public:
   void setUp();
