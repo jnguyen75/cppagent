@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppagent", "cppagent.vcproj", "{3AE7E9EE-0EBD-4662-994C-8706007EBA7D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3AE7E9EE-0EBD-4662-994C-8706007EBA7D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3AE7E9EE-0EBD-4662-994C-8706007EBA7D}.Debug|Win32.Build.0 = Debug|Win32
+		{3AE7E9EE-0EBD-4662-994C-8706007EBA7D}.Release|Win32.ActiveCfg = Release|Win32
+		{3AE7E9EE-0EBD-4662-994C-8706007EBA7D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
