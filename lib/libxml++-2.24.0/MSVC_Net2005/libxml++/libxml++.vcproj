@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/vd2"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;../.."
+				AdditionalIncludeDirectories="&quot;C:\cppagent\win32\iconv-1.9.2.win32\include&quot;;&quot;C:\cppagent\win32\libxml2-2.7.3.win32\include&quot;;.;../.."
 				PreprocessorDefinitions="LIBXMLPP_BUILD"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -68,7 +68,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libxml2.lib glibmm-2.4d.lib"
+				AdditionalOptions="/LIBPATH:..\..\..\..\win32\libxml2-2.7.3.win32\lib"
+				AdditionalDependencies="libxml2.lib "
 				OutputFile="$(OutDir)/$(ProjectName)d.dll"
 				ModuleDefinitionFile="$(ConfigurationName)\$(InputName).def"
 				GenerateDebugInformation="true"

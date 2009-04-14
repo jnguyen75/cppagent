@@ -1,6 +1,0 @@
-<area shape="rect" href="$classGio_1_1BufferedInputStream.html" title="The buffered input stream implements FilterInputStream and provides for buffered..." alt="" coords="5,378,173,405">
-<area shape="rect" href="$classGio_1_1InputStream.html" title="Base class for implementing streaming input." alt="" coords="29,229,149,256">
-<area shape="rect" href="$classGlib_1_1Object.html" title="Glib::Object" alt="" coords="44,154,135,181">
-<area shape="rect" href="$classGlib_1_1ObjectBase.html" title="Glib::ObjectBase is a common base class for Objects and Interfaces." alt="" coords="29,80,149,106">
-<area shape="rect" href="$classsigc_1_1trackable.html" title="sigc::trackable" alt="" coords="36,5,143,32">
-<area shape="rect" href="$classGio_1_1DataInputStream.html" title="An implementation of BufferedInputStream that allows for high&#45;level data manipulation..." alt="" coords="16,453,163,480">
