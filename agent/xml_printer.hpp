@@ -53,8 +53,7 @@ namespace XmlPrinter
   /***** Helper Methods *****/
   /* Initiate all documents */
   xmlpp::Document * initXmlDoc(
-    std::string rootName,
-    std::string xmlnsM,
+    std::string xmlType,
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
@@ -111,8 +110,7 @@ namespace XmlPrinter
     std::list<DataItem *> dataItems
   );
   
-  std::string printSample
-  (
+  std::string printSample(
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,

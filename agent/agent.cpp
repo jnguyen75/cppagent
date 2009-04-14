@@ -438,7 +438,7 @@ std::string Agent::fetchCurrentData(std::list<DataItem *> dataItems)
 {
   mSequenceLock->lock();
   unsigned int firstSeq = (mSequence > SLIDING_BUFFER_SIZE) ?
-    SLIDING_BUFFER_SIZE - mSequence : 1;
+    mSequence - SLIDING_BUFFER_SIZE : 1;
   
   std::string toReturn = XmlPrinter::printCurrent(
       mInstanceId,
@@ -464,7 +464,7 @@ std::string Agent::fetchSampleData(
 
   unsigned int seq = mSequence;
   unsigned int firstSeq = (mSequence > SLIDING_BUFFER_SIZE) ?
-    SLIDING_BUFFER_SIZE - mSequence : 1;
+    mSequence - SLIDING_BUFFER_SIZE : 1;
   
   // START SHOULD BE BETWEEN 0 AND SEQUENCE NUMBER
   start = (start <= firstSeq) ? firstSeq  : start;

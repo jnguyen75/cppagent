@@ -39,19 +39,19 @@ CPPUNIT_TEST_SUITE_REGISTRATION(DeviceTest);
 void DeviceTest::setUp()
 {
   std::map<std::string, std::string> attributes1;
-  attributes1["id"] = 3;
+  attributes1["id"] = "3";
   attributes1["name"] = "DeviceTestA";
   attributes1["uuid"] = "UniversalUniqueIdA";
-  attributes1["sampleRate"] = 100.11;
-  attributes1["iso841Class"] = 12;
+  attributes1["sampleRate"] = "100.11";
+  attributes1["iso841Class"] = "12";
   
   a = new Device(attributes1);
   
   std::map<std::string, std::string> attributes2;
-  attributes2["id"] = 5;
+  attributes2["id"] = "5";
   attributes2["name"] = "DeviceTestB";
   attributes2["uuid"] = "UniversalUniqueIdB";
-  attributes2["iso841Class"] = 24;
+  attributes2["iso841Class"] = "24";
   
   b = new Device(attributes2);
 }
@@ -65,23 +65,109 @@ void DeviceTest::tearDown()
 void DeviceTest::testGetAttributes()
 {
   std::map<std::string, std::string> attributes1 = a->getAttributes();
-  CPPUNIT_ASSERT_EQUAL(attributes1["id"], 3);
-  CPPUNIT_ASSERT_EQUAL(attributes1["name"], "DeviceTestA");
-  CPPUNIT_ASSERT_EQUAL(attributes1["uuid"], "UniversalUniqueIdA");
-  CPPUNIT_ASSERT_EQUAL(attributes1["sampleRate"], 100.11);
-  CPPUNIT_ASSERT_EQUAL(attributes1["iso841Class"], 12);
+  CPPUNIT_ASSERT_EQUAL((std::string) "3", attributes1["id"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "DeviceTestA", attributes1["name"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "UniversalUniqueIdA", attributes1["uuid"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "100.11", attributes1["sampleRate"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "12", attributes1["iso841Class"]);
   
   std::map<std::string, std::string> attributes2 = b->getAttributes();
-  CPPUNIT_ASSERT_EQUAL(attributes2["id"], 5);
-  CPPUNIT_ASSERT_EQUAL(attributes2["name"], "DeviceTestB");
-  CPPUNIT_ASSERT_EQUAL(attributes2["uuid"], "UniversalUniqueIdB");
-  CPPUNIT_ASSERT_EQUAL(attributes2["sampleRate"], 0.0);
-  CPPUNIT_ASSERT_EQUAL(attributes2["iso841Class"], 24);
+  CPPUNIT_ASSERT_EQUAL((std::string) "5", attributes2["id"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "DeviceTestB", attributes2["name"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "UniversalUniqueIdB", attributes2["uuid"]);
+  CPPUNIT_ASSERT(attributes2["sampleRate"].empty());
+  CPPUNIT_ASSERT_EQUAL((std::string) "24", attributes2["iso841Class"]);
 }
 
 void DeviceTest::testGetClass()
 {
-  CPPUNIT_ASSERT_EQUAL("Device", a->getClass());
-  CPPUNIT_ASSERT_EQUAL("Device", b->getClass());
+  CPPUNIT_ASSERT_EQUAL((std::string) "Device", a->getClass());
+  CPPUNIT_ASSERT_EQUAL((std::string) "Device", b->getClass());
+}
+
+void DeviceTest::testDescription()
+{
+  std::map<std::string, std::string> getDescription, addDescription;
+  
+  getDescription = a->getDescription();
+  CPPUNIT_ASSERT(getDescription.empty());
+  
+  addDescription["manufacturer"] = "MANU";
+  addDescription["serialNumber"] = "SERIAL";
+  a->addDescription(addDescription);
+  getDescription = a->getDescription();
+  
+  CPPUNIT_ASSERT_EQUAL(getDescription.size(), (size_t) 2);
+  CPPUNIT_ASSERT_EQUAL(getDescription["manufacturer"], (std::string) "MANU");
+  CPPUNIT_ASSERT_EQUAL(getDescription["serialNumber"], (std::string) "SERIAL");
+  CPPUNIT_ASSERT(getDescription["station"].empty());
+  
+  addDescription["station"] = "STAT";
+  a->addDescription(addDescription);
+  getDescription = a->getDescription();
+  CPPUNIT_ASSERT_EQUAL(getDescription.size(), (size_t) 3);
+  CPPUNIT_ASSERT_EQUAL(getDescription["manufacturer"], (std::string) "MANU");
+  CPPUNIT_ASSERT_EQUAL(getDescription["serialNumber"], (std::string) "SERIAL");
+  CPPUNIT_ASSERT_EQUAL(getDescription["station"], (std::string) "STAT");
+}
+
+void DeviceTest::testParents()
+{
+  CPPUNIT_ASSERT(a->getParent() == NULL);
+  CPPUNIT_ASSERT(a->getDevice() == a);
+}
+
+void DeviceTest::testChildren()
+{
+  std::map<std::string, std::string> attributes1, attributes2;
+  
+  attributes1["id"] = "7";
+  attributes1["name"] = "child1";
+  attributes1["uuid"] = "UniversalUniqueIdA";
+  
+  Device * d1 = new Device(attributes1);
+  
+  attributes2["id"] = "9";
+  attributes2["name"] = "child2";
+  attributes2["uuid"] = "UniversalUniqueIdB";
+  
+  Device * d2 = new Device(attributes2);
+  
+  CPPUNIT_ASSERT(a->getChildren().empty());
+  
+  a->addChild(d1);
+  a->addChild(d2);
+  
+  CPPUNIT_ASSERT_EQUAL((size_t) 2, a->getChildren().size());
+  CPPUNIT_ASSERT_EQUAL(d1, dynamic_cast<Device *>(a->getChildren().front()));
+  CPPUNIT_ASSERT_EQUAL(d2, dynamic_cast<Device *>(a->getChildren().back()));
+}
+
+void DeviceTest::testDataItems()
+{
+  std::map<std::string, std::string> attributes1, attributes2;
+  
+  CPPUNIT_ASSERT(a->getDataItems().empty());
+  
+  attributes1["id"] = "1";
+  attributes1["name"] = "DataItem1";
+  attributes1["type"] = "ACCELERATION";
+  attributes1["category"] == "SAMPLE";
+  
+  DataItem * d1 = new DataItem(attributes1);
+  
+  attributes2["id"] = "2";
+  attributes2["name"] = "DataItem2";
+  attributes2["type"] = "ACCELERATION";
+  attributes2["category"] == "SAMPLE";
+    
+  DataItem * d2 = new DataItem(attributes2);
+  
+  a->addDataItem(d1);
+  a->addDataItem(d2);
+  
+  CPPUNIT_ASSERT_EQUAL((size_t) 2, a->getDataItems().size());
+  CPPUNIT_ASSERT_EQUAL(d1, a->getDataItems().front());
+  CPPUNIT_ASSERT_EQUAL(d2, a->getDataItems().back());
 }
 
