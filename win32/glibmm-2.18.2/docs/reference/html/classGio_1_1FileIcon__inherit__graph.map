@@ -1,6 +1,0 @@
-<area shape="rect" href="$classGlib_1_1Object.html" title="Glib::Object" alt="" coords="5,230,96,256">
-<area shape="rect" href="$classGlib_1_1ObjectBase.html" title="Glib::ObjectBase is a common base class for Objects and Interfaces." alt="" coords="39,80,159,107">
-<area shape="rect" href="$classGlib_1_1Interface.html" title="Glib::Interface" alt="" coords="100,155,204,182">
-<area shape="rect" href="$classsigc_1_1trackable.html" title="sigc::trackable" alt="" coords="45,6,152,32">
-<area shape="rect" href="$classGio_1_1LoadableIcon.html" title="Extends the Icon interface and adds the ability to load icons from streams." alt="" coords="92,304,217,331">
-<area shape="rect" href="$classGio_1_1Icon.html" title="This is a very minimal interface for icons." alt="" coords="120,230,195,256">

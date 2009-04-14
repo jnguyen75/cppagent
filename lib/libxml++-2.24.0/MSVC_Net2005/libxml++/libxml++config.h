@@ -2,7 +2,9 @@
 #ifndef _LIBXMLPP_CONFIG_H
 #define _LIBXMLPP_CONFIG_H 1
 
-#include <glibmmconfig.h>
+//#include <glibmmconfig.h>
+#define GLIBMM_MSC 1
+#define GLIBMM_DLL 1
 
 #ifdef GLIBMM_CONFIGURE
 /* compiler feature tests that are used during compile time and run-time
