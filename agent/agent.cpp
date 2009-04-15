@@ -110,8 +110,9 @@ bool Agent::on_request(
       else
       {
         result = printError(
-            "ROUTING_ERROR",
-            "The path '" + path + "' does not exist."
+            "UNSUPPORTED",
+            "The request was not one of the specified requests: "
+              + path.substr(1, loc1-1)
           );
         return true;
       }
@@ -333,8 +334,8 @@ bool Agent::handleCall(
   else
   {
     result = printError(
-        "ROUTING_ERROR",
-        "The path '/" + call + "' does not exist."
+        "UNSUPPORTED",
+        "The request was not one of the specified requests: " + call
       );
     return true;
   }
