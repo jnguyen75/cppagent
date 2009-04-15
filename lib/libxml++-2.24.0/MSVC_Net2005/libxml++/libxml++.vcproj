@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/vd2"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\cppagent\win32\iconv-1.9.2.win32\include&quot;;&quot;C:\cppagent\win32\libxml2-2.7.3.win32\include&quot;;.;../.."
+				AdditionalIncludeDirectories="..\..\..\..\win32\lib;&quot;..\..\..\..\win32\iconv-1.9.2.win32\include&quot;;&quot;..\..\..\..\win32\libxml2-2.7.3.win32\include&quot;;.;../.."
 				PreprocessorDefinitions="LIBXMLPP_BUILD"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -68,9 +68,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/LIBPATH:..\..\..\..\win32\libxml2-2.7.3.win32\lib"
 				AdditionalDependencies="libxml2.lib "
 				OutputFile="$(OutDir)/$(ProjectName)d.dll"
+				AdditionalLibraryDirectories="&quot;..\..\..\..\win32\libxml2-2.7.3.win32\lib&quot;"
 				ModuleDefinitionFile="$(ConfigurationName)\$(InputName).def"
 				GenerateDebugInformation="true"
 			/>
@@ -125,7 +125,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/vd2"
-				AdditionalIncludeDirectories=".;../.."
+				AdditionalIncludeDirectories="..\..\..\..\win32\lib;&quot;..\..\..\..\win32\iconv-1.9.2.win32\include&quot;;&quot;..\..\..\..\win32\libxml2-2.7.3.win32\include&quot;;.;../.."
 				PreprocessorDefinitions="LIBXMLPP_BUILD"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
@@ -149,7 +149,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libxml2.lib glibmm-2.4.lib"
+				AdditionalOptions="/LIBPATH:..\..\..\..\win32\libxml2-2.7.3.win32\lib"
+				AdditionalDependencies="libxml2.lib "
 				ModuleDefinitionFile="$(ConfigurationName)\$(InputName).def"
 			/>
 			<Tool
@@ -305,6 +306,10 @@
 						ObjectFile="$(IntDir)/"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\win32\lib\glibmm\ustring.cpp"
+				>
 			</File>
 			<Filter
 				Name="exceptions"
@@ -794,6 +799,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libxml++\noncopyable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\win32\lib\glibmm\ustring.h"
 				>
 			</File>
 			<Filter
