@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\cppagent\lib\libxml++-2.24.0&quot;;C:\cppagent\lib;C:\cppagent\agent;C:\cppagent\devices;&quot;C:\cppagent\win32\libxml2-2.7.3.win32\include&quot;;&quot;C:\cppagent\win32\zlib-1.2.3.win32\include&quot;;&quot;C:\cppagent\win32\openssl-0.9.8a.win32\include&quot;;&quot;C:\cppagent\win32\libxslt-1.1.24.win32\include&quot;;&quot;C:\cppagent\win32\libxmlsec-1.2.11.win32\include&quot;;&quot;C:\cppagent\win32\iconv-1.9.2.win32\include&quot;"
+				AdditionalIncludeDirectories="C:\cppagent\win32\lib;&quot;C:\cppagent\lib\libxml++-2.24.0\MSVC_Net2005\libxml++&quot;;&quot;C:\cppagent\lib\libxml++-2.24.0&quot;;C:\cppagent\lib;C:\cppagent\agent;C:\cppagent\devices;&quot;C:\cppagent\win32\libxml2-2.7.3.win32\include&quot;;&quot;C:\cppagent\win32\zlib-1.2.3.win32\include&quot;;&quot;C:\cppagent\win32\openssl-0.9.8a.win32\include&quot;;&quot;C:\cppagent\win32\libxslt-1.1.24.win32\include&quot;;&quot;C:\cppagent\win32\libxmlsec-1.2.11.win32\include&quot;;&quot;C:\cppagent\win32\iconv-1.9.2.win32\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,7 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="xml++-2.6d.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;..\..\lib\libxml++-2.24.0\MSVC_Net2005\libxml++\Debug&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -193,6 +195,10 @@
 			</File>
 			<File
 				RelativePath="..\..\agent\component_event.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\agent\connector.cpp"
 				>
 			</File>
 			<File
