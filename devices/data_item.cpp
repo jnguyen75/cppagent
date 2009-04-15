@@ -136,7 +136,7 @@ std::map<std::string, std::string> DataItem::getAttributes() const
   
   attributes["id"] = intToString(mId);
   attributes["name"] = mName;
-  attributes["type"] = mType;
+  attributes["type"] = STypeUpper[mType];
   
   if (!mSubType.empty())
   {

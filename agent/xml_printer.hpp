@@ -53,7 +53,7 @@ namespace XmlPrinter
   /***** Helper Methods *****/
   /* Initiate all documents */
   xmlpp::Document * initXmlDoc(
-    std::string xmlType,
+    const std::string xmlType,
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,

@@ -34,7 +34,9 @@ test.cpp \
 axes.cpp \
 axes_test.cpp \
 component.cpp \
+component_event.cpp \
 data_item.cpp \
+data_item_test.cpp \
 device.cpp \
 device_test.cpp \
 globals.cpp

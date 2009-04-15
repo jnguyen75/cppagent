@@ -276,12 +276,12 @@ xmlpp::Document * XmlPrinter::initXmlDoc(
   header->set_attribute("instanceId", intToString(instanceId));
   header->set_attribute("bufferSize", intToString(bufferSize));
   header->set_attribute("version", "1.0");
-  header->set_attribute("nextSequence", intToString(nextSeq));
   
-  if (firstSeq > 0)
+  if (xmlType == "Streams")
   {
+    header->set_attribute("nextSequence", intToString(nextSeq));
     header->set_attribute("firstSequence", intToString(firstSeq));
-    //header->set_attribute("lastSequence", intToString(nextSeq - 1));
+    header->set_attribute("lastSequence", intToString(nextSeq - 1));
   }
   
   return doc;
