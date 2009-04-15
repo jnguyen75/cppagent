@@ -26,20 +26,24 @@ vpath %.cpp ../agent
 vpath %.hpp ../devices
 vpath %.cpp ../devices
 vpath %.hpp agent
+vpath %.cpp agent
+vpath %.hpp devices
 vpath %.cpp devices
 
 
 SOURCES= \
 test.cpp \
-axes.cpp \
-axes_test.cpp \
-component.cpp \
 component_event.cpp \
+globals.cpp \
+axes.cpp \
+component.cpp \
 data_item.cpp \
-data_item_test.cpp \
 device.cpp \
-device_test.cpp \
-globals.cpp
+component_event_test.cpp \
+globals_test.cpp \
+axes_test.cpp \
+data_item_test.cpp \
+device_test.cpp
 
 OBJS=$(SOURCES:%.cpp=%.o)
 LIBS=$(LIBRARIES:%=-l%)

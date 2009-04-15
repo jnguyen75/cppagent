@@ -384,6 +384,16 @@ bool Agent::handleStream(
   )
 {
   std::list<DataItem *> dataItems = getDataItems(path);
+  
+  if (dataItems.empty())
+  {
+    result = printError(
+        "INVALID_PATH",
+        "The path could not be parsed. Invalid syntax: " + path
+      );
+    return true;
+  }
+  
   if (frequency > 0)
   {
     if (current)
