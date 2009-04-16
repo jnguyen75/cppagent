@@ -138,7 +138,7 @@ Component * XmlParser::handleComponent(
   }
   
   // Construct
-  if (toReturn != NULL and parent != NULL)
+  if (toReturn != NULL && parent != NULL)
   {
     parent->addChild(toReturn);
     toReturn->setParent(parent);
@@ -146,7 +146,7 @@ Component * XmlParser::handleComponent(
   
   
   // Check if there are children
-  if (toReturn != NULL and !dynamic_cast<const xmlpp::ContentNode*>(component))
+  if (toReturn != NULL && !dynamic_cast<const xmlpp::ContentNode*>(component))
   {
     xmlpp::Node::NodeList children = component->get_children();
     

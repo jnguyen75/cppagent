@@ -1,5 +1,0 @@
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1binary__function.html" title="std::binary_function\&lt; _Tp::first_argument_type, _Tp::second_argument_type, _Tp::result_type \&gt;" alt="" coords="7,19,585,46">
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1___reference__wrapper__base__impl_3_01false_00_01true_00_01___tp_01_4.html" title="std::tr1::_Reference_wrapper_base_impl\&lt; false, true, _Tp \&gt;" alt="" coords="636,6,1001,32">
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1___reference__wrapper__base__impl_3_01true_00_01true_00_01___tp_01_4.html" title="std::tr1::_Reference_wrapper_base_impl\&lt; true, true, _Tp \&gt;" alt="" coords="639,56,999,83">
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1unary__function.html" title="std::unary_function\&lt; _Tp::argument_type, _Tp::result_type \&gt;" alt="" coords="109,82,483,108">
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1___reference__wrapper__base__impl_3_01true_00_01false_00_01___tp_01_4.html" title="std::tr1::_Reference_wrapper_base_impl\&lt; true, false, _Tp \&gt;" alt="" coords="636,107,1001,134">

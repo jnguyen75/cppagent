@@ -82,7 +82,7 @@ void Adapter::processData(std::string line)
   {
     mAgent->addToBuffer(time, key, value);
     
-    while (getline(toParse, key, '|') and getline(toParse, value, '|'))
+    while (getline(toParse, key, '|') && getline(toParse, value, '|'))
     {
       mAgent->addToBuffer(time, key, value);
     }
