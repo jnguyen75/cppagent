@@ -41,7 +41,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "../../devices/axes.hpp"
-//#include "../../devices/device.hpp"
+#include "../../devices/data_item.hpp"
+#include "../../devices/device.hpp"
 
 class AxesTest : public CppUnit::TestFixture
 {

@@ -205,8 +205,9 @@ std::list<DataItem *> Agent::getDataItems(std::string path, xmlpp::Node * node)
   
   for (unsigned int i=0; i<elements.size(); i++)
   {
-    const xmlpp::Element * nodeElement;
-    nodeElement = dynamic_cast<const xmlpp::Element*>(elements[i]);
+    const xmlpp::Element * nodeElement =
+      dynamic_cast<const xmlpp::Element*>(elements[i]);
+    
     if (nodeElement)
     {
       std::string nodename = nodeElement->get_name();
@@ -312,11 +313,16 @@ bool Agent::handleCall(
       start = 0;
     }
     
-    if (count < 0 || freq < 0 || start < 0)
+    if (count < 0 or freq < 0 or start < 0)
     {
+      std::string error = "Query parameters cannot be a negative integer. ";
+      error += "(Debug: Count = " + count;
+      error += "Frequency = " + freq;
+      error += "Start = " + start + ")";
+      
       result = printError(
           "QUERY_ERROR",
-          "Query parameters cannot be a negative integer."
+          error
         );
       return true;
     }
