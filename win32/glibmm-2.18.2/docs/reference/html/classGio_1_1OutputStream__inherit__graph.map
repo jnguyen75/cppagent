@@ -1,8 +1,0 @@
-<area shape="rect" href="$classGio_1_1FileOutputStream.html" title="FileOutputStream provides output streams that write their content to a file." alt="" coords="5,304,157,330">
-<area shape="rect" href="$classGio_1_1FilterOutputStream.html" title="Filter Output Stream." alt="" coords="181,304,341,330">
-<area shape="rect" href="$classGio_1_1UnixOutputStream.html" title="UnixOutputStream implements OutputStream for writing to a a unix file descriptor..." alt="" coords="365,304,520,330">
-<area shape="rect" href="$classGlib_1_1Object.html" title="Glib::Object" alt="" coords="216,154,307,181">
-<area shape="rect" href="$classGlib_1_1ObjectBase.html" title="Glib::ObjectBase is a common base class for Objects and Interfaces." alt="" coords="201,80,321,106">
-<area shape="rect" href="$classsigc_1_1trackable.html" title="sigc::trackable" alt="" coords="208,5,315,32">
-<area shape="rect" href="$classGio_1_1BufferedOutputStream.html" title="The buffered output stream implements FilterOutputStream and provides for buffered..." alt="" coords="172,378,351,405">
-<area shape="rect" href="$classGio_1_1DataOutputStream.html" title="An implementation of BufferedOutputStream that allows for high&#45;level data manipulation..." alt="" coords="183,453,340,480">

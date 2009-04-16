@@ -223,7 +223,7 @@ std::list<DataItem *> Agent::getDataItems(std::string path, xmlpp::Node * node)
           std::cerr << "DATA ITEM NOT FOUND\n";
         }
       }
-      else if (nodename == "Components" or nodename == "DataItems")
+      else if (nodename == "Components" || nodename == "DataItems")
       {
         std::list<DataItem *> toMerge = getDataItems("*", elements[i]);
         items.merge(toMerge);
@@ -312,7 +312,7 @@ bool Agent::handleCall(
       start = 0;
     }
     
-    if (count < 0 or freq < 0 or start < 0)
+    if (count < 0 || freq < 0 || start < 0)
     {
       result = printError(
           "QUERY_ERROR",
@@ -571,6 +571,7 @@ void terminateServerThread(Agent * server)
   delete server;
 }
 
+#ifndef WIN32
 void signal_handler(int sig)
 {
   switch(sig) {
@@ -584,9 +585,11 @@ void signal_handler(int sig)
     break;
   }
 }
+#endif
 
 void daemonize()
 {
+#ifndef WIN32
   int i,lfp;
   char str[10];
   if(getppid()==1) return; /* already a daemon */
@@ -634,6 +637,7 @@ void daemonize()
   
   signal(SIGHUP,signal_handler); /* catch hangup signal */
   signal(SIGTERM,signal_handler); /* catch kill signal */
+#endif
 }
 
 

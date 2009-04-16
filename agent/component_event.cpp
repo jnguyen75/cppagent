@@ -107,7 +107,7 @@ std::string ComponentEvent::getSValue() const
 void ComponentEvent::convertValue(std::string value)
 {
   // Check if the type is an alarm or if it doesn't have units
-  if (mDataItem->getType() == DataItem::ALARM or mDataItem->getNativeUnits().empty())
+  if (mDataItem->getType() == DataItem::ALARM || mDataItem->getNativeUnits().empty())
   {
     sValue = value;
     return;
@@ -131,7 +131,7 @@ void ComponentEvent::convertValue(std::string value)
     
     std::string::size_type carotLoc = denominator.find('^');
     
-    if (numerator == "REVOLUTION" and denominator == "SECOND")
+    if (numerator == "REVOLUTION" && denominator == "SECOND")
     {
       fValue = atof(value.c_str()) * 60.0f;
     }
@@ -144,7 +144,7 @@ void ComponentEvent::convertValue(std::string value)
       std::string unit = units.substr(0, carotLoc);
       std::string power = units.substr(carotLoc+1);
       
-      float div = pow(convertSimple(unit, atof(value.c_str())), atof(power.c_str()));
+      double div = pow((double) convertSimple(unit, atof(value.c_str())), (double) atof(power.c_str()));
       fValue = convertSimple(numerator, atof(value.c_str())) / div;
     }
   }

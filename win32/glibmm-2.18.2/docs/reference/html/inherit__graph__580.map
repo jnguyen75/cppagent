@@ -1,8 +1,0 @@
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1____sfinae__types.html" title="std::tr1::__sfinae_types" alt="" coords="7,157,164,184">
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1____conv__helper.html" title="std::tr1::__conv_helper\&lt; _From, _To \&gt;" alt="" coords="267,5,509,32">
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1____is__abstract__helper.html" title="std::tr1::__is_abstract_helper\&lt; _Tp, class \&gt;" alt="" coords="251,56,525,82">
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1____is__base__of__helper.html" title="std::tr1::__is_base_of_helper\&lt; _Base, _Derived, class \&gt;" alt="" coords="215,106,561,133">
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1____is__union__or__class__helper.html" title="std::tr1::__is_union_or_class_helper\&lt; _Tp \&gt;" alt="" coords="251,157,525,184">
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1___derives__from__binary__function.html" title="std::tr1::_Derives_from_binary_function\&lt; _Tp \&gt;" alt="" coords="240,208,536,234">
-<area shape="rect" href="libstdc++.tag.xml$structstd_1_1tr1_1_1___derives__from__unary__function.html" title="std::tr1::_Derives_from_unary_function\&lt; _Tp \&gt;" alt="" coords="243,258,533,285">
-<area shape="rect" href="libstdc++.tag.xml$classstd_1_1tr1_1_1___has__result__type__helper.html" title="std::tr1::_Has_result_type_helper\&lt; _Tp \&gt;" alt="" coords="259,309,517,336">
