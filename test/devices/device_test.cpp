@@ -169,5 +169,8 @@ void DeviceTest::testDataItems()
   CPPUNIT_ASSERT_EQUAL((size_t) 2, a->getDataItems().size());
   CPPUNIT_ASSERT_EQUAL(d1, a->getDataItems().front());
   CPPUNIT_ASSERT_EQUAL(d2, a->getDataItems().back());
+  
+  delete d1;
+  delete d2;
 }
 

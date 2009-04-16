@@ -70,6 +70,7 @@ public:
   static const unsigned int SERVER_PORT = 8080;
   static const unsigned int SLIDING_BUFFER_EXP = 17;
   static const unsigned int SLIDING_BUFFER_SIZE = 131072;
+  static const long int MAX_FREQUENCY = 2147483647;
   
 protected:
   /* Handle the device/path parameters for the xpath search */
