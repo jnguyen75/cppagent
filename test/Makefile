@@ -35,12 +35,21 @@ SOURCES= \
 test.cpp \
 component_event.cpp \
 globals.cpp \
+xml_parser.cpp \
+xml_printer.cpp \
 axes.cpp \
 component.cpp \
+controller.cpp \
 data_item.cpp \
 device.cpp \
+linear.cpp \
+power.cpp \
+spindle.cpp \
+thermostat.cpp \
 component_event_test.cpp \
 globals_test.cpp \
+xml_parser_test.cpp \
+xml_printer_test.cpp \
 axes_test.cpp \
 data_item_test.cpp \
 device_test.cpp

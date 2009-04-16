@@ -31,92 +31,44 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef XML_PRINTER_HPP
-#define XML_PRINTER_HPP
+#ifndef XML_PRINTER_TEST_HPP
+#define XML_PRINTER_TEST_HPP
 
-#include <map>
-#include <list>
+#include <string>
 
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
 #include <libxml++/libxml++.h>
 
-#include "component_event.hpp"
-#include "device.hpp"
+#include "../../agent/xml_printer.hpp"
+#include "../../devices/device.hpp"
 
-class DataItem;
-
-extern std::string intToString(unsigned int i);
-extern std::string floatToString(float i);
 extern std::string getCurrentTime();
 
-namespace XmlPrinter
+class XmlPrinterTest : public CppUnit::TestFixture
 {
-  /***** Helper Methods *****/
-  /* Initiate all documents */
-  xmlpp::Document * initXmlDoc(
-    const std::string xmlType,
-    const unsigned int instanceId,
-    const unsigned int bufferSize,
-    const unsigned int nextSeq,
-    const unsigned int firstSeq = 0
-  );
+  CPPUNIT_TEST_SUITE(XmlPrinterTest);
+  CPPUNIT_TEST(testInitXmlDoc);
+  CPPUNIT_TEST(testPrintNode);
+  CPPUNIT_TEST(testPrintIndentation);
+  CPPUNIT_TEST(testAddAttributes);
+  CPPUNIT_TEST(testSearchParentForId);
+  CPPUNIT_TEST(testGetDeviceStream);
+  CPPUNIT_TEST(testPrintError);
+  CPPUNIT_TEST_SUITE_END();
   
-  /* Function to parse and write XML */
-  std::string printNode(
-    const xmlpp::Node* node, 
-    const unsigned int indentation = 0
-  );
+protected:
+  void testInitXmlDoc();
+  void testPrintNode();
+  void testPrintIndentation();
+  void testAddAttributes();
+  void testSearchParentForId();
+  void testGetDeviceStream();
+  void testPrintError();
   
-  void printProbeHelper(xmlpp::Element * element, Component * component);
-  
-  /* Simple helper function to put indentations into the XML stream */
-  std::string printIndentation(const unsigned int indentation);
-  
-  void addAttributes(
-    xmlpp::Element * element,
-    std::map<std::string, std::string> attributes
-  );
-  
-  xmlpp::Element * searchParentsForId(
-    std::list<xmlpp::Element *> elements,
-    const unsigned int id
-  );
-  
-  xmlpp::Element * getDeviceStream(
-    xmlpp::Element * element,
-    Device * device
-  );
-  
-  /***** Main methods to call *****/
-  std::string printError(
-    const unsigned int instanceId,
-    const unsigned int bufferSize,
-    const unsigned int nextSeq,
-    std::string errorCode,
-    std::string errorText
-  );
-  
-  std::string printProbe(
-    const unsigned int instanceId,
-    const unsigned int bufferSize,
-    const unsigned int nextSeq,
-    std::list<Device *> devices
-  );
-  
-  std::string printCurrent(
-    const unsigned int instanceId,
-    const unsigned int bufferSize,
-    const unsigned int nextSeq,
-    const unsigned int firstSeq,
-    std::list<DataItem *> dataItems
-  );
-  
-  std::string printSample(
-    const unsigned int instanceId,
-    const unsigned int bufferSize,
-    const unsigned int nextSeq,
-    const unsigned int firstSeq,
-    std::list<ComponentEvent *> results
-  );
+public:
+  void setUp();
+  void tearDown();
 };
 
 #endif

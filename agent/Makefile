@@ -27,6 +27,7 @@ adapter.cpp \
 component_event.cpp \
 connector.cpp \
 xml_parser.cpp \
+xml_printer.cpp \
 component.cpp \
 device.cpp \
 data_item.cpp \
@@ -36,7 +37,6 @@ linear.cpp \
 controller.cpp \
 power.cpp \
 thermostat.cpp \
-xml_printer.cpp \
 globals.cpp
 
 OBJS=$(SOURCES:%.cpp=%.o)

@@ -438,12 +438,11 @@ xmlpp::Element * XmlPrinter::getDeviceStream(
     Device * device
   )
 {
-  xmlpp::Node::NodeList children = element->get_children();
+  xmlpp::Node::NodeList children = element->get_children("DeviceStream");
   xmlpp::Node::NodeList::iterator child;
   for (child=children.begin(); child!=children.end(); child++)
   {
-    xmlpp::Element * nodeElement;
-    nodeElement = dynamic_cast<xmlpp::Element *>(*child);
+    xmlpp::Element * nodeElement = dynamic_cast<xmlpp::Element *>(*child);
     
     if (nodeElement and
       nodeElement->get_attribute_value("name") == device->getName())

@@ -208,8 +208,20 @@ void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent)
   // Check children for "source"
   if (!dynamic_cast<const xmlpp::ContentNode*>(dataItem))
   {
-    xmlpp::Node::NodeList children = dataItem->get_children();
+    xmlpp::Node::NodeList children = dataItem->get_children("Source");
     
+    if (children.size() == 1)
+    {
+      xmlpp::Element * source =
+        dynamic_cast<xmlpp::Element *>(children.front());
+      
+      if (source and source->has_child_text())
+      {
+        xmlpp::TextNode * nodeText = source->get_child_text();
+        d->addSource(nodeText->get_content());
+      }
+    }
+    /*
     xmlpp::Node::NodeList::iterator child;
     for (child=children.begin(); child!=children.end(); ++child)
     {
@@ -225,7 +237,7 @@ void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent)
           d->addSource(nodeText->get_content());
         }
       }
-    }
+    }*/
   }
   
   parent->addDataItem(d);
