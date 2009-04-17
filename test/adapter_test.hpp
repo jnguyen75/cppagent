@@ -31,40 +31,28 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef XML_PRINTER_TEST_HPP
-#define XML_PRINTER_TEST_HPP
+#ifndef ADAPTER_TEST_HPP
+#define ADAPTER_TEST_HPP
 
+#include <map>
 #include <string>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <libxml++/libxml++.h>
 
-#include "../../agent/xml_printer.hpp"
-#include "../../devices/device.hpp"
+#include "../src/adapter.hpp"
 
-extern std::string getCurrentTime();
-
-class XmlPrinterTest : public CppUnit::TestFixture
+class AdapterTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE(XmlPrinterTest);
-  CPPUNIT_TEST(testInitXmlDoc);
-  CPPUNIT_TEST(testPrintNode);
-  CPPUNIT_TEST(testPrintIndentation);
-  CPPUNIT_TEST(testAddAttributes);
-  CPPUNIT_TEST(testSearchParentForId);
-  CPPUNIT_TEST(testGetDeviceStream);
-  CPPUNIT_TEST(testPrintError);
+  CPPUNIT_TEST_SUITE(AdapterTest);
+  //CPPUNIT_TEST();
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  void testInitXmlDoc();
-  void testPrintNode();
-  void testPrintIndentation();
-  void testAddAttributes();
-  void testSearchParentForId();
-  void testGetDeviceStream();
-  void testPrintError();
+  Adapter * a;
+  
+protected:
+  void testIntToString();
   
 public:
   void setUp();

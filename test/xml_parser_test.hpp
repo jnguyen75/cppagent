@@ -1,4 +1,3 @@
-
 /*
 * Copyright (c) 2008, AMT – The Association For Manufacturing Technology (“AMT”)
 * All rights reserved.
@@ -32,17 +31,33 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#include "axes.hpp"
+#ifndef XML_PARSER_TEST_HPP
+#define XML_PARSER_TEST_HPP
 
-/* Axes public methods */
-Axes::Axes(const std::map<std::string, std::string> attributes)
-: Component(attributes)
+#include <libxml++/libxml++.h>
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
+
+#include "../src/xml_parser.hpp"
+
+class XmlParserTest : public CppUnit::TestFixture
 {
+  CPPUNIT_TEST_SUITE(XmlParserTest);
+  CPPUNIT_TEST(testConstructor);
+  CPPUNIT_TEST(testGetters);
+  CPPUNIT_TEST_SUITE_END();
+  
+protected:
+  XmlParser * a;
+  
+protected:
+  void testConstructor();
+  void testGetters();
+  
+public:
+  void setUp();
+  void tearDown();
+};
 
-}
-
-const std::string Axes::getClass() const
-{
-  return "Axes";
-}
+#endif
 

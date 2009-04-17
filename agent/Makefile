@@ -18,25 +18,26 @@ CXXFLAGS = -g -Wall $(INCLUDE_DIRECTORIES:%=-I%) -DDLIB_NO_GUI_SUPPORT
 LDFLAGS = $(LIB_DIRECTORIES:%=-L%)
 LIBRARIES=  xml++-2.6 xml2 pthread z m glibmm-2.4 gobject-2.0 sigc-2.0 glib-2.0 #intl iconv 
 
-vpath %.hpp ../devices
-vpath %.cpp ../devices
+vpath %.hpp ../src
+vpath %.cpp ../src
 
 SOURCES= \
+cppagent.cpp \
 agent.cpp \
 adapter.cpp \
+axes.cpp \
+controller.cpp \
+component.cpp \
 component_event.cpp \
 connector.cpp \
+data_item.cpp \
+device.cpp \
+linear.cpp \
+power.cpp \
+spindle.cpp \
+thermostat.cpp \
 xml_parser.cpp \
 xml_printer.cpp \
-component.cpp \
-device.cpp \
-data_item.cpp \
-axes.cpp \
-spindle.cpp \
-linear.cpp \
-controller.cpp \
-power.cpp \
-thermostat.cpp \
 globals.cpp
 
 OBJS=$(SOURCES:%.cpp=%.o)

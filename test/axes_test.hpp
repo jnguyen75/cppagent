@@ -31,31 +31,51 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef XML_PARSER_TEST_HPP
-#define XML_PARSER_TEST_HPP
+#ifndef AXES_TEST_HPP
+#define AXES_TEST_HPP
 
-#include <libxml++/libxml++.h>
+#include <map>
+#include <string>
+
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../agent/xml_parser.hpp"
+#include "../src/axes.hpp"
+#include "../src/data_item.hpp"
+#include "../src/device.hpp"
 
-class XmlParserTest : public CppUnit::TestFixture
+class AxesTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE(XmlParserTest);
-  CPPUNIT_TEST(testConstructor);
+  /* CPPUNIT Testing Macros */
+  CPPUNIT_TEST_SUITE(AxesTest);
+  CPPUNIT_TEST(testGetClass);
   CPPUNIT_TEST(testGetters);
+  CPPUNIT_TEST(testGetAttributes);
+  CPPUNIT_TEST(testDescription);
+  CPPUNIT_TEST(testParentsAndDevice);
+  CPPUNIT_TEST(testChildren);
+  CPPUNIT_TEST(testDataItems);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  XmlParser * a;
+  /* Instances for testing */
+  Axes * a, * b;
   
 protected:
-  void testConstructor();
+  /* Test cases */
+  void testGetClass();
   void testGetters();
+  void testGetAttributes();
+  void testDescription();
+  void testParentsAndDevice();
+  void testChildren();
+  void testDataItems();
   
 public:
+  /* Set up testing environment */
   void setUp();
+  
+  /* Take down testing environment */
   void tearDown();
 };
 

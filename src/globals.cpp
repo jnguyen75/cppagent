@@ -31,46 +31,58 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef ADAPTER_HPP
-#define ADAPTER_HPP
+// Dlib library
+#include "../lib/dlib/all/source.cpp"
 
-#include <iostream>
+#include <ctime>
+#include <string>
+#include <sstream>
 
-#include "dlib/sockets.h"
-#include "dlib/threads.h"
-
-#include "agent.hpp"
-#include "connector.hpp"
-
-extern std::string toUpperCase(std::string text);
-
-class Agent;
-
-using namespace dlib;
-
-class Adapter : public Connector, public threaded_object
+/* Convert an unsigned integer to string */
+std::string intToString(unsigned int i)
 {
-protected:
-  /* Pointer to the agent */
-  Agent * mAgent;
-  
-private:
-  /* Inherited and is run as part of the threaded_object */
-  void thread();
-  
-public:
-  /* Load the adapter with the .xml file */
-  Adapter(std::string server, unsigned int port);
-  
-  /* Destructor */
-  virtual ~Adapter();
-  
-  /* Set pointer to the agent */
-  void setAgent(Agent * agent);
-  
-  /* Inherited method for incoming data from the server */
-  void processData(std::string line);
-};
+  std::ostringstream stm;
+  stm << i;
+  return stm.str();
+}
 
-#endif
+/* Convert a float to string */
+std::string floatToString(float f)
+{
+  std::ostringstream stm;
+  stm << f;
+  return stm.str();
+}
+
+/* Convert a string to the same string with all upper case letters */
+std::string toUpperCase(std::string text)
+{
+  for (unsigned int i=0; i<text.length();++i)
+  {
+    text[i] = toupper(text[i]);
+  }
+  
+  return text;
+}
+
+/* Get the current time formatted */
+std::string getCurrentTime()
+{
+  char timeBuffer [30];
+  time_t rawtime;
+  struct tm * timeinfo;
+
+  time ( &rawtime );
+  timeinfo = gmtime ( &rawtime );
+
+  strftime (timeBuffer, 50, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
+  
+  return std::string(timeBuffer);
+}
+
+/* Get the current time in number of seconds as an integer */
+unsigned int getCurrentTimeInSec()
+{
+  return time(NULL);
+}
 

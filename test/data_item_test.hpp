@@ -31,8 +31,8 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef ADAPTER_TEST_HPP
-#define ADAPTER_TEST_HPP
+#ifndef DATA_ITEM_TEST_HPP
+#define DATA_ITEM_TEST_HPP
 
 #include <map>
 #include <string>
@@ -40,19 +40,33 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../agent/adapter.hpp"
+#include "../src/axes.hpp"
+#include "../src/component_event.hpp"
+#include "../src/data_item.hpp"
 
-class AdapterTest : public CppUnit::TestFixture
+class DataItemTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE(AdapterTest);
-  //CPPUNIT_TEST();
+  CPPUNIT_TEST_SUITE(DataItemTest);
+  CPPUNIT_TEST(testGetters);
+  CPPUNIT_TEST(testGetAttributes);
+  CPPUNIT_TEST(testHasNameAndSource);
+  CPPUNIT_TEST(testIsSample);
+  CPPUNIT_TEST(testComponent);
+  CPPUNIT_TEST(testComponentEvent);
+  CPPUNIT_TEST(testGetTypeEnum);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  Adapter * a;
+  DataItem * a, * b;
   
 protected:
-  void testIntToString();
+  void testGetters();
+  void testGetAttributes();
+  void testHasNameAndSource();
+  void testIsSample();
+  void testComponent();
+  void testComponentEvent();
+  void testGetTypeEnum();
   
 public:
   void setUp();
