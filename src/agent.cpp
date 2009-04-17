@@ -44,7 +44,7 @@ Agent::Agent(std::string configXmlPath)
   catch (std::exception & e)
   {
     std::cerr << "Agent: Error loading .xml configuration" << std::endl;
-    throw;
+    throw -1;
   }
   
   mDevices = mConfig->getDevices();

@@ -26,9 +26,12 @@ vpath %.cpp ../src
 
 SOURCES= \
 test.cpp \
+adapter.cpp \
+agent.cpp \
 axes.cpp \
 component.cpp \
 component_event.cpp \
+connector.cpp \
 controller.cpp \
 data_item.cpp \
 device.cpp \
@@ -39,6 +42,7 @@ thermostat.cpp \
 xml_parser.cpp \
 xml_printer.cpp \
 globals.cpp \
+agent_test.cpp \
 axes_test.cpp \
 component_event_test.cpp \
 globals_test.cpp \

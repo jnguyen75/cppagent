@@ -52,7 +52,7 @@ XmlParser::XmlParser(std::string xmlPath)
   catch (std::exception & e)
   {
     std::cout << "XmlParser.cpp: " << e.what() << std::endl;
-    throw;
+    throw -2;
   }
   
   xmlpp::NodeSet devices = getRootNode()->find("//MTConnectDevices/Devices/*");
