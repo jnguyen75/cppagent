@@ -41,8 +41,6 @@
 #include <string>
 #include <list>
 
-#include <ctime>
-
 #include "dlib/md5.h"
 #include "dlib/server.h"
 #include "dlib/sliding_buffer.h"
@@ -67,9 +65,16 @@ using namespace dlib;
 class Agent : public server::http_1a_c
 {
 public:
+  /* Port number to put server on */
   static const unsigned int SERVER_PORT = 8080;
+  
+  /* Size of buffer exponent: 2^SLIDING_BUFFER_EXP */
   static const unsigned int SLIDING_BUFFER_EXP = 17;
+  
+  /* Size of sliding buffer */
   static const unsigned int SLIDING_BUFFER_SIZE = 131072;
+  
+  /* Maximum frequency allowed */
   static const long int MAX_FREQUENCY = 2147483646;
   
 protected:

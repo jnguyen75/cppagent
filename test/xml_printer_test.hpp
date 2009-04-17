@@ -31,42 +31,40 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef AXES_TEST_HPP
-#define AXES_TEST_HPP
+#ifndef XML_PRINTER_TEST_HPP
+#define XML_PRINTER_TEST_HPP
 
-#include <map>
 #include <string>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
+#include <libxml++/libxml++.h>
 
-#include "../../devices/axes.hpp"
-#include "../../devices/data_item.hpp"
-#include "../../devices/device.hpp"
+#include "../src/xml_printer.hpp"
+#include "../src/device.hpp"
 
-class AxesTest : public CppUnit::TestFixture
+extern std::string getCurrentTime();
+
+class XmlPrinterTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE(AxesTest);
-  CPPUNIT_TEST(testGetters);
-  CPPUNIT_TEST(testGetAttributes);
-  CPPUNIT_TEST(testGetClass);
-  CPPUNIT_TEST(testDescription);
-  CPPUNIT_TEST(testParents);
-  CPPUNIT_TEST(testChildren);
-  CPPUNIT_TEST(testDataItems);
+  CPPUNIT_TEST_SUITE(XmlPrinterTest);
+  CPPUNIT_TEST(testInitXmlDoc);
+  CPPUNIT_TEST(testPrintNode);
+  CPPUNIT_TEST(testPrintIndentation);
+  CPPUNIT_TEST(testAddAttributes);
+  CPPUNIT_TEST(testSearchParentForId);
+  CPPUNIT_TEST(testGetDeviceStream);
+  CPPUNIT_TEST(testPrintError);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  Axes * a, * b;
-  
-protected:
-  void testGetters();
-  void testGetAttributes();
-  void testGetClass();
-  void testDescription();
-  void testParents();
-  void testChildren();
-  void testDataItems();
+  void testInitXmlDoc();
+  void testPrintNode();
+  void testPrintIndentation();
+  void testAddAttributes();
+  void testSearchParentForId();
+  void testGetDeviceStream();
+  void testPrintError();
   
 public:
   void setUp();

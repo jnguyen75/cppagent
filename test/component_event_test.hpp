@@ -31,8 +31,8 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef DEVICE_TEST_HPP
-#define DEVICE_TEST_HPP
+#ifndef COMPONENT_EVENT_TEST_HPP
+#define COMPONENT_EVENT_TEST_HPP
 
 #include <map>
 #include <string>
@@ -40,30 +40,26 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../devices/device.hpp"
-#include "../../devices/data_item.hpp"
+#include "../src/component_event.hpp"
 
-class DeviceTest : public CppUnit::TestFixture
+class ComponentEventTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE(DeviceTest);
+  CPPUNIT_TEST_SUITE(ComponentEventTest);
   CPPUNIT_TEST(testGetAttributes);
-  CPPUNIT_TEST(testGetClass);
-  CPPUNIT_TEST(testDescription);
-  CPPUNIT_TEST(testParents);
-  CPPUNIT_TEST(testChildren);
-  CPPUNIT_TEST(testDataItems);
+  CPPUNIT_TEST(testGetDataItem);
+  CPPUNIT_TEST(testGetValue);
+  CPPUNIT_TEST(testGetSimpleUnits);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  Device * a, * b;
+  ComponentEvent * a, * b;
+  DataItem * d1, * d2;
   
 protected:
   void testGetAttributes();
-  void testGetClass();
-  void testDescription();
-  void testParents();
-  void testChildren();
-  void testDataItems();
+  void testGetDataItem();
+  void testGetValue();
+  void testGetSimpleUnits();
   
 public:
   void setUp();

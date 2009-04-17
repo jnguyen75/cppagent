@@ -31,8 +31,8 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef DATA_ITEM_TEST_HPP
-#define DATA_ITEM_TEST_HPP
+#ifndef DEVICE_TEST_HPP
+#define DEVICE_TEST_HPP
 
 #include <map>
 #include <string>
@@ -40,33 +40,30 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../../devices/axes.hpp"
-#include "../../agent/component_event.hpp"
-#include "../../devices/data_item.hpp"
+#include "../src/device.hpp"
+#include "../src/data_item.hpp"
 
-class DataItemTest : public CppUnit::TestFixture
+class DeviceTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE(DataItemTest);
-  CPPUNIT_TEST(testGetters);
+  CPPUNIT_TEST_SUITE(DeviceTest);
   CPPUNIT_TEST(testGetAttributes);
-  CPPUNIT_TEST(testHasNameAndSource);
-  CPPUNIT_TEST(testIsSample);
-  CPPUNIT_TEST(testComponent);
-  CPPUNIT_TEST(testComponentEvent);
-  CPPUNIT_TEST(testGetTypeEnum);
+  CPPUNIT_TEST(testGetClass);
+  CPPUNIT_TEST(testDescription);
+  CPPUNIT_TEST(testParents);
+  CPPUNIT_TEST(testChildren);
+  CPPUNIT_TEST(testDataItems);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  DataItem * a, * b;
+  Device * a, * b;
   
 protected:
-  void testGetters();
   void testGetAttributes();
-  void testHasNameAndSource();
-  void testIsSample();
-  void testComponent();
-  void testComponentEvent();
-  void testGetTypeEnum();
+  void testGetClass();
+  void testDescription();
+  void testParents();
+  void testChildren();
+  void testDataItems();
   
 public:
   void setUp();

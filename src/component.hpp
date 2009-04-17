@@ -115,14 +115,14 @@ public:
   /* Return a map of attributes of all the component specs */
   virtual std::map<std::string, std::string> getAttributes() const;
   
-  /* Add/get description specifications using an attribute map */
-  void addDescription(std::map<std::string, std::string> attributes);
-  std::map<std::string, std::string> getDescription() const;
-  
   /* Getter methods for the component ID/Name */
   unsigned int getId() const;
   std::string getName() const;
   std::string getUuid() const;
+  
+  /* Add/get description specifications using an attribute map */
+  void addDescription(std::map<std::string, std::string> attributes);
+  std::map<std::string, std::string> getDescription() const;
   
   /* Get the device that any component is associated with */
   Device * getDevice() const;

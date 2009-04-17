@@ -32,8 +32,6 @@
 */
 
 #include "agent.hpp"
-#include "fcntl.h"
-#include "sys/stat.h"
 
 /* Agent public methods */
 Agent::Agent(std::string configXmlPath)
@@ -46,7 +44,7 @@ Agent::Agent(std::string configXmlPath)
   catch (std::exception & e)
   {
     std::cerr << "Agent: Error loading .xml configuration" << std::endl;
-    exit(1);
+    exit(1); // FIXME: throw exception?
   }
   
   mDevices = mConfig->getDevices();
@@ -99,21 +97,14 @@ bool Agent::on_request(
       
       if (loc2 == end)
       {
-        return handleCall(
-            out,
-            result,
-            queries,
-            path.substr(loc1+1, loc2-loc1-1),
-            path.substr(1, loc1-1)
-          );
+        return handleCall(out, result, queries, 
+          path.substr(loc1+1, loc2-loc1-1), path.substr(1, loc1-1));
       }
       else
       {
-        result = printError(
-            "UNSUPPORTED",
-            "The request was not one of the specified requests: "
-              + path.substr(1, loc1-1)
-          );
+        result = printError("UNSUPPORTED",
+          "The request was not one of the specified requests: "
+          + path.substr(1, loc1-1));
         return true;
       }
     }
@@ -172,14 +163,12 @@ std::string Agent::devicesAndPath(std::string path, std::string device)
       std::istringstream toParse(path);
       std::string token;
       
-      // Prefix each part of the path:
-      // i.e. "path1|path2" => "{prefix}path1|{prefix}path2"
+      // Prefix path (i.e. "path1|path2" => "{prefix}path1|{prefix}path2")
       while (std::getline(toParse, token, '|'))
       {
         dataPath += prefix + token + "|";
       }
       
-      // Get rid of last extraneous '|'
       dataPath.erase(dataPath.length()-1);
     }
     else
@@ -241,7 +230,6 @@ std::list<DataItem *> Agent::getDataItems(std::string path, xmlpp::Node * node)
   return items;
 }
 
-
 bool Agent::handleCall(
     std::ostream& out,
     std::string& result,
@@ -280,13 +268,8 @@ bool Agent::handleCall(
       return true;
     }
     
-    return handleStream(
-        out,
-        result,
-        devicesAndPath(path, deviceName),
-        true,
-        freq
-      );
+    return handleStream(out, result, devicesAndPath(path, deviceName), true,
+      freq);
   }
   else if (call == "probe" || call.empty())
   {
@@ -332,22 +315,13 @@ bool Agent::handleCall(
       return true;
     }
     
-    return handleStream(
-        out,
-        result,
-        devicesAndPath(path, deviceName),
-        false,
-        freq,
-        start,
-        count
-      );
+    return handleStream(out, result, devicesAndPath(path, deviceName), false,
+        freq, start, count);
   }
   else
   {
-    result = printError(
-        "UNSUPPORTED",
-        "The request was not one of the specified requests: " + call
-      );
+    result = printError("UNSUPPORTED",
+      "The request was not one of the specified requests: " + call);
     return true;
   }
 }
@@ -356,15 +330,13 @@ std::string Agent::handleProbe(std::string name)
 {
   std::list<Device *> mDeviceList;
   
-  if (name != "")
+  if (!name.empty())
   {
     Device * device = getDeviceByName(name);
     if (device == NULL)
     {
-      return printError(
-          "NO_DEVICE",
-          "Could not find the device '" + name + "'"
-        );
+      return printError("NO_DEVICE",
+        "Could not find the device '" + name + "'");
     }
     else
     {
@@ -376,12 +348,8 @@ std::string Agent::handleProbe(std::string name)
     mDeviceList = mDevices;
   }
   
-  return XmlPrinter::printProbe(
-    mInstanceId,
-    SLIDING_BUFFER_SIZE,
-    mSequence,
-    mDeviceList
-  );
+  return XmlPrinter::printProbe(mInstanceId, SLIDING_BUFFER_SIZE, mSequence,
+    mDeviceList);
 }
 
 bool Agent::handleStream(
@@ -398,10 +366,8 @@ bool Agent::handleStream(
   
   if (dataItems.empty())
   {
-    result = printError(
-        "INVALID_PATH",
-        "The path could not be parsed. Invalid syntax: " + path
-      );
+    result = printError("INVALID_PATH",
+      "The path could not be parsed. Invalid syntax: " + path);
     return true;
   }
   
@@ -450,7 +416,6 @@ void Agent::streamData(
     out << std::endl;
     out << content;
     
-    
     out.flush();
     dlib::sleep(frequency);
   }
@@ -462,13 +427,8 @@ std::string Agent::fetchCurrentData(std::list<DataItem *> dataItems)
   unsigned int firstSeq = (mSequence > SLIDING_BUFFER_SIZE) ?
     mSequence - SLIDING_BUFFER_SIZE : 1;
   
-  std::string toReturn = XmlPrinter::printCurrent(
-      mInstanceId,
-      SLIDING_BUFFER_SIZE,
-      mSequence,
-      firstSeq,
-      dataItems
-    );
+  std::string toReturn = XmlPrinter::printCurrent(mInstanceId,
+    SLIDING_BUFFER_SIZE, mSequence, firstSeq, dataItems);
   
   mSequenceLock->unlock();
   return toReturn;
@@ -508,13 +468,8 @@ std::string Agent::fetchSampleData(
   
   mSequenceLock->unlock();
   
-  return XmlPrinter::printSample(
-      mInstanceId,
-      SLIDING_BUFFER_SIZE,
-      seq,
-      firstSeq,
-      results
-    );
+  return XmlPrinter::printSample(mInstanceId, SLIDING_BUFFER_SIZE, seq, 
+    firstSeq, results);
 }
 
 Device * Agent::getDeviceByName(std::string name)
@@ -562,119 +517,7 @@ bool Agent::hasDataItem(std::list<DataItem *> dataItems, std::string name)
 
 std::string Agent::printError(std::string errorCode, std::string text)
 {
-  return XmlPrinter::printError(
-      mInstanceId,
-      SLIDING_BUFFER_SIZE,
-      mSequence,
-      errorCode,
-      text
-    );
-}
-
-/***** Procedural Code *****/
-void terminateServerThread(Agent * server)
-{
-  std::cout << "Press enter at anytime to terminate web server" << std::endl;
-  std::cin.get();
-
-  // Shut down server by unblocking Agent::start()
-  server->clear();
-  delete server;
-}
-
-#ifndef WIN32
-void signal_handler(int sig)
-{
-  switch(sig) {
-  case SIGHUP:
-    std::cout << "hangup signal catched" << std::endl;
-    break;
-    
-  case SIGTERM:
-    std::cout << "terminate signal catched" << std::endl;
-    exit(0);
-    break;
-  }
-}
-#endif
-
-void daemonize()
-{
-#ifndef WIN32
-  int i,lfp;
-  char str[10];
-  if(getppid()==1) return; /* already a daemon */
-  
-  i=fork();
-  if (i<0) exit(1); /* fork error */
-  if (i>0)
-  {
-    std::cout << "Parent process now exiting, child process started" << std::endl;
-    exit(0); /* parent exits */
-  }
-  
-  
-  /* child (daemon) continues */
-  setsid(); /* obtain a new process group */
-
-  // Close stdin
-  close(0);
-  open("/dev/null", O_RDONLY);
-
-  // Redirect stdout and stderr to another file.
-  close(1);
-  close(2);
-  umask(027); /* set newly created file permissions */
-  i = open("agent.log", O_WRONLY | O_CREAT, 0640);
-  dup(i); /* handle standart I/O */
-  
-  // chdir(RUNNING_DIR); /* change running directory */
-
-  // Create the pid file.
-  lfp = open("agent.pid", O_RDWR|O_CREAT, 0640);
-  if (lfp<0) exit(1); /* can not open */
-
-  // Lock the pid file.
-  if (lockf(lfp, F_TLOCK, 0)<0) exit(0); /* can not lock */
-  
-  /* first instance continues */
-  sprintf(str,"%d\n", getpid());
-  write(lfp, str, strlen(str)); /* record pid to lockfile */
-  
-  signal(SIGCHLD,SIG_IGN); /* ignore child */
-  signal(SIGTSTP,SIG_IGN); /* ignore tty signals */
-  signal(SIGTTOU,SIG_IGN);
-  signal(SIGTTIN,SIG_IGN);
-  
-  signal(SIGHUP,signal_handler); /* catch hangup signal */
-  signal(SIGTERM,signal_handler); /* catch kill signal */
-#endif
-}
-
-
-int main()
-{
-  daemonize();
-  
-  try
-  {
-    //Agent * agent = new Agent("../include/config2.xml");
-    //agent->addAdapter("128.32.164.245", 7878);
-    
-    Agent * agent = new Agent("../include/agent.mtconnect.org.xml");
-    agent->addAdapter("agent.mtconnect.org", 7878);
-    
-    // create a thread that will listen for the user to end this program
-    //thread_function t(terminateServerThread, agent);
-    
-    agent->set_listening_port(Agent::SERVER_PORT);
-    agent->start();
-  }
-  catch (std::exception & e)
-  {
-    std::cerr << "Agent.cpp main: " << e.what() << std::endl;
-  }
-  
-  return 0;
+  return XmlPrinter::printError(mInstanceId, SLIDING_BUFFER_SIZE, mSequence,
+    errorCode, text);
 }
 

@@ -31,40 +31,45 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef COMPONENT_EVENT_TEST_HPP
-#define COMPONENT_EVENT_TEST_HPP
+#ifndef ADAPTER_HPP
+#define ADAPTER_HPP
 
-#include <map>
-#include <string>
+#include <iostream>
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include "dlib/sockets.h"
+#include "dlib/threads.h"
 
-#include "../../agent/component_event.hpp"
-//#include "../../devices/device.hpp"
+#include "agent.hpp"
+#include "connector.hpp"
 
-class ComponentEventTest : public CppUnit::TestFixture
+extern std::string toUpperCase(std::string text);
+
+using namespace dlib;
+
+class Agent;
+
+class Adapter : public Connector, public threaded_object
 {
-  CPPUNIT_TEST_SUITE(ComponentEventTest);
-  CPPUNIT_TEST(testGetAttributes);
-  CPPUNIT_TEST(testGetDataItem);
-  CPPUNIT_TEST(testGetValue);
-  CPPUNIT_TEST(testGetSimpleUnits);
-  CPPUNIT_TEST_SUITE_END();
-  
 protected:
-  ComponentEvent * a, * b;
-  DataItem * d1, * d2;
+  /* Pointer to the agent */
+  Agent * mAgent;
   
-protected:
-  void testGetAttributes();
-  void testGetDataItem();
-  void testGetValue();
-  void testGetSimpleUnits();
+private:
+  /* Inherited and is run as part of the threaded_object */
+  void thread();
   
 public:
-  void setUp();
-  void tearDown();
+  /* Load the adapter with the .xml file */
+  Adapter(std::string server, unsigned int port);
+  
+  /* Destructor */
+  virtual ~Adapter();
+  
+  /* Set pointer to the agent */
+  void setAgent(Agent * agent);
+  
+  /* Inherited method for incoming data from the server */
+  void processData(std::string line);
 };
 
 #endif

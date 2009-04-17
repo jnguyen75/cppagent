@@ -31,53 +31,17 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-// Dlib library
-#include "../lib/dlib/all/source.cpp"
+#include "axes.hpp"
 
-#include <ctime>
-#include <string>
-#include <sstream>
-
-std::string intToString(unsigned int i)
+/* Axes public methods */
+Axes::Axes(const std::map<std::string, std::string> attributes)
+: Component(attributes)
 {
-  std::ostringstream stm;
-  stm << i;
-  return stm.str();
+
 }
 
-std::string floatToString(float f)
+const std::string Axes::getClass() const
 {
-  std::ostringstream stm;
-  stm << f;
-  return stm.str();
-}
-
-std::string toUpperCase(std::string text)
-{
-  for (unsigned int i=0; i<text.length();++i)
-  {
-    text[i] = toupper(text[i]);
-  }
-  
-  return text;
-}
-
-std::string getCurrentTime()
-{
-  char timeBuffer [30];
-  time_t rawtime;
-  struct tm * timeinfo;
-
-  time ( &rawtime );
-  timeinfo = gmtime ( &rawtime );
-
-  strftime (timeBuffer, 50, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
-  
-  return std::string(timeBuffer);
-}
-
-unsigned int getCurrentTimeInSec()
-{
-  return time(NULL);
+  return "Axes";
 }
 
