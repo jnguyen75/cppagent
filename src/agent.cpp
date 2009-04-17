@@ -256,15 +256,19 @@ bool Agent::handleCall(
     
     if (freq < 0)
     {
+      std::string error = "Frequency parameter cannot be a negative integer.";
+      error += "**DEBUG: Frequency = " + intToString(freq);
       result = printError("QUERY_ERROR",
-          "Frequency parameter cannot be a negative integer.");
+        error);
       return true;
     }
     
     if (freq > MAX_FREQUENCY)
     {
+      std::string error = "Frequency must be less than " + intToString(MAX_FREQUENCY) + ".";
+      error += "**DEBUG: Frequency = " + intToString(freq);
       result = printError("QUERY_ERROR",
-          "Frequency must be less than " + intToString(MAX_FREQUENCY) + ".");
+        error);
       return true;
     }
     
@@ -303,15 +307,21 @@ bool Agent::handleCall(
     
     if (count < 0 or freq < 0 or start < 0)
     {
+      std::string error = "Query parameters cannot be a negative integer.";
+      error += "**DEBUG: Frequency = " + intToString(freq);
+      
       result = printError("QUERY_ERROR",
-        "Query parameters cannot be a negative integer.");
+        error);
       return true;
     }
     
     if (freq > MAX_FREQUENCY)
     {
+      std::string error =   "Frequency must be less than " + intToString(MAX_FREQUENCY) + ".";
+      error += "**DEBUG: Frequency = " + intToString(freq);
+      
       result = printError("QUERY_ERROR",
-          "Frequency must be less than " + intToString(MAX_FREQUENCY) + ".");
+        error);
       return true;
     }
     
