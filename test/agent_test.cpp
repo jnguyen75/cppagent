@@ -54,6 +54,18 @@ void AgentTest::testConstructor()
 
 void AgentTest::testRequest()
 {
+  const std::string& path,
+  std::string& result,
+  const map_type& queries,
+  const map_type& cookies,
+  queue_type& new_cookies,
+  const map_type& incoming_headers,
+  map_type& response_headers,
+  const std::string& foreign_ip,
+  const std::string& local_ip,
+  unsigned short foreign_port,
+  unsigned short local_port,
+  std::ostream& out
 }
 
 void AgentTest::testAddAdapter()
