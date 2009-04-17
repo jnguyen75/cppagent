@@ -311,7 +311,7 @@ bool Agent::handleCall(
       std::ostringstream stm;
       stm << freq;
       error += "**DEBUG: Frequency = " + stm.str();
-      std::cout << "Frequency = " << freq << std::endl;
+      error += "String = " + queries["frequency"];
       
       result = printError("QUERY_ERROR",
         error);
