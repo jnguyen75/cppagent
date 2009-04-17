@@ -74,8 +74,13 @@ public:
   /* Size of sliding buffer */
   static const unsigned int SLIDING_BUFFER_SIZE = 131072;
   
-  /* Maximum frequency allowed */
-  static const long int MAX_FREQUENCY = 2147483646;
+  /* Slowest frequency allowed */
+  static const int SLOWEST_FREQ = 2147483646;
+  
+  static const int FASTEST_FREQ = 100;
+  
+  static const int FREQ_ERROR = -1;
+  static const int NO_FREQ = 0;
   
 protected:
   /* Handle the device/path parameters for the xpath search */
@@ -95,6 +100,12 @@ protected:
   
   std::string handleProbe(
     std::string device
+  );
+  
+  int checkAndGetFreq(
+    std::ostream& out,
+    std::string& result,
+    const map_type& queries
   );
   
   bool handleStream(
