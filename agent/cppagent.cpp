@@ -35,6 +35,17 @@
 #include "fcntl.h"
 #include "sys/stat.h"
 
+
+void terminateServerThread(Agent * server)
+{
+  std::cout << "Press enter at anytime to terminate web server" << std::endl;
+  std::cin.get();
+ 
+  // Shut down server by unblocking Agent::start()
+  server->clear();
+  delete server;
+}
+
 #ifndef WIN32
 void signal_handler(int sig)
 {
@@ -114,7 +125,7 @@ int main()
     //Agent * agent = new Agent("../include/128.32.164.245.xml");
     //agent->addAdapter("128.32.164.245", 7878);
     
-    Agent * agent = new Agent("../include/agent.mtconnect.org.xml");
+    Agent * agent = new Agent("../include/agent.mtconnect.org.xml2");
     agent->addAdapter("agent.mtconnect.org", 7878);
     
     agent->set_listening_port(Agent::SERVER_PORT);
@@ -122,7 +133,7 @@ int main()
   }
   catch (std::exception & e)
   {
-    std::cerr << "Agent.cpp main: " << e.what() << std::endl;
+    std::cerr << "Agent failed to load." << std::endl;
   }
   
   return 0;
