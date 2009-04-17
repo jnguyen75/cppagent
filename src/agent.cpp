@@ -251,24 +251,11 @@ bool Agent::handleCall(
   if (call == "current")
   {
     std::string path = queries.is_in_domain("path") ? queries["path"] : "";
-    int freq = queries.is_in_domain("frequency") ?
-      strtol(queries["frequency"].c_str(), NULL, 10) : 0;
     
-    if (freq < 0)
-    {
-      std::string error = "Frequency parameter cannot be a negative integer.";
-      error += "**DEBUG: Frequency = " + intToString(freq);
-      result = printError("QUERY_ERROR",
-        error);
-      return true;
-    }
+    int freq = checkAndGetFreq(out, result, queries);
     
-    if (freq > MAX_FREQUENCY)
+    if (freq == FREQ_ERROR)
     {
-      std::string error = "Frequency must be less than " + intToString(MAX_FREQUENCY) + ".";
-      error += "**DEBUG: Frequency = " + intToString(freq);
-      result = printError("QUERY_ERROR",
-        error);
       return true;
     }
     
@@ -285,11 +272,15 @@ bool Agent::handleCall(
     std::string path = queries.is_in_domain("path") ?
       queries["path"] : "";
     
+    int freq = checkAndGetFreq(out, result, queries);
+    
+    if (freq == FREQ_ERROR)
+    {
+      return true;
+    }
+    
     long int count = (queries.is_in_domain("count")) ?
       strtol(queries["count"].c_str(), NULL, 10) : 100;
-    
-    long int freq = (queries.is_in_domain("frequency")) ?
-      strtol(queries["frequency"].c_str(), NULL, 10) : 0;
     
     long int start;
     if (queries.is_in_domain("start"))
@@ -307,29 +298,20 @@ bool Agent::handleCall(
     
     if (count < 0 or freq < 0 or start < 0)
     {
-      std::string error = "Query parameters cannot be a negative integer.";
-      std::ostringstream stm;
-      stm << freq;
-      error += "**DEBUG: Frequency = " + stm.str();
-      
       result = printError("QUERY_ERROR",
-        error);
+        "Query parameters cannot be a negative integer.");
       return true;
     }
     
-    if (freq > MAX_FREQUENCY)
+    if (freq > SLOWEST_FREQ)
     {
-      std::string error =   "Frequency must be less than " + intToString(MAX_FREQUENCY) + ".";
-      error += "**DEBUG: Frequency = " + intToString(freq);
-      error += "String = " + queries["frequency"];
-      
       result = printError("QUERY_ERROR",
-        error);
+        "Frequency must be less than " + intToString(SLOWEST_FREQ) + ".");
       return true;
     }
     
     return handleStream(out, result, devicesAndPath(path, deviceName), false,
-        freq, start, count);
+      freq, start, count);
   }
   else
   {
@@ -365,6 +347,42 @@ std::string Agent::handleProbe(std::string name)
     mDeviceList);
 }
 
+int Agent::checkAndGetFreq(
+    std::ostream& out,
+    std::string& result,
+    const map_type& queries
+  )
+{
+  if (queries.is_in_domain("frequency"))
+  {
+    long int freq = strtol(queries["frequency"].c_str(), NULL, 10);
+    if (freq < 0)
+    {
+      result = printError("QUERY_ERROR",
+        "Frequency parameter cannot be a negative integer.");
+      return FREQ_ERROR;
+    }
+    else if (freq < FASTEST_FREQ)
+    {
+      return FASTEST_FREQ;
+    }
+    else if (freq > SLOWEST_FREQ)
+    {
+      result = printError("QUERY_ERROR",
+        "Frequency must be faster than " + intToString(SLOWEST_FREQ) + ".");
+      return FREQ_ERROR;
+    }
+    else
+    {
+      return freq;
+    }
+  }
+  else
+  {
+    return NO_FREQ;
+  }
+}
+
 bool Agent::handleStream(
     std::ostream& out,
     std::string& result,
@@ -384,7 +402,7 @@ bool Agent::handleStream(
     return true;
   }
   
-  if (frequency > 0)
+  if (frequency != (unsigned) NO_FREQ)
   {
     if (current)
     {
