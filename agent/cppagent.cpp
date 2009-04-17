@@ -125,7 +125,7 @@ int main()
     //Agent * agent = new Agent("../include/128.32.164.245.xml");
     //agent->addAdapter("128.32.164.245", 7878);
     
-    Agent * agent = new Agent("../include/agent.mtconnect.org.xml2");
+    Agent * agent = new Agent("../include/agent.mtconnect.org.xml");
     agent->addAdapter("agent.mtconnect.org", 7878);
     
     agent->set_listening_port(Agent::SERVER_PORT);

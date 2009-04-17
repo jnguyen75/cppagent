@@ -308,7 +308,10 @@ bool Agent::handleCall(
     if (count < 0 or freq < 0 or start < 0)
     {
       std::string error = "Query parameters cannot be a negative integer.";
-      error += "**DEBUG: Frequency = " + intToString(freq);
+      std::ostringstream stm;
+      stm << freq;
+      error += "**DEBUG: Frequency = " + stm.str();
+      std::cout << "Frequency = " << freq << std::endl;
       
       result = printError("QUERY_ERROR",
         error);
