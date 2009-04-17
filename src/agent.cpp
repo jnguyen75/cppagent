@@ -252,7 +252,7 @@ bool Agent::handleCall(
   {
     std::string path = queries.is_in_domain("path") ? queries["path"] : "";
     int freq = queries.is_in_domain("frequency") ?
-      atoi(queries["frequency"].c_str()) : 0;
+      strtol(queries["frequency"].c_str(), NULL, 10) : 0;
     
     if (freq < 0)
     {
@@ -285,20 +285,20 @@ bool Agent::handleCall(
     std::string path = queries.is_in_domain("path") ?
       queries["path"] : "";
     
-    int count = (queries.is_in_domain("count")) ?
-      atoi(queries["count"].c_str()) : 100;
+    long int count = (queries.is_in_domain("count")) ?
+      strtol(queries["count"].c_str(), NULL, 10) : 100;
     
-    int freq = (queries.is_in_domain("frequency")) ?
-      atoi(queries["frequency"].c_str()) : 0;
+    long int freq = (queries.is_in_domain("frequency")) ?
+      strtol(queries["frequency"].c_str(), NULL, 10) : 0;
     
-    int start;
+    long int start;
     if (queries.is_in_domain("start"))
     {
-      start = atoi(queries["start"].c_str());
+      start = strtol(queries["start"].c_str(), NULL, 10);
     }
     else if (queries.is_in_domain("from"))
     {
-      start = atoi(queries["from"].c_str());
+      start = strtol(queries["from"].c_str(), NULL, 10);
     }
     else
     {
@@ -311,7 +311,6 @@ bool Agent::handleCall(
       std::ostringstream stm;
       stm << freq;
       error += "**DEBUG: Frequency = " + stm.str();
-      error += "String = " + queries["frequency"];
       
       result = printError("QUERY_ERROR",
         error);
@@ -322,6 +321,7 @@ bool Agent::handleCall(
     {
       std::string error =   "Frequency must be less than " + intToString(MAX_FREQUENCY) + ".";
       error += "**DEBUG: Frequency = " + intToString(freq);
+      error += "String = " + queries["frequency"];
       
       result = printError("QUERY_ERROR",
         error);
