@@ -31,62 +31,32 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#include "xml_parser_test.hpp"
+#include "agent_test.hpp"
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(XmlParserTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(AgentTest);
 
-void XmlParserTest::setUp()
+void AgentTest::setUp()
 {
-  try
-  {
-    a = new XmlParser("../include/test.xml");
-  }
-  catch (std::exception & e)
-  {
-    CPPUNIT_FAIL("Could not locate test xml: ../include/test.xml");
-  }
+  a = new Agent("../include/test.xml");
 }
 
-void XmlParserTest::tearDown()
+void AgentTest::tearDown()
 {
   delete a;
 }
 
-void XmlParserTest::testConstructor()
+void AgentTest::testConstructor()
 {
-  CPPUNIT_ASSERT_THROW(new XmlParser("../include/badPath.xml"), int);
-  CPPUNIT_ASSERT_NO_THROW(new XmlParser("../include/test.xml"));
+  CPPUNIT_ASSERT_THROW(new Agent("../include/badPath.xml"), int);
+  CPPUNIT_ASSERT_NO_THROW(new Agent("../include/test.xml"));
 }
 
-void XmlParserTest::testGetters()
+void AgentTest::testRequest()
 {
-  std::list<Device *> devices = a->getDevices();
-  
-  CPPUNIT_ASSERT_EQUAL((size_t) 1, devices.size());
-  
-  std::list<DataItem *> dataItems = a->getDataItems();
-  
-  CPPUNIT_ASSERT_EQUAL((size_t) 17, dataItems.size());
-  
-  
-  bool hasExec = false, hasZcom = false;
-  
-  std::list<DataItem *>::iterator dataItem;
-  for (dataItem=dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
-  {
-    if ((*dataItem)->getId() == 24 and (*dataItem)->getName() == "execution")
-    {
-      hasExec = true;
-    }
-    
-    if ((*dataItem)->getId() == 19 and (*dataItem)->getName() == "Zcom")
-    {
-      hasZcom = true;
-    }
-  }
-  
-  CPPUNIT_ASSERT(hasExec);
-  CPPUNIT_ASSERT(hasZcom);
+}
+
+void AgentTest::testAddAdapter()
+{
 }
 
