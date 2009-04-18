@@ -52,6 +52,7 @@
 #include "xml_printer.hpp"
 
 extern std::string intToString(unsigned int i);
+extern bool isPositiveInteger(const std::string& s);
 extern unsigned int getCurrentTimeInSec();
 
 class Adapter;
@@ -79,8 +80,12 @@ public:
   
   static const int FASTEST_FREQ = 100;
   
-  static const int FREQ_ERROR = -1;
+  static const int PARAM_ERROR = -1;
+  static const int NO_VALUE = -1;
   static const int NO_FREQ = 0;
+  static const int NO_START = -2;
+  
+  static const unsigned int DEFAULT_COUNT = 100;
   
 protected:
   /* Handle the device/path parameters for the xpath search */
@@ -102,10 +107,13 @@ protected:
     std::string device
   );
   
-  int checkAndGetFreq(
-    std::ostream& out,
+  int checkAndGetParam(
     std::string& result,
-    const map_type& queries
+    const map_type& queries,
+    std::string param,
+    const int defaultValue,
+    const int minValue = NO_VALUE,
+    const int maxValue = NO_VALUE
   );
   
   bool handleStream(

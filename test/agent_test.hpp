@@ -54,8 +54,24 @@ class AgentTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testAddAdapter);
   CPPUNIT_TEST_SUITE_END();
   
+  typedef map<std::string,std::string>::kernel_1a_c map_type;
+  typedef queue<std::string>::kernel_1a_c queue_type;
+  
 protected:
   Agent * a;
+  
+  std::string path;
+  map_type queries;
+  std::string result;
+  map_type cookies;
+  queue_type new_cookies;
+  map_type incoming_headers;
+  map_type response_headers;
+  std::string foreign_ip;
+  std::string local_ip;
+  unsigned short foreign_port;
+  unsigned short local_port;
+  std::ostringstream out;
   
 protected:
   void testConstructor();

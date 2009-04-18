@@ -54,21 +54,28 @@ void AgentTest::testConstructor()
 
 void AgentTest::testRequest()
 {
-  const std::string& path,
-  std::string& result,
-  const map_type& queries,
-  const map_type& cookies,
-  queue_type& new_cookies,
-  const map_type& incoming_headers,
-  map_type& response_headers,
-  const std::string& foreign_ip,
-  const std::string& local_ip,
-  unsigned short foreign_port,
-  unsigned short local_port,
-  std::ostream& out
+  const std::string& path = this->path;
+  std::string& result = this->result;
+  const map_type& queries = this->queries;
+  const map_type& cookies = this->cookies;
+  queue_type& new_cookies = this->new_cookies;
+  const map_type& incoming_headers = this->incoming_headers;
+  map_type& response_headers = this->response_headers;
+  const std::string& foreign_ip = this->foreign_ip;
+  const std::string& local_ip = this->local_ip;
+  std::ostream& out = this->out;
+  
+  this->path = "/bad_path";
+  
+  bool response = a->on_request(path, result, queries, cookies, new_cookies, incoming_headers,
+    response_headers, foreign_ip, local_ip, 123, 321, out);
+  
+  CPPUNIT_ASSERT(response);
+  CPPUNIT_ASSERT_EQUAL((std::string) "asdf", this->result);
 }
 
 void AgentTest::testAddAdapter()
 {
+  
 }
 
