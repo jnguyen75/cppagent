@@ -128,6 +128,9 @@ int main()
     Agent * agent = new Agent("../include/agent.mtconnect.org.xml");
     agent->addAdapter("agent.mtconnect.org", 7878);
     
+    // create a thread that will listen for the user to end this program
+    //thread_function t(terminateServerThread, agent);
+    
     agent->set_listening_port(Agent::SERVER_PORT);
     agent->start();
   }
