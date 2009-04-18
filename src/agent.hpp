@@ -113,6 +113,7 @@ protected:
     std::string param,
     const int defaultValue,
     const int minValue = NO_VALUE,
+    bool minError = false,
     const int maxValue = NO_VALUE
   );
   

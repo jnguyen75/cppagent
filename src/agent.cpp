@@ -253,7 +253,7 @@ bool Agent::handleCall(
     std::string path = queries.is_in_domain("path") ? queries["path"] : "";
     
     int freq = checkAndGetParam(result, queries, "frequency", NO_FREQ,
-      FASTEST_FREQ, SLOWEST_FREQ);
+      FASTEST_FREQ, false, SLOWEST_FREQ);
     
     if (freq == PARAM_ERROR)
     {
@@ -273,9 +273,10 @@ bool Agent::handleCall(
     std::string path = queries.is_in_domain("path") ?
       queries["path"] : "";
     
-    int count = checkAndGetParam(result, queries, "count", DEFAULT_COUNT);
+    int count = checkAndGetParam(result, queries, "count", DEFAULT_COUNT,
+      1, true);
     int freq = checkAndGetParam(result, queries, "frequency", NO_FREQ,
-      FASTEST_FREQ, SLOWEST_FREQ);
+      FASTEST_FREQ, false, SLOWEST_FREQ);
     
     int start = checkAndGetParam(result, queries, "start", NO_START);
     if (start == NO_START)
@@ -331,6 +332,7 @@ int Agent::checkAndGetParam(
     std::string param,
     const int defaultValue,
     const int minValue,
+    bool minError,
     const int maxValue
   )
 {
@@ -357,6 +359,12 @@ int Agent::checkAndGetParam(
   
   if (minValue != NO_VALUE and value < minValue)
   {
+    if (minError)
+    {
+      result = printError("QUERY_ERROR",
+        "'" + param + "' must be greater than " + intToString(minValue) + ".");
+      return PARAM_ERROR;
+    }
     return minValue;
   }
   
