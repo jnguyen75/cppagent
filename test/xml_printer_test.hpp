@@ -55,6 +55,7 @@ class XmlPrinterTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testSearchParentForId);
   CPPUNIT_TEST(testGetDeviceStream);
   CPPUNIT_TEST(testPrintError);
+  CPPUNIT_TEST(testPrintProbe);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
@@ -65,6 +66,7 @@ protected:
   void testSearchParentForId();
   void testGetDeviceStream();
   void testPrintError();
+  void testPrintProbe();
   
 public:
   void setUp();

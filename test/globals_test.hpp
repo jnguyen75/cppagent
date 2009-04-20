@@ -43,6 +43,7 @@
 extern std::string intToString(unsigned int i);
 extern std::string floatToString(float f);
 extern std::string toUpperCase(std::string text);
+extern bool isNonNegativeInteger(const std::string& s);
 extern std::string getCurrentTime(bool formatted);
 extern unsigned int getCurrentTimeInSec();
 
@@ -52,6 +53,7 @@ class GlobalsTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testIntToString);
   CPPUNIT_TEST(testFloatToString);
   CPPUNIT_TEST(testToUpperCase);
+  CPPUNIT_TEST(testIsNonNegativeInteger);
   CPPUNIT_TEST(testTime);
   CPPUNIT_TEST_SUITE_END();
   
@@ -59,6 +61,7 @@ protected:
   void testIntToString();
   void testFloatToString();
   void testToUpperCase();
+  void testIsNonNegativeInteger();
   void testTime();
   
 public:

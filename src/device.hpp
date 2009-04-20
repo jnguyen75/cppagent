@@ -45,9 +45,6 @@ protected:
   unsigned int mIso841Class;
   
 public:
-  /* Default constructor, used for testing */
-  Device();
-  
   /* Constructor that sets variables from an attribute map */
   Device(std::map<std::string, std::string> attributes);
   

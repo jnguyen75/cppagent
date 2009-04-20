@@ -67,6 +67,16 @@ void GlobalsTest::testToUpperCase()
   CPPUNIT_ASSERT_EQUAL((std::string) "QWERTY.ASDF|", toUpperCase("qwerty.asdf|"));
 }
 
+void GlobalsTest::testIsNonNegativeInteger()
+{
+  CPPUNIT_ASSERT(isNonNegativeInteger("12345"));
+  CPPUNIT_ASSERT(isNonNegativeInteger("123456789012345678901234567890"));
+  CPPUNIT_ASSERT(isNonNegativeInteger("0"));
+  CPPUNIT_ASSERT(!isNonNegativeInteger("-12345"));
+  CPPUNIT_ASSERT(!isNonNegativeInteger("123456789012345678901234567890a"));
+  CPPUNIT_ASSERT(!isNonNegativeInteger("123.45"));
+}
+
 void GlobalsTest::testTime()
 {
   std::string time1 = getCurrentTime(false);
@@ -77,12 +87,20 @@ void GlobalsTest::testTime()
   std::string time3 = getCurrentTime(false);
   CPPUNIT_ASSERT(time1 != time3);
   
-  unsigned int time4 = getCurrentTimeInSec();
-  unsigned int time5 = getCurrentTimeInSec();
+  std::string time4 = getCurrentTime(true);
+  std::string time5 = getCurrentTime(true);
   CPPUNIT_ASSERT_EQUAL(time4, time5);
   
+  sleep(1);
+  std::string time6 = getCurrentTime(true);
+  CPPUNIT_ASSERT(time4 != time6);
+  
+  unsigned int time7 = getCurrentTimeInSec();
+  unsigned int time8 = getCurrentTimeInSec();
+  CPPUNIT_ASSERT_EQUAL(time7, time8);
+  
   sleep(2);
-  unsigned int time6 = getCurrentTimeInSec();
-  CPPUNIT_ASSERT(time4 < time6);
+  unsigned int time9 = getCurrentTimeInSec();
+  CPPUNIT_ASSERT(time7 < time9);
 }
 

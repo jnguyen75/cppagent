@@ -59,6 +59,7 @@ class AgentTest : public CppUnit::TestFixture
   
 protected:
   Agent * a;
+  std::string agentId;
   
   std::string path;
   map_type queries;

@@ -120,7 +120,7 @@ void ComponentEvent::convertValue(std::string value)
   {
     fValue = convertSimple(units, atof(value.c_str()));
   }
-  else if (units == "REVOLUTIONS/MINUTE")
+  else if (units == "REVOLUTION/MINUTE")
   {
     fValue = atof(value.c_str());
   }
@@ -141,10 +141,11 @@ void ComponentEvent::convertValue(std::string value)
     }
     else
     {
-      std::string unit = units.substr(0, carotLoc);
-      std::string power = units.substr(carotLoc+1);
+      std::string unit = denominator.substr(0, carotLoc);
+      std::string power = denominator.substr(carotLoc+1);
       
-      double div = pow((double) convertSimple(unit, atof(value.c_str())), (double) atof(power.c_str()));
+      double div = pow((double) convertSimple(unit, 1.0f),
+        (double) atof(power.c_str()));
       fValue = convertSimple(numerator, atof(value.c_str())) / div;
     }
   }

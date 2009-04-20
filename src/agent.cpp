@@ -348,7 +348,7 @@ int Agent::checkAndGetParam(
     return PARAM_ERROR;
   }
   
-  if (!isPositiveInteger(queries[param]))
+  if (!isNonNegativeInteger(queries[param]))
   {
     result = printError("QUERY_ERROR",
       "'" + param + "' must be a positive integer.");

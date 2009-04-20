@@ -39,6 +39,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(AgentTest);
 void AgentTest::setUp()
 {
   a = new Agent("../include/test.xml");
+  agentId = intToString(getCurrentTimeInSec());
 }
 
 void AgentTest::tearDown()
@@ -54,24 +55,26 @@ void AgentTest::testConstructor()
 
 void AgentTest::testRequest()
 {
-  const std::string& path = this->path;
-  std::string& result = this->result;
-  const map_type& queries = this->queries;
-  const map_type& cookies = this->cookies;
-  queue_type& new_cookies = this->new_cookies;
-  const map_type& incoming_headers = this->incoming_headers;
-  map_type& response_headers = this->response_headers;
-  const std::string& foreign_ip = this->foreign_ip;
-  const std::string& local_ip = this->local_ip;
-  std::ostream& out = this->out;
-  
-  this->path = "/bad_path";
+  path = "/bad_path";
   
   bool response = a->on_request(path, result, queries, cookies, new_cookies, incoming_headers,
     response_headers, foreign_ip, local_ip, 123, 321, out);
   
+  std::string expected;
+  expected += "<MTConnectError xmlns:m=\"urn:mtconnect.com:MTConnectError:1.0\"";
+  expected += " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
+  expected += " xmlns=\"urn:mtconnect.com:MTConnectError:1.0\" xsi:";
+  expected += "schemaLocation=\"urn:mtconnect.com:MTConnectError:1.0 /schemas/";
+  expected += "MTConnectError.xsd\">\r\n";
+  expected += "  <Header creationTime=\"" + getCurrentTime(false) + "\" sender=";
+  expected += "\"localhost\" instanceId=\"" + agentId + "\" bufferSize=\"131072\" ";
+  expected += "version=\"1.0\" />\r\n";
+  expected += "  <Error errorCode=\"UNSUPPORTED\">The request was not one of ";
+  expected += "the specified requests: bad_path</Error>\r\n";
+  expected += "</MTConnectError>\r\n";
+  
   CPPUNIT_ASSERT(response);
-  CPPUNIT_ASSERT_EQUAL((std::string) "asdf", this->result);
+  CPPUNIT_ASSERT_EQUAL(expected, result);
 }
 
 void AgentTest::testAddAdapter()

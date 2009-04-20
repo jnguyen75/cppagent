@@ -201,3 +201,16 @@ void AxesTest::testDataItems()
   a->getDataItems().clear();
 }
 
+void AxesTest::testGetComponentEnum()
+{
+  CPPUNIT_ASSERT_EQUAL(Component::AXES, Component::getComponentEnum("Axes"));
+  CPPUNIT_ASSERT_EQUAL(Component::THERMOSTAT,
+    Component::getComponentEnum("Thermostat"));
+  CPPUNIT_ASSERT_EQUAL(Component::COMPONENTS,
+    Component::getComponentEnum("Components"));
+  CPPUNIT_ASSERT_EQUAL(Component::TEXT,
+    Component::getComponentEnum("text"));
+  CPPUNIT_ASSERT_EQUAL((Component::EComponentSpecs) -1,
+    Component::getComponentEnum("NON_EXISTANT"));
+}
+

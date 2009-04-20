@@ -287,3 +287,16 @@ void XmlPrinterTest::testPrintError()
     XmlPrinter::printError(123, 9999, 1, "ERROR_CODEE", "ERROR TEXT!"));
 }
 
+void XmlPrinterTest::testPrintProbe()
+{
+  std::string expected;
+  
+  expected += "  <Header creationTime=\"" + getCurrentTime(false) + "\" sender=\"";
+  expected += "localhost\" instanceId=\"123\" bufferSize=\"9999\" ";
+  expected += "version=\"1.0\" />\r\n";
+  expected += "</MTConnectError>\r\n";
+  
+  CPPUNIT_ASSERT_EQUAL(expected,
+    XmlPrinter::printError(123, 9999, 1, "ERROR_CODEE", "ERROR TEXT!"));
+}
+
