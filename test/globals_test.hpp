@@ -43,7 +43,7 @@
 extern std::string intToString(unsigned int i);
 extern std::string floatToString(float f);
 extern std::string toUpperCase(std::string text);
-extern std::string getCurrentTime();
+extern std::string getCurrentTime(bool formatted);
 extern unsigned int getCurrentTimeInSec();
 
 class GlobalsTest : public CppUnit::TestFixture

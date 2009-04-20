@@ -46,7 +46,7 @@ class DataItem;
 
 extern std::string intToString(unsigned int i);
 extern std::string floatToString(float i);
-extern std::string getCurrentTime();
+extern std::string getCurrentTime(bool formatted);
 
 namespace XmlPrinter
 {

@@ -16,10 +16,11 @@ INCLUDE_DIRECTORIES=/usr/local/include/libxml++-2.6 \
 
 LIB_DIRECTORIES=../lib/cppunit-1.12.1/lib
 
-CXXFLAGS = -g -Wall $(INCLUDE_DIRECTORIES:%=-I%) -DDLIB_NO_GUI_SUPPORT
+CXXFLAGS = -g -Wall $(INCLUDE_DIRECTORIES:%=-I%) -DDLIB_NO_GUI_SUPPORT \
+  -fprofile-arcs -ftest-coverage
 LDFLAGS = $(LIB_DIRECTORIES:%=-L%)
 LIBRARIES=  xml++-2.6 xml2 pthread z m glibmm-2.4 gobject-2.0 sigc-2.0 \
-	glib-2.0 stdc++ cppunit dl #intl iconv 
+	glib-2.0 stdc++ cppunit dl gcov#intl iconv 
 
 vpath %.hpp ../src
 vpath %.cpp ../src
@@ -57,8 +58,8 @@ LIBS=$(LIBRARIES:%=-l%)
 all: test
 
 clean:
-	@echo Removing all object and binary files
-	@rm -rf *.o test
+	@echo Removing all object, binary and test files
+	@rm -rf *.o *.gcov *.gcda *.gcno test
 
 test: $(OBJS)
 	@echo Building test agent

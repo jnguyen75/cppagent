@@ -53,6 +53,7 @@
 
 extern std::string intToString(unsigned int i);
 extern bool isPositiveInteger(const std::string& s);
+extern std::string getCurrentTime(bool formatted);
 extern unsigned int getCurrentTimeInSec();
 
 class Adapter;
