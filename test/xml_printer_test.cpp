@@ -277,7 +277,7 @@ void XmlPrinterTest::testPrintError()
   expected += "xmlns=\"urn:mtconnect.com:MTConnectError:1.0\" ";
   expected += "xsi:schemaLocation=\"urn:mtconnect.com:MTConnectError:1.0 ";
   expected += "/schemas/MTConnectError.xsd\">\r\n";
-  expected += "  <Header creationTime=\"" + getCurrentTime() + "\" sender=\"";
+  expected += "  <Header creationTime=\"" + getCurrentTime(false) + "\" sender=\"";
   expected += "localhost\" instanceId=\"123\" bufferSize=\"9999\" ";
   expected += "version=\"1.0\" />\r\n";
   expected += "  <Error errorCode=\"ERROR_CODEE\">ERROR TEXT!</Error>\r\n";

@@ -80,7 +80,7 @@ bool isPositiveInteger(const std::string& s)
 }
 
 /* Get the current time formatted */
-std::string getCurrentTime()
+std::string getCurrentTime(bool formatted)
 {
   char timeBuffer [30];
   time_t rawtime;
@@ -88,8 +88,15 @@ std::string getCurrentTime()
 
   time ( &rawtime );
   timeinfo = gmtime ( &rawtime );
-
-  strftime (timeBuffer, 50, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
+  
+  if (formatted)
+  {
+    strftime (timeBuffer, 50, "%a, %d %b %Y %H:%M:%S %Z", timeinfo);
+  }
+  else
+  {
+    strftime (timeBuffer, 50, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
+  }
   
   return std::string(timeBuffer);
 }

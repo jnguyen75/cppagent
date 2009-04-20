@@ -69,12 +69,12 @@ void GlobalsTest::testToUpperCase()
 
 void GlobalsTest::testTime()
 {
-  std::string time1 = getCurrentTime();
-  std::string time2 = getCurrentTime();
+  std::string time1 = getCurrentTime(false);
+  std::string time2 = getCurrentTime(false);
   CPPUNIT_ASSERT_EQUAL(time1, time2);
   
   sleep(1);
-  std::string time3 = getCurrentTime();
+  std::string time3 = getCurrentTime(false);
   CPPUNIT_ASSERT(time1 != time3);
   
   unsigned int time4 = getCurrentTimeInSec();

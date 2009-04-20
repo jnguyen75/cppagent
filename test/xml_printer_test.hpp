@@ -43,7 +43,7 @@
 #include "../src/xml_printer.hpp"
 #include "../src/device.hpp"
 
-extern std::string getCurrentTime();
+extern std::string getCurrentTime(bool formatted);
 
 class XmlPrinterTest : public CppUnit::TestFixture
 {

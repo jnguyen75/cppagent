@@ -427,21 +427,28 @@ void Agent::streamData(
     unsigned int count
   )
 {
-  std::string boundary = "--" + md5(intToString(time(NULL)));
-  std::string contentType = "Content-type: text/xml";
+  out << "HTTP/1.1 200 OK" << std::endl;
+  out << "Connection: close" << std::endl;
+  out << "Date: " << getCurrentTime(true) << std::endl;
+  out << "Status: 200 OK" << std::endl;
+  out << "Content-Disposition: inline" << std::endl;
+  out << "X-Runtime: 144ms" << std::endl;
+  out << "Content-Type: multipart/x-mixed-replace;";
   
+  std::string boundary = "--" + md5(intToString(time(NULL)));
+  out << "boundary=" << boundary << std::endl << std::endl;
+    
   while (out.good())
   {
     out << boundary << std::endl;
-    out << contentType << std::endl;
+    out << "Content-type: text/xml" << std::endl;
     
     std::string content = (current) ?
       fetchCurrentData(dataItems) : fetchSampleData(dataItems, start, count);
     
     out << "Content-length: " << content.length() << std::endl;
     
-    out << std::endl;
-    out << content;
+    out << std::endl << content;
     
     out.flush();
     dlib::sleep(frequency);
