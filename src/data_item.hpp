@@ -38,6 +38,7 @@
 #include <iostream>
 
 #include "component.hpp"
+#include "component_event.hpp"
 
 extern std::string intToString(unsigned int i);
 
@@ -133,6 +134,8 @@ public:
   /* Construct a data item with appropriate attributes mapping */
   DataItem(std::map<std::string, std::string> attributes);
   
+  ~DataItem();
+  
   /* Get a map of all the attributes of this data item */
   std::map<std::string, std::string> getAttributes() const;
   
@@ -160,7 +163,7 @@ public:
   Component * getComponent() const;
   
   /* Set/get latest component event the data item is associated with */
-  void setLatestEvent(ComponentEvent * event);
+  void setLatestEvent(ComponentEvent& event);
   ComponentEvent * getLatestEvent() const;
   
 public:

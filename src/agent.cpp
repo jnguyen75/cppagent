@@ -140,9 +140,14 @@ void Agent::addToBuffer(std::string time, std::string key, std::string value)
   { 
     mSequenceLock->lock();
     
+    if ((*mSlidingBuffer)[mSequence] != NULL)
+    {
+      delete (*mSlidingBuffer)[mSequence];
+    }
+    
     ComponentEvent * event = new ComponentEvent(d, mSequence, time, value);
     (*mSlidingBuffer)[mSequence] = event;
-    d->setLatestEvent(event);
+    d->setLatestEvent(*event);
     
     mSequence++;
     mSequenceLock->unlock();

@@ -71,6 +71,19 @@ ComponentEvent::ComponentEvent(DataItem * dataItem, unsigned int sequence, std::
   convertValue(value);
 }
 
+ComponentEvent::ComponentEvent(ComponentEvent& ce)
+{
+  std::map<std::string, std::string> attributes = ce.getAttributes();
+  
+  mDataItem = ce.getDataItem();
+  
+  mTime = attributes["timestamp"];
+  mSequence = atoi(attributes["sequence"].c_str());
+  
+  fValue = ce.getFValue();
+  sValue = ce.getSValue();
+}
+
 ComponentEvent::~ComponentEvent()
 {
 }
