@@ -40,11 +40,11 @@ void XmlParserTest::setUp()
 {
   try
   {
-    a = new XmlParser("../include/test.xml");
+    a = new XmlParser("../include/test_config.xml");
   }
   catch (std::exception & e)
   {
-    CPPUNIT_FAIL("Could not locate test xml: ../include/test.xml");
+    CPPUNIT_FAIL("Could not locate test xml: ../include/test_config.xml");
   }
 }
 
@@ -56,7 +56,7 @@ void XmlParserTest::tearDown()
 void XmlParserTest::testConstructor()
 {
   CPPUNIT_ASSERT_THROW(new XmlParser("../include/badPath.xml"), int);
-  CPPUNIT_ASSERT_NO_THROW(new XmlParser("../include/test.xml"));
+  CPPUNIT_ASSERT_NO_THROW(new XmlParser("../include/test_config.xml"));
 }
 
 void XmlParserTest::testGetters()

@@ -46,6 +46,14 @@
 
 #include "../src/adapter.hpp"
 
+extern std::string getFile(std::string fileLoc);
+extern void fillErrorText(std::string& errorXml, const std::string& text);
+extern void fillAttribute(
+  std::string& xmlString,
+  const std::string& attribute,
+  const std::string& value
+);
+
 class AgentTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(AgentTest);

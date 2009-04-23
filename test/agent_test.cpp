@@ -38,7 +38,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(AgentTest);
 
 void AgentTest::setUp()
 {
-  a = new Agent("../include/test.xml");
+  a = new Agent("../include/test_config.xml");
   agentId = intToString(getCurrentTimeInSec());
 }
 
@@ -50,7 +50,7 @@ void AgentTest::tearDown()
 void AgentTest::testConstructor()
 {
   CPPUNIT_ASSERT_THROW(new Agent("../include/badPath.xml"), int);
-  CPPUNIT_ASSERT_NO_THROW(new Agent("../include/test.xml"));
+  CPPUNIT_ASSERT_NO_THROW(new Agent("../include/test_config.xml"));
 }
 
 void AgentTest::testRequest()
@@ -60,21 +60,17 @@ void AgentTest::testRequest()
   bool response = a->on_request(path, result, queries, cookies, new_cookies, incoming_headers,
     response_headers, foreign_ip, local_ip, 123, 321, out);
   
-  std::string expected;
-  expected += "<MTConnectError xmlns:m=\"urn:mtconnect.com:MTConnectError:1.0\"";
-  expected += " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
-  expected += " xmlns=\"urn:mtconnect.com:MTConnectError:1.0\" xsi:";
-  expected += "schemaLocation=\"urn:mtconnect.com:MTConnectError:1.0 /schemas/";
-  expected += "MTConnectError.xsd\">\r\n";
-  expected += "  <Header creationTime=\"" + getCurrentTime(false) + "\" sender=";
-  expected += "\"localhost\" instanceId=\"" + agentId + "\" bufferSize=\"131072\" ";
-  expected += "version=\"1.0\" />\r\n";
-  expected += "  <Error errorCode=\"UNSUPPORTED\">The request was not one of ";
-  expected += "the specified requests: bad_path</Error>\r\n";
-  expected += "</MTConnectError>\r\n";
+  std::string pathError = getFile("../include/test_error.xml");
+  fillErrorText(pathError,
+    "The request was not one of the specified requests: bad_path");
+  fillAttribute(pathError, "errorCode", "UNSUPPORTED");
+  fillAttribute(pathError, "instanceId", agentId);
+  fillAttribute(pathError, "bufferSize", "131072");
+  fillAttribute(pathError, "creationTime", getCurrentTime(false));
+  
   
   CPPUNIT_ASSERT(response);
-  CPPUNIT_ASSERT_EQUAL(expected, result);
+  CPPUNIT_ASSERT_EQUAL(pathError, result);
 }
 
 void AgentTest::testAddAdapter()
