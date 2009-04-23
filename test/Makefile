@@ -49,6 +49,7 @@ component_event_test.cpp \
 globals_test.cpp \
 data_item_test.cpp \
 device_test.cpp \
+test_globals.cpp \
 xml_parser_test.cpp \
 xml_printer_test.cpp
 

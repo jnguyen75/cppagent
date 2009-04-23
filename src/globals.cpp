@@ -66,7 +66,7 @@ std::string toUpperCase(std::string text)
 }
 
 /* Check if each char in a string is a positive integer */
-bool isPositiveInteger(const std::string& s)
+bool isNonNegativeInteger(const std::string& s)
 {
   for (unsigned int i=0; i<s.length(); i++)
   {

@@ -52,7 +52,7 @@
 #include "xml_printer.hpp"
 
 extern std::string intToString(unsigned int i);
-extern bool isPositiveInteger(const std::string& s);
+extern bool isNonNegativeInteger(const std::string& s);
 extern std::string getCurrentTime(bool formatted);
 extern unsigned int getCurrentTimeInSec();
 

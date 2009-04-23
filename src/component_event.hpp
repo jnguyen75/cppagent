@@ -105,6 +105,9 @@ public:
   /* Initialize the ComponentEvent with the type of event, sequence number, time and value */
   ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value);
   
+  /* Copy constructor */
+  ComponentEvent(ComponentEvent& ce);
+  
   /* Virtual destructor */
   virtual ~ComponentEvent();
   

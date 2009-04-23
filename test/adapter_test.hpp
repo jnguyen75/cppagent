@@ -52,7 +52,7 @@ protected:
   Adapter * a;
   
 protected:
-  void testIntToString();
+  
   
 public:
   void setUp();

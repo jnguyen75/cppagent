@@ -70,6 +70,7 @@ protected:
   void testParentsAndDevice();
   void testChildren();
   void testDataItems();
+  void testGetComponentEnum();
   
 public:
   /* Set up testing environment */

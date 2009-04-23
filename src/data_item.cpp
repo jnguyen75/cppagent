@@ -83,7 +83,7 @@ const std::string DataItem::STypeCamel[NumTypes] = {
   "Program",
   "SpindleSpeed",
   "Status",
-  "Temperatur",
+  "Temperature",
   "Tick",
   "Transfer",
   "Velocity",
@@ -128,6 +128,14 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
   
   mComponent = NULL;
   mLatestEvent = NULL;
+}
+
+DataItem::~DataItem()
+{
+  if (mLatestEvent != NULL)
+  {
+    delete mLatestEvent;
+  }
 }
 
 std::map<std::string, std::string> DataItem::getAttributes() const
@@ -233,9 +241,13 @@ Component * DataItem::getComponent() const
   return mComponent;
 }
 
-void DataItem::setLatestEvent(ComponentEvent * event)
+void DataItem::setLatestEvent(ComponentEvent& event)
 {
-  mLatestEvent = event;
+  if (mLatestEvent != NULL)
+  {
+    delete mLatestEvent;
+  }
+  mLatestEvent = new ComponentEvent(event);
 }
 
 ComponentEvent * DataItem::getLatestEvent() const

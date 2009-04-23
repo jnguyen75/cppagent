@@ -140,9 +140,14 @@ void Agent::addToBuffer(std::string time, std::string key, std::string value)
   { 
     mSequenceLock->lock();
     
+    if ((*mSlidingBuffer)[mSequence] != NULL)
+    {
+      delete (*mSlidingBuffer)[mSequence];
+    }
+    
     ComponentEvent * event = new ComponentEvent(d, mSequence, time, value);
     (*mSlidingBuffer)[mSequence] = event;
-    d->setLatestEvent(event);
+    d->setLatestEvent(*event);
     
     mSequence++;
     mSequenceLock->unlock();
@@ -348,7 +353,7 @@ int Agent::checkAndGetParam(
     return PARAM_ERROR;
   }
   
-  if (!isPositiveInteger(queries[param]))
+  if (!isNonNegativeInteger(queries[param]))
   {
     result = printError("QUERY_ERROR",
       "'" + param + "' must be a positive integer.");

@@ -55,6 +55,7 @@ void DataItemTest::setUp()
   attributes2["units"] = "REVOLUTION/MINUTE";
   attributes2["nativeScale"] = "1.0";
   attributes2["significantDigits"] = "1";
+  attributes2["coordinateSystem"] = "testCoordinateSystem";
   b = new DataItem(attributes2);
 }
 
@@ -94,14 +95,18 @@ void DataItemTest::testGetAttributes()
   CPPUNIT_ASSERT(attributes1["subType"].empty());
   CPPUNIT_ASSERT(attributes1["nativeUnits"].empty());
   CPPUNIT_ASSERT(attributes1["getNativeScale"].empty());
+  CPPUNIT_ASSERT(attributes1["coordinateSystem"].empty());
   
   std::map<std::string, std::string> attributes2 = b->getAttributes();
   CPPUNIT_ASSERT_EQUAL((std::string) "3", attributes2["id"]);
   CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest2", attributes2["name"]);
   CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", attributes2["type"]);
   CPPUNIT_ASSERT_EQUAL((std::string) "ACTUAL", attributes2["subType"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "REVOLUTION/MINUTE", attributes2["nativeUnits"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "REVOLUTION/MINUTE",
+    attributes2["nativeUnits"]);
   CPPUNIT_ASSERT_EQUAL((std::string) "1", attributes2["nativeScale"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "testCoordinateSystem",
+    attributes2["coordinateSystem"]);
 }
 
 void DataItemTest::testHasNameAndSource()
@@ -109,9 +114,13 @@ void DataItemTest::testHasNameAndSource()
   CPPUNIT_ASSERT(a->hasName("DataItemTest1"));
   CPPUNIT_ASSERT(b->hasName("DataItemTest2"));
   
+  CPPUNIT_ASSERT(a->getSource().empty());
+  CPPUNIT_ASSERT(b->getSource().empty());
+  
   CPPUNIT_ASSERT(!b->hasName("DataItemTest2Source"));
   b->addSource("DataItemTest2Source");
   CPPUNIT_ASSERT(b->hasName("DataItemTest2Source"));
+  CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest2Source", b->getSource());
 }
 
 void DataItemTest::testIsSample()

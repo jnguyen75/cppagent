@@ -35,15 +35,26 @@
 #define XML_PRINTER_TEST_HPP
 
 #include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <libxml++/libxml++.h>
 
-#include "../src/xml_printer.hpp"
+#include "../src/component_event.hpp"
+#include "../src/data_item.hpp"
 #include "../src/device.hpp"
+#include "../src/xml_parser.hpp"
+#include "../src/xml_printer.hpp"
 
 extern std::string getCurrentTime(bool formatted);
+extern void fillAttribute(
+  std::string& toFill,
+  const std::string& attribute,
+  const std::string& value
+);
 
 class XmlPrinterTest : public CppUnit::TestFixture
 {
@@ -55,7 +66,15 @@ class XmlPrinterTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testSearchParentForId);
   CPPUNIT_TEST(testGetDeviceStream);
   CPPUNIT_TEST(testPrintError);
+  CPPUNIT_TEST(testPrintProbe);
+  CPPUNIT_TEST(testPrintCurrent);
+  CPPUNIT_TEST(testPrintSample);
   CPPUNIT_TEST_SUITE_END();
+  
+protected:
+  XmlParser * config;
+  std::list<DataItem *> dataItems;
+  std::list<Device *> devices;
   
 protected:
   void testInitXmlDoc();
@@ -65,6 +84,11 @@ protected:
   void testSearchParentForId();
   void testGetDeviceStream();
   void testPrintError();
+  void testPrintProbe();
+  void testPrintCurrent();
+  void testPrintSample();
+  
+  DataItem * getDataItemById(unsigned int id);
   
 public:
   void setUp();

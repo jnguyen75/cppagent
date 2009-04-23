@@ -103,9 +103,6 @@ protected:
   std::list<DataItem *> mDataItems;
 
 public:
-  /* Default constructor, used for testing */
-  Component();
-  
   /* Take in mapping of attributes */
   Component(std::map<std::string, std::string> attributes);
   

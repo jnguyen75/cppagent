@@ -49,6 +49,8 @@ class ComponentEventTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testGetDataItem);
   CPPUNIT_TEST(testGetValue);
   CPPUNIT_TEST(testGetSimpleUnits);
+  CPPUNIT_TEST(testConvertValue);
+  CPPUNIT_TEST(testConvertSimpleUnits);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
@@ -60,6 +62,8 @@ protected:
   void testGetDataItem();
   void testGetValue();
   void testGetSimpleUnits();
+  void testConvertValue();
+  void testConvertSimpleUnits();
   
 public:
   void setUp();
