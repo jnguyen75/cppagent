@@ -178,67 +178,71 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\agent\adapter.cpp"
+				RelativePath="..\..\src\adapter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\agent.cpp"
+				RelativePath="..\..\src\agent.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\axes.cpp"
+				RelativePath="..\..\src\axes.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\component.cpp"
+				RelativePath="..\..\src\component.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\component_event.cpp"
+				RelativePath="..\..\src\component_event.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\connector.cpp"
+				RelativePath="..\..\src\connector.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\controller.cpp"
+				RelativePath="..\..\src\controller.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\data_item.cpp"
+				RelativePath="..\..\agent\cppagent.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\device.cpp"
+				RelativePath="..\..\src\data_item.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\globals.cpp"
+				RelativePath="..\..\src\device.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\linear.cpp"
+				RelativePath="..\..\src\globals.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\power.cpp"
+				RelativePath="..\..\src\linear.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\spindle.cpp"
+				RelativePath="..\..\src\power.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\thermostat.cpp"
+				RelativePath="..\..\src\spindle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\xml_parser.cpp"
+				RelativePath="..\..\src\thermostat.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\xml_printer.cpp"
+				RelativePath="..\..\src\xml_parser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\xml_printer.cpp"
 				>
 			</File>
 		</Filter>
@@ -248,63 +252,63 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\agent\adapter.hpp"
+				RelativePath="..\..\src\adapter.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\agent.hpp"
+				RelativePath="..\..\src\agent.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\axes.hpp"
+				RelativePath="..\..\src\axes.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\component.hpp"
+				RelativePath="..\..\src\component.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\component_event.hpp"
+				RelativePath="..\..\src\component_event.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\connector.hpp"
+				RelativePath="..\..\src\connector.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\controller.hpp"
+				RelativePath="..\..\src\controller.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\data_item.hpp"
+				RelativePath="..\..\src\data_item.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\device.hpp"
+				RelativePath="..\..\src\device.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\linear.hpp"
+				RelativePath="..\..\src\linear.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\power.hpp"
+				RelativePath="..\..\src\power.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\spindle.hpp"
+				RelativePath="..\..\src\spindle.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\devices\thermostat.hpp"
+				RelativePath="..\..\src\thermostat.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\xml_parser.hpp"
+				RelativePath="..\..\src\xml_parser.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\agent\xml_printer.hpp"
+				RelativePath="..\..\src\xml_printer.hpp"
 				>
 			</File>
 		</Filter>
