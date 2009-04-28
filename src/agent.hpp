@@ -133,7 +133,7 @@ protected:
   bool handleStream(
     std::ostream& out,
     std::string& result,
-    std::string path,
+    const std::string& path,
     bool current,  
     unsigned int frequency,
     unsigned int start = 0,

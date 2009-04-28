@@ -32,6 +32,7 @@
 */
 
 #include "agent.hpp"
+#include <time.h>
 
 /* Agent public methods */
 Agent::Agent(const std::string& configXmlPath)
@@ -231,7 +232,7 @@ bool Agent::handleCall (
       start = checkAndGetParam(result, queries, "from", 0);
     }
     
-    if (freq == PARAM_ERROR or count == PARAM_ERROR or start == PARAM_ERROR)
+    if (freq == PARAM_ERROR || count == PARAM_ERROR || start == PARAM_ERROR)
     {
       return true;
     }
@@ -276,7 +277,7 @@ std::string Agent::handleProbe(const std::string& name)
 bool Agent::handleStream(
     std::ostream& out,
     std::string& result,
-    std::string path,
+    const std::string& path,
     bool current,
     unsigned int frequency,
     unsigned int start,

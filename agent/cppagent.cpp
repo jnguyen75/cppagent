@@ -118,7 +118,7 @@ void daemonize()
 
 int main()
 {
-  //daemonize();
+  daemonize();
   
   try
   {
@@ -129,7 +129,7 @@ int main()
     agent->addAdapter("agent.mtconnect.org", 7878);
     
     // create a thread that will listen for the user to end this program
-    thread_function t(terminateServerThread, agent);
+    //thread_function t(terminateServerThread, agent);
     
     agent->set_listening_port(SERVER_PORT);
     agent->start();

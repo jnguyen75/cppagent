@@ -215,7 +215,7 @@ void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent)
       xmlpp::Element * source =
         dynamic_cast<xmlpp::Element *>(children.front());
       
-      if (source and source->has_child_text())
+      if (source && source->has_child_text())
       {
         xmlpp::TextNode * nodeText = source->get_child_text();
         d->addSource(nodeText->get_content());
