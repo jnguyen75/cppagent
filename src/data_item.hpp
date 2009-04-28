@@ -37,6 +37,8 @@
 #include <map>
 #include <iostream>
 
+#include "dlib/threads.h"
+
 #include "component.hpp"
 #include "component_event.hpp"
 
@@ -129,6 +131,9 @@ protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
   
   /* Pointer to the latest component event that occured for this data item */
   ComponentEvent * mLatestEvent;
+  
+  
+  dlib::mutex * mLatestEventLock;
   
 public:
   /* Construct a data item with appropriate attributes mapping */

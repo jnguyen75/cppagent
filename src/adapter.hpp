@@ -41,15 +41,27 @@
 
 #include "agent.hpp"
 #include "connector.hpp"
-
-extern std::string toUpperCase(std::string text);
-
-using namespace dlib;
+#include "globals.hpp"
 
 class Agent;
 
+using namespace dlib;
+
 class Adapter : public Connector, public threaded_object
 {
+public:
+  /* Connect the adapter to the server & port */
+  Adapter(const std::string &server, const unsigned int port);
+  
+  /* Virtual destructor */
+  virtual ~Adapter();
+  
+  /* Set pointer to the agent */
+  void setAgent(Agent& agent) { mAgent = &agent; }
+  
+  /* Inherited method for incoming data from the server */
+  virtual void processData(const std::string& data);
+  
 protected:
   /* Pointer to the agent */
   Agent * mAgent;
@@ -57,19 +69,6 @@ protected:
 private:
   /* Inherited and is run as part of the threaded_object */
   void thread();
-  
-public:
-  /* Load the adapter with the .xml file */
-  Adapter(std::string server, unsigned int port);
-  
-  /* Destructor */
-  virtual ~Adapter();
-  
-  /* Set pointer to the agent */
-  void setAgent(Agent * agent);
-  
-  /* Inherited method for incoming data from the server */
-  void processData(std::string line);
 };
 
 #endif

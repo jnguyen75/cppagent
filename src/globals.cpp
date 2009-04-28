@@ -34,9 +34,7 @@
 // Dlib library
 #include "../lib/dlib/all/source.cpp"
 
-#include <ctime>
-#include <string>
-#include <sstream>
+#include "globals.hpp"
 
 /* Convert an unsigned integer to string */
 std::string intToString(unsigned int i)
@@ -79,31 +77,67 @@ bool isNonNegativeInteger(const std::string& s)
   return true;
 }
 
-/* Get the current time formatted */
-std::string getCurrentTime(bool formatted)
+std::string getCurrentTime(TimeFormat format)
 {
   char timeBuffer [30];
   time_t rawtime;
   struct tm * timeinfo;
 
-  time ( &rawtime );
-  timeinfo = gmtime ( &rawtime );
+  time (&rawtime);
   
-  if (formatted)
+  timeinfo = (format == LOCAL) ? localtime(&rawtime) : gmtime(&rawtime);
+  
+  switch (format)
   {
-    strftime (timeBuffer, 50, "%a, %d %b %Y %H:%M:%S %Z", timeinfo);
-  }
-  else
-  {
-    strftime (timeBuffer, 50, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
+    case HUM_READ:
+      strftime (timeBuffer, 50, "%a, %d %b %Y %H:%M:%S %Z", timeinfo);
+      break;
+    case GMT:
+      strftime (timeBuffer, 50, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
+      break;
+    case GMT_UV_SEC:
+    case LOCAL:
+      strftime (timeBuffer, 50, "%Y-%m-%dT%H:%M:%S", timeinfo);
+      break;
   }
   
-  return std::string(timeBuffer);
+  std::string toReturn (timeBuffer);
+  
+  if (format == GMT_UV_SEC)
+  {
+    timeval timEval;
+    gettimeofday(&timEval, NULL);
+    
+    std::ostringstream ostm;
+    ostm << timEval.tv_usec;
+    std::string toAppend = ostm.str();
+    
+    toReturn += ".";
+    for (unsigned int i=toAppend.length(); i<6; i++)
+    {
+      toReturn += "0";
+    }
+    toReturn += toAppend;
+  }
+  
+  return toReturn;
 }
 
-/* Get the current time in number of seconds as an integer */
 unsigned int getCurrentTimeInSec()
 {
   return time(NULL);
+}
+
+void logEvent(const std::string& source, const std::string& message)
+{
+  std::ofstream logFile;
+  logFile.open(LOG_FILE, std::ios::app);
+  if (logFile.is_open())
+  {
+    logFile << "[" << getCurrentTime(LOCAL) << "] ";
+    logFile << source << ": ";
+    logFile << message << std::endl; 
+  }
+  logFile.close();
 }
 

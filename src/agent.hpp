@@ -34,10 +34,7 @@
 #ifndef AGENT_HPP
 #define AGENT_HPP
 
-// C++ libraries
-#include <iostream>
 #include <sstream>
-#include <fstream>
 #include <string>
 #include <list>
 
@@ -48,13 +45,9 @@
 #include <libxml++/libxml++.h>
 
 #include "adapter.hpp"
+#include "globals.hpp"
 #include "xml_parser.hpp"
 #include "xml_printer.hpp"
-
-extern std::string intToString(unsigned int i);
-extern bool isNonNegativeInteger(const std::string& s);
-extern std::string getCurrentTime(bool formatted);
-extern unsigned int getCurrentTimeInSec();
 
 class Adapter;
 class ComponentEvent;
@@ -63,114 +56,35 @@ class Device;
 
 using namespace dlib;
 
-// Web server used from dlib example
 class Agent : public server::http_1a_c
 {
 public:
-  /* Port number to put server on */
-  static const unsigned int SERVER_PORT = 8080;
-  
-  /* Size of buffer exponent: 2^SLIDING_BUFFER_EXP */
-  static const unsigned int SLIDING_BUFFER_EXP = 17;
-  
-  /* Size of sliding buffer */
-  static const unsigned int SLIDING_BUFFER_SIZE = 131072;
-  
   /* Slowest frequency allowed */
   static const int SLOWEST_FREQ = 2147483646;
   
+  /* Fastest frequency allowed */
   static const int FASTEST_FREQ = 100;
   
-  static const int PARAM_ERROR = -1;
-  static const int NO_VALUE = -1;
-  static const int NO_FREQ = 0;
-  static const int NO_START = -2;
-  
+  /* Default count for sample query */
   static const unsigned int DEFAULT_COUNT = 100;
   
-protected:
-  /* Handle the device/path parameters for the xpath search */
-  std::string devicesAndPath(std::string path = "", std::string device = "");
+  /* Error code to return for a parameter error */
+  static const int PARAM_ERROR = -1;
   
-  /* Get list of data items in path */
-  std::list<DataItem *> getDataItems(std::string path, xmlpp::Node * node = NULL);
+  /* Code to return when a parameter has no value */
+  static const int NO_VALUE = -1;
   
-  /* HTTP methods to handle the 3 basic calls*/
-  bool handleCall(
-    std::ostream& out,
-    std::string& result,
-    const map_type& queries,
-    std::string call,
-    std::string device = ""
-  );
+  /* Code to return for no frequency specified */
+  static const int NO_FREQ = 0;
   
-  std::string handleProbe(
-    std::string device
-  );
-  
-  int checkAndGetParam(
-    std::string& result,
-    const map_type& queries,
-    std::string param,
-    const int defaultValue,
-    const int minValue = NO_VALUE,
-    bool minError = false,
-    const int maxValue = NO_VALUE
-  );
-  
-  bool handleStream(
-    std::ostream& out,
-    std::string& result,
-    std::string path,
-    bool current,  
-    unsigned int frequency,
-    unsigned int start = 0,
-    unsigned int count = 0
-  );
-  
-  void streamData(
-    std::ostream& out,
-    std::list<DataItem *> dataItems,
-    bool current,
-    unsigned int frequency,
-    unsigned int start = 0,
-    unsigned int count = 0
-  );
-  
-  std::string fetchCurrentData(std::list<DataItem *> dataItems);
-  std::string fetchSampleData(std::list<DataItem *> dataItems, unsigned int start, unsigned int count);
-  
-  /* Find devices/data items by name */
-  Device * getDeviceByName(std::string name);
-  DataItem * getDataItemByName(std::string name);
-  bool hasDataItem(std::list<DataItem *> dataItems, std::string name);
-  
-  /* Output an XML Error */
-  std::string printError(std::string errorCode, std::string text);
-  
-protected:
-  
-  unsigned int mInstanceId;
-  
-  XmlParser * mConfig;
-  
-  /* For access to the sequence number and sliding buffer, use the mutex */
-  dlib::mutex * mSequenceLock;
-  
-  /* Sequence number */
-  unsigned int mSequence;
-  
-  /* The sliding/circular buffer to hold all of the events/sample data */
-  dlib::sliding_buffer_kernel_1<ComponentEvent *> * mSlidingBuffer;
-  
-  /* Lists of data */
-  std::list<Adapter *> mAdapters;
-  std::list<Device *> mDevices;
-  std::list<DataItem *> mDataItems;
+  /* Code for no start value specified */
+  static const int NO_START = -2;
   
 public:
-  Agent(std::string configXmlPath);
+  /* Load agent with the xml configuration */
+  Agent(const std::string& configXmlPath);
   
+  /* Virtual destructor */
   virtual ~Agent();
   
   /* Overridden method that is called per web request */  
@@ -186,15 +100,117 @@ public:
     const std::string& local_ip,
     unsigned short foreign_port,
     unsigned short local_port,
-    std::ostream& out
+    std::ostream& out // Added to allow streaming of data
   );
   
-  void addAdapter(const std::string host, const unsigned int port);
+  /* Add an adapter to the agent */
+  void addAdapter(const std::string& host, const unsigned int port);
   
-  /* Add ComponentEvent and specs to the SlidingBuffer */
-  void addToBuffer(std::string time, std::string key, std::string value);
+  /* Add component events to the sliding buffer */
+  void addToBuffer (
+    const std::string& dataItemName,
+    const std::string& value,
+    std::string time = ""
+  );
+  
+protected:
+  /* HTTP methods to handle the 3 basic calls */
+  bool handleCall(
+    std::ostream& out,
+    const std::string& path,
+    std::string& result,
+    const map_type& queries,
+    const std::string& call,
+    const std::string& device = ""
+  );
+  
+  /* Handle probe calls */
+  std::string handleProbe(
+    const std::string& device
+  );
+  
+  /* Handle stream calls, which includes both current and sample */
+  bool handleStream(
+    std::ostream& out,
+    std::string& result,
+    std::string path,
+    bool current,  
+    unsigned int frequency,
+    unsigned int start = 0,
+    unsigned int count = 0
+  );
+  
+  /* Stream the data to the user */
+  void streamData(
+    std::ostream& out,
+    std::list<DataItem *> dataItems,
+    bool current,
+    unsigned int frequency,
+    unsigned int start = 0,
+    unsigned int count = 0
+  );
+  
+  /* Fetch the current/sample data and return the XML in a string */
+  std::string fetchCurrentData(std::list<DataItem *> dataItems);
+  std::string fetchSampleData (
+    std::list<DataItem *> dataItems,
+    unsigned int start,
+    unsigned int count
+  );
+  
+  /* Output an XML Error */
+  std::string printError(const std::string& errorCode, const std::string& text);
+  
+  /* Handle the device/path parameters for the xpath search */
+  std::string devicesAndPath (
+    const std::string& path,
+    const std::string& device
+  );
+  
+  /* Get list of data items in path */
+  std::list<DataItem *> getDataItems (
+    const std::string& path,
+    xmlpp::Node * node = NULL
+  );
+  
+  /* Perform a check on parameter and return a value or a code */
+  int checkAndGetParam(
+    std::string& result,
+    const map_type& queries,
+    const std::string& param,
+    const int defaultValue,
+    const int minValue = NO_VALUE,
+    bool minError = false,
+    const int maxValue = NO_VALUE
+  );
+  
+  /* Find devices/data items by name */
+  Device * getDeviceByName(const std::string& name);
+  DataItem * getDataItemByName(const std::string& name);
+  
+  /* Find if there's data item with that name/source name */
+  bool hasDataItem(std::list<DataItem *> dataItems, const std::string& name);
+  
+protected:
+  /* Unique id based on the time of creation */
+  unsigned int mInstanceId;
+  
+  /* Pointer to the configuration file for node access */
+  XmlParser * mConfig;
+  
+  /* For access to the sequence number and sliding buffer, use the mutex */
+  dlib::mutex * mSequenceLock;
+  
+  /* Sequence number */
+  unsigned int mSequence;
+  
+  /* The sliding/circular buffer to hold all of the events/sample data */
+  dlib::sliding_buffer_kernel_1<ComponentEvent *> * mSlidingBuffer;
+  
+  /* Lists of data */
+  std::list<Device *> mDevices;
+  std::list<DataItem *> mDataItems;
 };
-
 
 #endif
 

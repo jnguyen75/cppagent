@@ -118,20 +118,20 @@ void daemonize()
 
 int main()
 {
-  daemonize();
+  //daemonize();
   
   try
   {
     //Agent * agent = new Agent("../include/128.32.164.245.xml");
     //agent->addAdapter("128.32.164.245", 7878);
-    
+    logEvent("ASDA", "ASDAS");
     Agent * agent = new Agent("../include/agent.mtconnect.org.xml");
     agent->addAdapter("agent.mtconnect.org", 7878);
     
     // create a thread that will listen for the user to end this program
-    //thread_function t(terminateServerThread, agent);
+    thread_function t(terminateServerThread, agent);
     
-    agent->set_listening_port(Agent::SERVER_PORT);
+    agent->set_listening_port(SERVER_PORT);
     agent->start();
   }
   catch (std::exception & e)

@@ -31,48 +31,53 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef CONNECTOR_HPP
-#define CONNECTOR_HPP
+#ifndef GLOBALS_HPP
+#define GLOBALS_HPP
 
-#include "dlib/sockets.h"
-#include "dlib/server.h"
+#include <ctime>
+#include <string>
+#include <sstream>
+#include <fstream>
 
-using namespace dlib;
+/* Port number to put server on */
+const unsigned int SERVER_PORT = 8080;
 
-class Connector
+/* Size of sliding buffer */
+const unsigned int SLIDING_BUFFER_SIZE = 131072;
+
+/* Size of buffer exponent: 2^SLIDING_BUFFER_EXP */
+const unsigned int SLIDING_BUFFER_EXP = 17;
+
+static const char * LOG_FILE = "../log/agent.log";
+
+/* Convert an unsigned integer to string */
+std::string intToString(unsigned int i);
+
+/* Convert a float to string */
+std::string floatToString(float f);
+
+/* Convert a string to the same string with all upper case letters */
+std::string toUpperCase(std::string text);
+
+/* Check if each char in a string is a positive integer */
+bool isNonNegativeInteger(const std::string& s);
+
+/* Time format */
+enum TimeFormat
 {
-private:
-  /* Size of buffer to read at a time from the socket */  
-  static const unsigned int SOCKET_BUFFER_SIZE = 80;
-  
-  /* Size of buffer to search in the buffer stream */  
-  static const unsigned int LINE_BUFFER_SIZE = 1024;
-  
-protected:
-  /* Name of the server to connect to */
-  std::string mServer;
-  
-  /* The port number to connect to */
-  unsigned int mPort;
-  
-  /* The string buffer to hold the data from socket */
-  std::string mBuffer;  
-  
-public:
-  /* Instantiate the server by assigning it a server and port */
-  Connector(std::string server, unsigned int port);
-  
-  virtual ~Connector();
-  
-  /*
-   *  Blocking call to connect to the server/port
-   *  Put data from the socket in the string buffer
-   */
-  void connect();
-  
-  /* Method to handle what to do with each line of data from Socket */
-  virtual void processData(const std::string& data) = 0;
+  HUM_READ,
+  GMT,
+  GMT_UV_SEC,
+  LOCAL
 };
+
+/* Get the current time formatted */
+std::string getCurrentTime(TimeFormat format);
+
+/* Get the current time in number of seconds as an integer */
+unsigned int getCurrentTimeInSec();
+
+void logEvent(const std::string& source, const std::string& message);
 
 #endif
 

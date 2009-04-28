@@ -41,12 +41,9 @@
 
 #include "component_event.hpp"
 #include "device.hpp"
+#include "globals.hpp"
 
 class DataItem;
-
-extern std::string intToString(unsigned int i);
-extern std::string floatToString(float i);
-extern std::string getCurrentTime(bool formatted);
 
 namespace XmlPrinter
 {

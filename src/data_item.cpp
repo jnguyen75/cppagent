@@ -128,6 +128,8 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
   
   mComponent = NULL;
   mLatestEvent = NULL;
+  
+  mLatestEventLock = new dlib::mutex;
 }
 
 DataItem::~DataItem()
@@ -243,16 +245,24 @@ Component * DataItem::getComponent() const
 
 void DataItem::setLatestEvent(ComponentEvent& event)
 {
+  mLatestEventLock->lock();
+  
   if (mLatestEvent != NULL)
   {
     delete mLatestEvent;
   }
   mLatestEvent = new ComponentEvent(event);
+  
+  mLatestEventLock->unlock();
 }
 
 ComponentEvent * DataItem::getLatestEvent() const
 {
-  return mLatestEvent;
+  mLatestEventLock->lock();
+  ComponentEvent * toReturn = mLatestEvent;
+  mLatestEventLock->unlock();
+  
+  return toReturn;
 }
 
 /* DataItem public static methods */

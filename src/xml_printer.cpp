@@ -271,7 +271,7 @@ xmlpp::Document * XmlPrinter::initXmlDoc(
   
   // Header
   xmlpp::Element * header = doc->get_root_node()->add_child("Header");
-  header->set_attribute("creationTime", getCurrentTime(false));
+  header->set_attribute("creationTime", getCurrentTime(GMT));
   header->set_attribute("sender", "localhost");
   header->set_attribute("instanceId", intToString(instanceId));
   header->set_attribute("bufferSize", intToString(bufferSize));
@@ -336,7 +336,7 @@ std::string XmlPrinter::printNode(
     
     if (!nodeElement->has_child_text())
     {
-      toReturn += "\r\n";
+      toReturn += "\n";
     }
   }
   
@@ -357,7 +357,7 @@ std::string XmlPrinter::printNode(
     {
       toReturn += printIndentation(indentation);
     }
-    toReturn += "</" + nodename + ">\r\n";
+    toReturn += "</" + nodename + ">\n";
   }
   
   return toReturn;

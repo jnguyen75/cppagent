@@ -34,7 +34,7 @@
 #include "adapter.hpp"
 
 /* Adapter public methods */
-Adapter::Adapter(std::string server, unsigned int port)
+Adapter::Adapter(const std::string &server, const unsigned int port)
 : Connector(server, port)
 {
   // Will start threaded object: Adapter::thread()
@@ -48,16 +48,12 @@ Adapter::~Adapter()
   wait();
 }
 
-void Adapter::setAgent(Agent * agent)
+void Adapter::processData(const std::string& data)
 {
-  mAgent = agent;
-}
-
-void Adapter::processData(std::string line)
-{
-  std::istringstream toParse(line);
+  std::istringstream toParse(data);
   std::string key;
   
+  // Parse data
   getline(toParse, key, '|');
   std::string time = key;
   
@@ -67,8 +63,10 @@ void Adapter::processData(std::string line)
   std::string value;
   getline(toParse, value, '|');
   
+  // Check for alarm
   if (type == "Alarm")
   {
+    // Convert the rest of the data into upper case with pipe delimeter
     std::string alarmValue = toUpperCase(value);
     
     while (getline(toParse, value, '|'))
@@ -78,13 +76,15 @@ void Adapter::processData(std::string line)
     
     mAgent->addToBuffer(time, key, alarmValue);
   }
-  else // Key -> Value Pairings
+  else
   {
-    mAgent->addToBuffer(time, key, value);
+    // Add key->value pairings
+    mAgent->addToBuffer(key, value, time);
     
+    // Look for more key->value pairings in the rest of the data
     while (getline(toParse, key, '|') && getline(toParse, value, '|'))
     {
-      mAgent->addToBuffer(time, key, value);
+      mAgent->addToBuffer(key, value, time);
     }
   }
 }
@@ -92,7 +92,7 @@ void Adapter::processData(std::string line)
 /* Adapter private methods */
 void Adapter::thread()
 {
-  std::cout << "Starting adapter thread to read data" << std::endl;
+  // Start the connection to the socket
   connect();
 }
 
