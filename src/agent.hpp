@@ -107,7 +107,7 @@ public:
   void addAdapter(const std::string& host, const unsigned int port);
   
   /* Add component events to the sliding buffer */
-  void addToBuffer (
+  bool addToBuffer(
     const std::string& dataItemName,
     const std::string& value,
     std::string time = ""
@@ -162,13 +162,13 @@ protected:
   std::string printError(const std::string& errorCode, const std::string& text);
   
   /* Handle the device/path parameters for the xpath search */
-  std::string devicesAndPath (
+  std::string devicesAndPath(
     const std::string& path,
     const std::string& device
   );
   
   /* Get list of data items in path */
-  std::list<DataItem *> getDataItems (
+  std::list<DataItem *> getDataItems(
     const std::string& path,
     xmlpp::Node * node = NULL
   );

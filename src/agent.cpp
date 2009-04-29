@@ -136,7 +136,7 @@ void Agent::addAdapter(const std::string& host, const unsigned int port)
   adapter->setAgent(*this);
 }
 
-void Agent::addToBuffer (
+bool Agent::addToBuffer(
     const std::string& dataItemName,
     const std::string& value,
     std::string time
@@ -147,6 +147,7 @@ void Agent::addToBuffer (
   if (dataItem == NULL)
   {
     logEvent("Agent", "Could not find data item" + dataItemName);
+    return false;
   }
   else
   {
@@ -163,7 +164,7 @@ void Agent::addToBuffer (
       time = getCurrentTime(GMT_UV_SEC);
     }
     
-    ComponentEvent *event = 
+    ComponentEvent *event =
       new ComponentEvent(dataItem, mSequence, time, value);
     
     (*mSlidingBuffer)[mSequence] = event;
@@ -171,6 +172,7 @@ void Agent::addToBuffer (
     
     mSequence++;
     mSequenceLock->unlock();
+    return true;
   }
 }
 
@@ -284,11 +286,21 @@ bool Agent::handleStream(
     unsigned int count
   )
 {
-  std::list<DataItem *> dataItems = getDataItems(path);
-  
+  std::list<DataItem *> dataItems;
+  try
+  {
+    dataItems = getDataItems(path);
+  }
+  catch (std::exception& e)
+  {
+    result = printError("INVALID_XPATH", e.what());
+    logEvent("Agent::handleStream", e.what());
+    return true;
+  }
+    
   if (dataItems.empty())
   {
-    result = printError("INVALID_PATH",
+    result = printError("INVALID_XPATH",
       "The path could not be parsed. Invalid syntax: " + path);
     return true;
   }
@@ -451,7 +463,7 @@ std::string Agent::devicesAndPath (
   return dataPath;
 }
 
-std::list<DataItem *> Agent::getDataItems (
+std::list<DataItem *> Agent::getDataItems(
     const std::string& path,
     xmlpp::Node * node
   )
@@ -460,7 +472,9 @@ std::list<DataItem *> Agent::getDataItems (
   
   node = (node == NULL) ? mConfig->getRootNode() : node;
   
-  xmlpp::NodeSet elements = node->find(path);
+  xmlpp::NodeSet elements;
+  
+  elements = node->find(path);
   
   for (unsigned int i=0; i<elements.size(); i++)
   {
@@ -481,7 +495,6 @@ std::list<DataItem *> Agent::getDataItems (
         }
         else
         {
-          std::cerr << "DATA ITEM NOT FOUND\n";
           logEvent("Agent", "Data item not found: " + nodename);
         }
       }

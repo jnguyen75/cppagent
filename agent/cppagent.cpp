@@ -36,14 +36,30 @@
 #include "sys/stat.h"
 
 
-void terminateServerThread(Agent * server)
+void terminateServerThread(Agent *server)
 {
   std::cout << "Press enter at anytime to terminate web server" << std::endl;
   std::cin.get();
  
   // Shut down server by unblocking Agent::start()
   server->clear();
-  delete server;
+}
+
+void addToBufferThread(Agent *server)
+{
+  while (true)
+  {
+    std::string dataItem, value;
+    
+    std::cout << std::endl << "Data item: ";
+    std::cin >> dataItem;
+    
+    std::cout << "Value: ";
+    std::cin >> value;
+    
+    bool added = server->addToBuffer(dataItem, value);
+    std::cout << "Success: " << std::boolalpha << added << std::endl;
+  }
 }
 
 #ifndef WIN32
@@ -118,21 +134,26 @@ void daemonize()
 
 int main()
 {
-  daemonize();
+  //daemonize();
   
   try
   {
     //Agent * agent = new Agent("../include/128.32.164.245.xml");
     //agent->addAdapter("128.32.164.245", 7878);
-    logEvent("ASDA", "ASDAS");
-    Agent * agent = new Agent("../include/agent.mtconnect.org.xml");
-    agent->addAdapter("agent.mtconnect.org", 7878);
     
-    // create a thread that will listen for the user to end this program
-    //thread_function t(terminateServerThread, agent);
+    Agent agent ("../include/agent.mtconnect.org.xml");
+    agent.addAdapter("agent.mtconnect.org", 7878);
     
-    agent->set_listening_port(SERVER_PORT);
-    agent->start();
+    // ***** DEBUGGING TOOLS *****
+    
+    // Create a thread that will listen for the user to end this program
+    //thread_function t(terminateServerThread, &agent);
+    
+    // Use the addToBuffer API to allow user input for data
+    thread_function t(addToBufferThread, &agent);
+    
+    agent.set_listening_port(SERVER_PORT);
+    agent.start();
   }
   catch (std::exception & e)
   {

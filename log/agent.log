@@ -1,1 +1,5 @@
-[2009-04-28T08:44:33] ASDA: ASDAS
+[2009-04-29T14:55:26] Agent: Invalid XPath: //Linnear?asdfa
+[2009-04-29T15:06:57] Agent::getDataItems: Invalid XPath: //Linnear?asdfa
+[2009-04-29T15:10:33] Agent::getDataItems: Invalid XPath: //Linnear?asdfa
+[2009-04-29T15:11:02] Agent::getDataItems: Invalid XPath: //Linnear?asdfa
+[2009-04-29T15:12:28] ASDA: GOOD

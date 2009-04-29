@@ -48,8 +48,6 @@ const unsigned int SLIDING_BUFFER_SIZE = 131072;
 /* Size of buffer exponent: 2^SLIDING_BUFFER_EXP */
 const unsigned int SLIDING_BUFFER_EXP = 17;
 
-static const char * LOG_FILE = "../log/agent.log";
-
 /* Convert an unsigned integer to string */
 std::string intToString(unsigned int i);
 

@@ -131,7 +131,7 @@ unsigned int getCurrentTimeInSec()
 void logEvent(const std::string& source, const std::string& message)
 {
   std::ofstream logFile;
-  logFile.open(LOG_FILE, std::ios::app);
+  logFile.open("../log/agent.log", std::ios::app);
   if (logFile.is_open())
   {
     logFile << "[" << getCurrentTime(LOCAL) << "] ";

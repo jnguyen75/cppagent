@@ -36,6 +36,7 @@
 
 #include "component.hpp"
 #include "data_item.hpp"
+#include "globals.hpp"
 
 #include <string>
 #include <iostream>
@@ -93,6 +94,9 @@ protected:
   /* The value of the event */
   float fValue;
   std::string sValue;
+  
+  /* */
+  std::string mAlarmData;
 
 protected:
   /* Convert the value to the agent unit standards */

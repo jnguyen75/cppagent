@@ -80,6 +80,9 @@ ComponentEvent::ComponentEvent(ComponentEvent& ce)
   mTime = attributes["timestamp"];
   mSequence = atoi(attributes["sequence"].c_str());
   
+  mAlarmData = attributes["code"] + "|" + attributes["nativeCode"] + "|" +
+    attributes["severity"] + "|" + attributes["state"];
+  
   fValue = ce.getFValue();
   sValue = ce.getSValue();
 }
@@ -97,6 +100,24 @@ std::map<std::string, std::string> ComponentEvent::getAttributes()
   attributes["subType"] = mDataItem->getSubType();
   attributes["name"] = mDataItem->getName();
   attributes["sequence"] = intToString(mSequence);
+  
+  if (getDataItem()->getType() == DataItem::ALARM)
+  {
+    std::istringstream toParse(mAlarmData);
+    std::string token;
+    
+    getline(toParse, token, '|');
+    attributes["code"] = token;
+  
+    getline(toParse, token, '|');
+    attributes["nativeCode"] = token;
+    
+    getline(toParse, token, '|');
+    attributes["severity"] = token;
+    
+    getline(toParse, token, '|');
+    attributes["state"] = token;
+  }
   
   return attributes;
 }
@@ -120,7 +141,16 @@ std::string ComponentEvent::getSValue() const
 void ComponentEvent::convertValue(std::string value)
 {
   // Check if the type is an alarm or if it doesn't have units
-  if (mDataItem->getType() == DataItem::ALARM || mDataItem->getNativeUnits().empty())
+  if (mDataItem->getType() == DataItem::ALARM)
+  {
+    logEvent("AlarmData", value);
+    std::string::size_type lastPipe = value.rfind('|');
+    
+    mAlarmData = value.substr(0, lastPipe);
+    sValue = value.substr(lastPipe+1);
+    return;
+  }
+  else if (mDataItem->getNativeUnits().empty())
   {
     sValue = value;
     return;
