@@ -97,6 +97,8 @@ namespace XmlPrinter
   
   void printProbeHelper(xmlpp::Element * element, Component * component);
   
+  std::string appendXmlEncode(const std::string& xml);
+  
   /* Simple helper function to put indentations into the XML stream */
   std::string printIndentation(const unsigned int indentation);
   

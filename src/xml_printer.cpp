@@ -57,7 +57,7 @@ std::string XmlPrinter::printError(
   
   delete mErrorXml;
   
-  return toReturn;
+  return appendXmlEncode(toReturn);
 }
 
 std::string XmlPrinter::printProbe(
@@ -87,7 +87,7 @@ std::string XmlPrinter::printProbe(
   
   delete mProbeXml;
   
-  return toReturn;
+  return appendXmlEncode(toReturn);
 }
 
 std::string XmlPrinter::printCurrent(
@@ -170,7 +170,7 @@ std::string XmlPrinter::printCurrent(
   
   delete mSampleXml;
   
-  return toReturn;
+  return appendXmlEncode(toReturn);
 }
 
 std::string XmlPrinter::printSample(
@@ -247,7 +247,7 @@ std::string XmlPrinter::printSample(
   
   delete mSampleXml;
   
-  return toReturn;
+  return appendXmlEncode(toReturn);
 }
 
 /* XmlPrinter helper Methods */
@@ -416,6 +416,11 @@ void XmlPrinter::printProbeHelper(
       printProbeHelper(component, *child);
     }
   }
+}
+
+std::string XmlPrinter::appendXmlEncode(const std::string& xml)
+{
+  return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xml;
 }
 
 std::string XmlPrinter::printIndentation(unsigned int indentation)
