@@ -1,5 +1,4 @@
-[2009-04-29T14:55:26] Agent: Invalid XPath: //Linnear?asdfa
-[2009-04-29T15:06:57] Agent::getDataItems: Invalid XPath: //Linnear?asdfa
-[2009-04-29T15:10:33] Agent::getDataItems: Invalid XPath: //Linnear?asdfa
-[2009-04-29T15:11:02] Agent::getDataItems: Invalid XPath: //Linnear?asdfa
-[2009-04-29T15:12:28] ASDA: GOOD
+[2009-04-30T05:55:52] XmlParser::XmlParser: Couldn't create parsing context
+[2009-04-30T05:57:44] XmlParser::XmlParser: Couldn't create parsing context
+[2009-04-30T09:02:20] AlarmData: A|A|A|A|A
+[2009-04-30T09:15:38] AlarmData: A|B|C|D|E

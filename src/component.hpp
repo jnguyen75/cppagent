@@ -34,14 +34,12 @@
 #ifndef COMPONENT_HPP
 #define COMPONENT_HPP
 
-#include <iostream>
 #include <sstream>
 #include <string>
 #include <list>
 #include <map>
 
-extern std::string intToString(unsigned int i);
-extern std::string floatToString(float f);
+#include "globals.hpp"
 
 class DataItem;
 class Device;
@@ -49,7 +47,6 @@ class Device;
 class Component
 {
 public:
-  
   /* String enumeration for component parts and details */
   enum EComponentSpecs
   {
@@ -72,6 +69,40 @@ public:
   
   static const unsigned int NumComponentSpecs = 13;
   static const std::string SComponentSpecs[];
+  
+public:
+  /* Take in mapping of attributes */
+  Component(std::map<std::string, std::string> attributes);
+  
+  /* Return what part of the component it is */
+  virtual const std::string getClass() const = 0;
+  
+  /* Return a map of attributes of all the component specs */
+  virtual std::map<std::string, std::string> getAttributes() const;
+  
+  /* Getter methods for the component ID/Name */
+  unsigned int getId() const { return mId; }
+  std::string getName() const { return mName; }
+  std::string getUuid() const { return mUuid; }
+  
+  /* Add/get description specifications using an attribute map */
+  void addDescription(std::map<std::string, std::string> attributes);
+  std::map<std::string, std::string> getDescription() const;
+  
+  /* Get the device that any component is associated with */
+  Device * getDevice() const;
+  
+  /* Set/Get the component's parent component */
+  void setParent(Component& parent) { mParent = &parent; }
+  Component * getParent() const { return mParent; }
+  
+  /* Add to/get the component's list of children */
+  void addChild(Component& child) { mChildren.push_back(&child); }
+  std::list<Component *> getChildren() { return mChildren; }
+  
+  /* Add to/get the component's list of data items */
+  void addDataItem(DataItem& dataItem) { mDataItems.push_back(&dataItem); }
+  std::list<DataItem *> getDataItems() const { return mDataItems; }
   
 protected:
   /* Component specs */
@@ -101,44 +132,6 @@ protected:
   
   /* Keep Track of all the data items associated with this component */
   std::list<DataItem *> mDataItems;
-
-public:
-  /* Take in mapping of attributes */
-  Component(std::map<std::string, std::string> attributes);
-  
-  /* Return what part of the component it is */
-  virtual const std::string getClass() const = 0;
-  
-  /* Return a map of attributes of all the component specs */
-  virtual std::map<std::string, std::string> getAttributes() const;
-  
-  /* Getter methods for the component ID/Name */
-  unsigned int getId() const;
-  std::string getName() const;
-  std::string getUuid() const;
-  
-  /* Add/get description specifications using an attribute map */
-  void addDescription(std::map<std::string, std::string> attributes);
-  std::map<std::string, std::string> getDescription() const;
-  
-  /* Get the device that any component is associated with */
-  Device * getDevice() const;
-  
-  /* Set/Get the component's parent component */
-  void setParent(Component * parent);
-  Component * getParent() const;
-  
-  /* Add to/get the component's list of children */
-  void addChild(Component * child);
-  std::list<Component *> getChildren() const;
-  
-  /* Add to/get the component's list of data items */
-  void addDataItem(DataItem * dataItem);
-  std::list<DataItem *> getDataItems() const;
-  
-public:
-  /* Get the enumeration corresponding to the string */
-  static Component::EComponentSpecs getComponentEnum(const std::string name);
 };
 
 #endif

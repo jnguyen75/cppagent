@@ -96,7 +96,7 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
 {
   mId = atoi(attributes["id"].c_str());
   mName = attributes["name"];
-  mType = getTypeEnum(attributes["type"]);
+  mType = (EType) getEnumeration(attributes["type"], STypeUpper, NumTypes);
   
   if (!attributes["subType"].empty())
   {
@@ -177,70 +177,14 @@ std::map<std::string, std::string> DataItem::getAttributes() const
   return attributes;
 }
 
-
-unsigned int DataItem::getId() const
-{
-  return mId;
-}
-
-std::string DataItem::getName() const
-{
-  return mName;
-}
-
-std::string DataItem::getSource() const
-{
-  return mSource;
-}
-
-DataItem::EType DataItem::getType() const
-{
-  return mType;
-}
-
 std::string DataItem::getTypeString(bool uppercase) const
 {
   return (uppercase) ? STypeUpper[mType] : STypeCamel[mType];
 }
 
-std::string DataItem::getSubType() const
-{
-  return mSubType;
-}
-
-std::string DataItem::getNativeUnits() const
-{
-  return mNativeUnits;
-}
-
-float DataItem::getNativeScale() const
-{
-  return mNativeScale;
-}
-
 bool DataItem::hasName(const std::string name)
 {
-  return mName == name || (!mSource.empty() && mSource == name);
-}
-
-bool DataItem::isSample()
-{
-  return mCategory == SAMPLE;
-}
-
-void DataItem::addSource(const std::string source)
-{
-  mSource = source;
-}
-
-void DataItem::setComponent(Component * component)
-{
-  mComponent = component;
-}
-
-Component * DataItem::getComponent() const
-{
-  return mComponent;
+  return mName == name or (!mSource.empty() and mSource == name);
 }
 
 void DataItem::setLatestEvent(ComponentEvent& event)
@@ -263,19 +207,5 @@ ComponentEvent * DataItem::getLatestEvent() const
   mLatestEventLock->unlock();
   
   return toReturn;
-}
-
-/* DataItem public static methods */
-DataItem::EType DataItem::getTypeEnum(const std::string name)
-{
-  for (unsigned int i=0; i<DataItem::NumTypes; i++)
-  {
-    if (name == DataItem::STypeUpper[i])
-    {
-       return (DataItem::EType) i;
-    }
-  }
-  
-  return (DataItem::EType) -1;
 }
 

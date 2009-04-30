@@ -33,13 +33,13 @@
 
 #include "xml_printer.hpp"
 
-/* XmlPrinter public methods */
+/* XmlPrinter main methods */
 std::string XmlPrinter::printError(
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
-    std::string errorCode,
-    std::string errorText
+    const std::string& errorCode,
+    const std::string& errorText
   )
 {
   xmlpp::Document * mErrorXml = initXmlDoc(
@@ -64,7 +64,7 @@ std::string XmlPrinter::printProbe(
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
-    std::list<Device *> deviceList
+    std::list<Device *>& deviceList
   )
 {
   xmlpp::Document * mProbeXml = initXmlDoc(
@@ -77,7 +77,7 @@ std::string XmlPrinter::printProbe(
   xmlpp::Element * devices = mProbeXml->get_root_node()->add_child("Devices");
   
   std::list<Device *>::iterator d;
-  for (d=deviceList.begin(); d!=deviceList.end(); d++ )
+  for (d=deviceList.begin(); d!=deviceList.end(); d++)
   {
     xmlpp::Element * device = devices->add_child("Device");
     printProbeHelper(device, *d);
@@ -95,7 +95,7 @@ std::string XmlPrinter::printCurrent(
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq,
-    std::list<DataItem *> dataItems
+    std::list<DataItem *>& dataItems
   )
 {
   xmlpp::Document * mSampleXml = initXmlDoc(
@@ -117,11 +117,11 @@ std::string XmlPrinter::printCurrent(
     {
       Component * component = (*dataItem)->getComponent();
       
-      xmlpp::Element * deviceStream = getDeviceStream(streams,
-        component->getDevice());
+      xmlpp::Element * deviceStream = 
+        getDeviceStream(streams, component->getDevice());
       
-      xmlpp::Element * element = searchParentsForId(elements,
-        component->getId());
+      xmlpp::Element * element = 
+        searchParentsForId(elements, component->getId());
       
       xmlpp::Element * child;
       
@@ -153,7 +153,9 @@ std::string XmlPrinter::printCurrent(
       
       if ((*dataItem)->isSample())
       {
-        child->add_child_text(floatToString((*dataItem)->getLatestEvent()->getFValue()));
+        child->add_child_text(
+            floatToString((*dataItem)->getLatestEvent()->getFValue())
+          );
       }
       else
       {
@@ -163,7 +165,6 @@ std::string XmlPrinter::printCurrent(
       addAttributes(child, (*dataItem)->getLatestEvent()->getAttributes());
     }
   }
-  
   
   std::string toReturn = printNode(mSampleXml->get_root_node());
   
@@ -177,7 +178,7 @@ std::string XmlPrinter::printSample(
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq,
-    std::list<ComponentEvent *> results
+    std::list<ComponentEvent *>& results
   )
 {
   xmlpp::Document * mSampleXml = initXmlDoc(
@@ -197,20 +198,22 @@ std::string XmlPrinter::printSample(
   {
     Component * component = (*result)->getDataItem()->getComponent();
     
-    xmlpp::Element * element = searchParentsForId(elements, component->getId());
+    xmlpp::Element * element = 
+      searchParentsForId(elements, component->getId());
     xmlpp::Element * child;
     
     if (element == NULL)
     {
+      xmlpp::Element * deviceStream = 
+        getDeviceStream(streams, component->getDevice());
       
-      xmlpp::Element * deviceStream = getDeviceStream(streams,
-        component->getDevice());
-      
-      xmlpp::Element * componentStream = deviceStream->add_child("ComponentStream");
+      xmlpp::Element * componentStream = 
+        deviceStream->add_child("ComponentStream");
       
       componentStream->set_attribute("component", component->getClass());
       componentStream->set_attribute("name", component->getName());
-      componentStream->set_attribute("componentId", intToString(component->getId()));
+      componentStream->set_attribute("componentId",
+        intToString(component->getId()));
       
       bool sample = (*result)->getDataItem()->isSample();
       
@@ -224,7 +227,8 @@ std::string XmlPrinter::printSample(
     }
     else
     {
-      child = element->add_child((*result)->getDataItem()->getTypeString(false));
+      child =
+        element->add_child((*result)->getDataItem()->getTypeString(false));
     }
     
     if ((*result)->getDataItem()->isSample())
@@ -246,9 +250,9 @@ std::string XmlPrinter::printSample(
   return toReturn;
 }
 
-/* XmlPrinter Protected Methods */
+/* XmlPrinter helper Methods */
 xmlpp::Document * XmlPrinter::initXmlDoc(
-    const std::string xmlType,
+    const std::string& xmlType,
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
@@ -302,7 +306,7 @@ std::string XmlPrinter::printNode(
   std::string toReturn;
 
   // Ignore empty whitespace
-  if (nodeText && nodeText->is_white_space())
+  if (nodeText and nodeText->is_white_space())
   {
     return "";
   }
@@ -310,7 +314,7 @@ std::string XmlPrinter::printNode(
   Glib::ustring nodename = node->get_name();
   
   // Element node: i.e. "<element"
-  if (!nodeText && !nodename.empty())
+  if (!nodeText and !nodename.empty())
   {
     toReturn += printIndentation(indentation) + "<" + nodename;
   }
@@ -351,7 +355,7 @@ std::string XmlPrinter::printNode(
   }
   
   // Close off xml tag, i.e. </tag>
-  if (!nodeText && !nodename.empty() && hasChildren)// or indentation == 0)
+  if (!nodeText and !nodename.empty() and hasChildren)// or indentation == 0)
   {
     if (!nodeElement->has_child_text())
     {
@@ -363,7 +367,10 @@ std::string XmlPrinter::printNode(
   return toReturn;
 }
 
-void XmlPrinter::printProbeHelper(xmlpp::Element * element, Component * component)
+void XmlPrinter::printProbeHelper(
+    xmlpp::Element * element,
+    Component * component
+  )
 {
   addAttributes(element, component->getAttributes());
     
@@ -444,7 +451,7 @@ xmlpp::Element * XmlPrinter::getDeviceStream(
   {
     xmlpp::Element * nodeElement = dynamic_cast<xmlpp::Element *>(*child);
     
-    if (nodeElement &&
+    if (nodeElement and
       nodeElement->get_attribute_value("name") == device->getName())
     {
       return nodeElement;

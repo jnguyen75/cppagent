@@ -157,7 +157,9 @@ int main()
   }
   catch (std::exception & e)
   {
-    std::cerr << "Agent failed to load." << std::endl;
+    logEvent("Cppagent::Main", e.what());
+    std::cerr << "Agent failed to load: " << e.what() << std::endl;
+    return -1;
   }
   
   return 0;

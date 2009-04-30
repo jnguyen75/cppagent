@@ -34,15 +34,3 @@
 
 #include "controller.hpp"
 
-/* Controller public methods */
-Controller::Controller(const std::map<std::string, std::string> attributes)
-: Component(attributes)
-{
-
-}
-
-const std::string Controller::getClass() const
-{
-  return "Controller";
-}
-

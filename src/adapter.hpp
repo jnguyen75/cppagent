@@ -34,8 +34,6 @@
 #ifndef ADAPTER_HPP
 #define ADAPTER_HPP
 
-#include <iostream>
-
 #include "dlib/sockets.h"
 #include "dlib/threads.h"
 
@@ -59,7 +57,7 @@ public:
   /* Set pointer to the agent */
   void setAgent(Agent& agent) { mAgent = &agent; }
   
-  /* Inherited method for incoming data from the server */
+  /* Inherited method to incoming data from the server */
   virtual void processData(const std::string& data);
   
 protected:

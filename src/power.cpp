@@ -34,15 +34,3 @@
 
 #include "power.hpp"
 
-/* Spindle public methods */
-Power::Power(const std::map<std::string, std::string> attributes)
-: Component(attributes)
-{
-
-}
-
-const std::string Power::getClass() const
-{
-  return "Power";
-}
-

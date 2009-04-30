@@ -34,7 +34,7 @@
 #include "connector.hpp"
 
 /* Connector public methods */
-Connector::Connector(std::string server, unsigned int port)
+Connector::Connector(const std::string& server, unsigned int port)
 {
   mServer = server;
   mPort = port;
@@ -44,7 +44,6 @@ Connector::Connector(std::string server, unsigned int port)
 Connector::~Connector()
 {
 }
-
 
 void Connector::connect()
 {
@@ -101,15 +100,16 @@ void Connector::connect()
         mBuffer = overflow;
       }
     }
+    
     // Code should never get here, if it does, notify the exit status
-    std::cerr << "Exit Status: " << status << std::endl;
+    logEvent("Connector::connect", "Connection exited with status " + status);
     
     // Close the connection gracefully
     close_gracefully(con);
   }
   catch (std::exception & e)
   {
-    std::cerr << "Connection Exception: " << e.what() << std::endl;
+    logEvent("Connector::connect", e.what());
   }
 }
 

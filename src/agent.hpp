@@ -88,7 +88,7 @@ public:
   virtual ~Agent();
   
   /* Overridden method that is called per web request */  
-  bool on_request (
+  bool on_request(
     const std::string& path,
     std::string& result,
     const map_type& queries,
@@ -143,7 +143,7 @@ protected:
   /* Stream the data to the user */
   void streamData(
     std::ostream& out,
-    std::list<DataItem *> dataItems,
+    std::list<DataItem *>& dataItems,
     bool current,
     unsigned int frequency,
     unsigned int start = 0,
@@ -151,9 +151,9 @@ protected:
   );
   
   /* Fetch the current/sample data and return the XML in a string */
-  std::string fetchCurrentData(std::list<DataItem *> dataItems);
+  std::string fetchCurrentData(std::list<DataItem *>& dataItems);
   std::string fetchSampleData (
-    std::list<DataItem *> dataItems,
+    std::list<DataItem *>& dataItems,
     unsigned int start,
     unsigned int count
   );
@@ -189,7 +189,7 @@ protected:
   DataItem * getDataItemByName(const std::string& name);
   
   /* Find if there's data item with that name/source name */
-  bool hasDataItem(std::list<DataItem *> dataItems, const std::string& name);
+  bool hasDataItem(std::list<DataItem *>& dataItems, const std::string& name);
   
 protected:
   /* Unique id based on the time of creation */

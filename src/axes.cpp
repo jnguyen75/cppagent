@@ -33,15 +33,3 @@
 
 #include "axes.hpp"
 
-/* Axes public methods */
-Axes::Axes(const std::map<std::string, std::string> attributes)
-: Component(attributes)
-{
-
-}
-
-const std::string Axes::getClass() const
-{
-  return "Axes";
-}
-

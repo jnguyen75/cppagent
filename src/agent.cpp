@@ -44,9 +44,10 @@ Agent::Agent(const std::string& configXmlPath)
   }
   catch (std::exception & e)
   {
-    std::string msg = "Error loading xml configuration: " + configXmlPath;
-    logEvent("Agent", msg);
-    throw msg;
+    logEvent("Agent::Agent",
+      "Error loading xml configuration: " + configXmlPath);
+    delete mConfig;
+    throw e.what();
   }
   
   // Grab data from configuration
@@ -122,7 +123,6 @@ bool Agent::on_request(
   }
   catch (std::exception & e)
   {
-    // FIXME
     logEvent("Agent", (std::string) e.what());
     printError("SERVER_EXCEPTION",(std::string) e.what()); 
   }
@@ -132,7 +132,7 @@ bool Agent::on_request(
 
 void Agent::addAdapter(const std::string& host, const unsigned int port)
 {
-  Adapter * adapter = new Adapter(host, port);
+  Adapter *adapter = new Adapter(host, port);
   adapter->setAgent(*this);
 }
 
@@ -165,7 +165,7 @@ bool Agent::addToBuffer(
     }
     
     ComponentEvent *event =
-      new ComponentEvent(dataItem, mSequence, time, value);
+      new ComponentEvent(*dataItem, mSequence, time, value);
     
     (*mSlidingBuffer)[mSequence] = event;
     dataItem->setLatestEvent(*event);
@@ -177,7 +177,7 @@ bool Agent::addToBuffer(
 }
 
 /* Agent protected methods */
-bool Agent::handleCall (
+bool Agent::handleCall(
     std::ostream& out,
     const std::string& path,
     std::string& result,
@@ -212,7 +212,7 @@ bool Agent::handleCall (
     return handleStream(out, result, devicesAndPath(path, deviceName), true,
       freq);
   }
-  else if (call == "probe" || call.empty())
+  else if (call == "probe" or call.empty())
   {
     result = handleProbe(deviceName);
     return true;
@@ -234,7 +234,7 @@ bool Agent::handleCall (
       start = checkAndGetParam(result, queries, "from", 0);
     }
     
-    if (freq == PARAM_ERROR || count == PARAM_ERROR || start == PARAM_ERROR)
+    if (freq == PARAM_ERROR or count == PARAM_ERROR or start == PARAM_ERROR)
     {
       return true;
     }
@@ -328,7 +328,7 @@ bool Agent::handleStream(
 
 void Agent::streamData(
     std::ostream& out,
-    std::list<DataItem *> dataItems,
+    std::list<DataItem *>& dataItems,
     bool current,
     unsigned int frequency,
     unsigned int start,
@@ -365,7 +365,7 @@ void Agent::streamData(
   }
 }
 
-std::string Agent::fetchCurrentData(std::list<DataItem *> dataItems)
+std::string Agent::fetchCurrentData(std::list<DataItem *>& dataItems)
 {
   mSequenceLock->lock();
   unsigned int firstSeq = (mSequence > SLIDING_BUFFER_SIZE) ?
@@ -379,7 +379,7 @@ std::string Agent::fetchCurrentData(std::list<DataItem *> dataItems)
 }
 
 std::string Agent::fetchSampleData(
-    std::list<DataItem *> dataItems,
+    std::list<DataItem *>& dataItems,
     unsigned int start,
     unsigned int count
   )
@@ -399,7 +399,7 @@ std::string Agent::fetchSampleData(
   for (unsigned int i = start; i<end; i++)
   {
     // Filter out according to if it exists in the list
-    std::string dataName = (*mSlidingBuffer)[i]->getDataItem()->getName();
+    const std::string dataName = (*mSlidingBuffer)[i]->getDataItem()->getName();
     if (hasDataItem(dataItems, dataName))
     {
       results.push_back((*mSlidingBuffer)[i]);
@@ -417,7 +417,7 @@ std::string Agent::fetchSampleData(
     firstSeq, results);
 }
 
-std::string Agent::printError (
+std::string Agent::printError(
     const std::string& errorCode,
     const std::string& text
   )
@@ -426,7 +426,7 @@ std::string Agent::printError (
     errorCode, text);
 }
 
-std::string Agent::devicesAndPath (
+std::string Agent::devicesAndPath(
     const std::string& path,
     const std::string& device
   )
@@ -596,13 +596,13 @@ DataItem * Agent::getDataItemByName(const std::string& name)
   return NULL;
 }
 
-bool Agent::hasDataItem (
-    std::list<DataItem *> dataItems,
+bool Agent::hasDataItem(
+    std::list<DataItem *>& dataItems,
     const std::string& name
   )
 {
   std::list<DataItem *>::iterator dataItem;
-  for (dataItem = dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
+  for (dataItem=dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
   {
     if ((*dataItem)->hasName(name))
     {

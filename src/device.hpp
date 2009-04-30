@@ -49,7 +49,7 @@ public:
   Device(std::map<std::string, std::string> attributes);
   
   /* Inherited method that returns name of the class */
-  const std::string getClass() const;
+  const std::string getClass() const { return "Device"; }
   
   /* Retrieve the attributes of the device in an attribute map */
   std::map<std::string, std::string> getAttributes() const;

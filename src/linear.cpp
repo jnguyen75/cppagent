@@ -34,15 +34,3 @@
 
 #include "linear.hpp"
 
-/* Spindle public methods */
-Linear::Linear(const std::map<std::string, std::string> attributes)
-: Component(attributes)
-{
-
-}
-
-const std::string Linear::getClass() const
-{
-  return "Linear";
-}
-

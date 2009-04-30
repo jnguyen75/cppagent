@@ -37,7 +37,7 @@
 #include "globals.hpp"
 
 /* Convert an unsigned integer to string */
-std::string intToString(unsigned int i)
+std::string intToString(int i)
 {
   std::ostringstream stm;
   stm << i;
@@ -139,5 +139,22 @@ void logEvent(const std::string& source, const std::string& message)
     logFile << message << std::endl; 
   }
   logFile.close();
+}
+
+int getEnumeration(
+    const std::string& name,
+    const std::string *array,
+    unsigned int size
+  )
+{
+  for (unsigned int i=0; i<size; i++)
+  {
+    if (name == array[i])
+    {
+       return i;
+    }
+  }
+  
+  return ENUM_MISS;
 }
 
