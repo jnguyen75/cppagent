@@ -34,6 +34,7 @@
 #include "../src/agent.hpp"
 #include "fcntl.h"
 #include "sys/stat.h"
+#include <options.h>
 
 
 void terminateServerThread(Agent * server)
@@ -125,8 +126,8 @@ int main()
     //Agent * agent = new Agent("../include/128.32.164.245.xml");
     //agent->addAdapter("128.32.164.245", 7878);
     
-    Agent * agent = new Agent("../include/agent.mtconnect.org.xml");
-    agent->addAdapter("agent.mtconnect.org", 7878);
+    Agent * agent = new Agent("../include/haas.xml");
+    agent->addAdapter("localhost", 7878);
     
     // create a thread that will listen for the user to end this program
     //thread_function t(terminateServerThread, agent);
