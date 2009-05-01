@@ -344,8 +344,9 @@ void Agent::streamData(
   out << "X-Runtime: 144ms" << std::endl;
   out << "Content-Type: multipart/x-mixed-replace;";
   
-  std::string boundary = "--" + md5(intToString(time(NULL)));
+  std::string boundary = md5(intToString(time(NULL)));
   out << "boundary=" << boundary << std::endl << std::endl;
+  boundary = "--" + boundary;
   
   // Loop until the user closes the connection
   while (out.good())
