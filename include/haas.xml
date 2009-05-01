@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MTConnectDevices>
+  <Header creationTime="2009-03-22T01:50:29+00:00" sender="localhost" instanceId="1237628993" bufferSize="100000" version="1.0"/>
+  <Devices>
+    <Device iso841Class="0" uuid="000" name="Haas_1" sampleRate="10.0" id="4">
+      <Description manufacturer="Haas" serialNumber=""/>
+      <DataItems>
+        <DataItem type="ALARM" nativeScale="0.0" category="EVENT" significantDigits="0" id="3" name="alarm"/>
+      </DataItems>
+      <Components>
+        <Axes iso841Class="0" name="Axes" sampleRate="0.0" id="5">
+          <Components>
+            <Spindle iso841Class="0" name="S" sampleRate="0.0" id="10">
+              <DataItems>
+                <DataItem type="SPINDLE_SPEED" nativeScale="0.0" category="SAMPLE" units="REVOLUTION/MINUTE" significantDigits="0" nativeUnits="REVOLUTION/MINUTE" id="12" subType="ACTUAL" name="Sspeed">
+                  <Source>spindle_speed</Source>
+                </DataItem>
+              </DataItems>
+            </Spindle>
+            <Linear iso841Class="0" name="X" sampleRate="0.0" id="7">
+              <DataItems>
+                <DataItem type="POSITION" nativeScale="0.0" category="SAMPLE" units="MILLIMETER" significantDigits="0" nativeUnits="MILLIMETER" id="14" subType="ACTUAL" name="Xact"/>
+              </DataItems>
+            </Linear>
+            <Linear iso841Class="0" name="Y" sampleRate="0.0" id="8">
+              <DataItems>
+                <DataItem type="POSITION" nativeScale="0.0" category="SAMPLE" units="MILLIMETER" significantDigits="0" nativeUnits="MILLIMETER" id="16" subType="ACTUAL" name="Yact"/>
+              </DataItems>
+            </Linear>
+            <Linear iso841Class="0" name="Z" sampleRate="0.0" id="9">
+              <DataItems>
+                <DataItem type="POSITION" nativeScale="0.0" category="SAMPLE" units="MILLIMETER" significantDigits="0" nativeUnits="MILLIMETER" id="18" subType="ACTUAL" name="Zact"/>
+              </DataItems>
+            </Linear>
+          </Components>
+        </Axes>
+        <Controller iso841Class="0" name="Controller" sampleRate="0.0" id="11">
+          <DataItems>
+            <DataItem type="CONTROLLER_MODE" nativeScale="0.0" category="EVENT" significantDigits="0" id="21" name="mode"/>
+            <DataItem type="PROGRAM" nativeScale="0.0" category="EVENT" significantDigits="0" id="23" name="program"/>
+            <DataItem type="EXECUTION" nativeScale="0.0" category="EVENT" significantDigits="0" id="24" name="execution"/>
+          </DataItems>
+        </Controller>
+        <Power iso841Class="0" name="power" sampleRate="0.0" id="2">
+          <DataItems>
+            <DataItem type="POWER_STATUS" nativeScale="0.0" category="EVENT" significantDigits="0" id="1" name="power"/>
+          </DataItems>
+        </Power>
+      </Components>
+    </Device>
+  </Devices>
+</MTConnectDevices>
