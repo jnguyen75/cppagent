@@ -145,7 +145,7 @@ void Agent::addAdapter(const std::string &device, const std::string& host, const
   adapter->setAgent(*this);
 }
 
-bool Agent::addToBuffer(
+unsigned int Agent::addToBuffer(
   const std::string& device,
   const std::string& dataItemName,
   const std::string& value,
@@ -157,7 +157,7 @@ bool Agent::addToBuffer(
   if (dataItem == NULL)
   {
     logEvent("Agent", "Could not find data item" + dataItemName);
-    return false;
+    return 0;
   }
   else
   {
@@ -177,12 +177,13 @@ bool Agent::addToBuffer(
     ComponentEvent *event =
       new ComponentEvent(*dataItem, mSequence, time, value);
     
-    (*mSlidingBuffer)[mSequence] = event;
+    unsigned int seqNum = mSequence++;
+    
+    (*mSlidingBuffer)[seqNum] = event;
     dataItem->setLatestEvent(*event);
     
-    mSequence++;
     mSequenceLock->unlock();
-    return true;
+    return seqNum;
   }
 }
 
@@ -354,13 +355,13 @@ void Agent::streamData(
   out << "X-Runtime: 144ms" << std::endl;
   out << "Content-Type: multipart/x-mixed-replace;";
   
-  std::string boundary = "--" + md5(intToString(time(NULL)));
+  std::string boundary = md5(intToString(time(NULL)));
   out << "boundary=" << boundary << std::endl << std::endl;
   
   // Loop until the user closes the connection
   while (out.good())
   {
-    out << boundary << std::endl;
+    out << "--" + boundary << std::endl;
     out << "Content-type: text/xml" << std::endl;
     
     std::string content = (current) ?

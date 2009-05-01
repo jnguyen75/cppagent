@@ -33,6 +33,7 @@ connector.cpp \
 data_item.cpp \
 device.cpp \
 linear.cpp \
+options.cpp \
 power.cpp \
 spindle.cpp \
 thermostat.cpp \
