@@ -107,7 +107,7 @@ public:
   void addAdapter(const std::string& host, const unsigned int port);
   
   /* Add component events to the sliding buffer */
-  bool addToBuffer(
+  unsigned int addToBuffer(
     const std::string& dataItemName,
     const std::string& value,
     std::string time = ""

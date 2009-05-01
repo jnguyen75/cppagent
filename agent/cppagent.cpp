@@ -34,7 +34,7 @@
 #include "../src/agent.hpp"
 #include "fcntl.h"
 #include "sys/stat.h"
-#include <options.hpp>
+#include "../src/options.hpp"
 
 using namespace std;
 using namespace dlib;
@@ -60,8 +60,8 @@ void addToBufferThread(Agent *server)
     std::cout << "Value: ";
     std::cin >> value;
     
-    bool added = server->addToBuffer(dataItem, value);
-    std::cout << "Success: " << std::boolalpha << added << std::endl;
+    unsigned int seqNum = server->addToBuffer(dataItem, value);
+    std::cout << "Sequence Number: " << seqNum << std::endl;
   }
 }
 
@@ -137,21 +137,20 @@ void daemonize()
 
 int main(int aArgc, char *aArgv[])
 {
-  int port = 5000;
+  int listenPort = 5000;
   const char *config_file = "probe.xml";
   list<string> adapters;
   bool interactive = false;
   bool daemonize_proc = false;
 
   OptionsList option_list;
-  option_list.append(new Option("p", port, "HTTP Server Port\nDefault: 5000", "port"));
+  option_list.append(new Option("p", listenPort, "HTTP Server Port\nDefault: 5000", "port"));
   option_list.append(new Option("f", config_file, "Configuration file\nDefault: probe.xml", "file"));
-  option_list.append(new Option("i", interactive, "Interactive shell", "interactive"));
-  option_list.append(new Option("d", daemonize_proc, "Daemonize\nDefault: false", "daemonize"));
+  option_list.append(new Option("i", interactive, "Interactive shell", false));
+  option_list.append(new Option("d", daemonize_proc, "Daemonize\nDefault: false", false));
   option_list.append(new Option("a", adapters, "Location of adapter\n'device:address:port'", "adapters", true));
   option_list.parse(aArgc, (const char**) aArgv);
-
-
+  
   if (daemonize_proc)
   {
     daemonize();
@@ -165,27 +164,31 @@ int main(int aArgc, char *aArgv[])
       // Should have the format device:address:port
       string &adapter = *iter;
       string device, address, port;
-      
+            
       unsigned int pos1 = adapter.find_first_of(':');
       if (pos1 == string::npos) {
-	cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
-	option_list.usage();
+        cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
+        option_list.usage();
       }
       
       device = adapter.substr(0, pos1);
       
       unsigned int pos2 = adapter.find_first_of(':', pos1 + 1);
       if (pos2 == string::npos) {
-	cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
-	option_list.usage();
+        cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
+        option_list.usage();
       }
-      address = adapter.substr(pos1 + 1, pos2 - pos1);
+      address = adapter.substr(pos1 + 1, pos2 - pos1 - 1);
 
       if (adapter.length() <= pos2) {
-	cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
-	option_list.usage();
+        cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
+        option_list.usage();
       }
       port = adapter.substr(pos2 + 1);
+      
+      cout << "Device " << device << endl;
+      cout << "Address " << address << endl;
+      cout << "Port " << port << endl;
 
       agent->addAdapter(address, atoi(port.c_str()));
     }
@@ -194,16 +197,23 @@ int main(int aArgc, char *aArgv[])
     
     // Create a thread that will listen for the user to end this program
     //thread_function t(terminateServerThread, &agent);
-
+    cout << "Listening on port " << listenPort << endl;
+    
+    thread_function *interactiveThread;
+    
     if (interactive)
     {
       // Use the addToBuffer API to allow user input for data
-      thread_function t(addToBufferThread, agent);
+      
+      interactiveThread = new thread_function(addToBufferThread, agent);
+      cout << agent->is_running() << endl;
     }
     
-    agent->set_listening_port(port);
+    agent->set_listening_port(listenPort);
+    cout << agent->is_running() << endl;
     agent->start();
-
+    
+    delete interactiveThread;
     delete agent;
   }
   catch (std::exception & e)

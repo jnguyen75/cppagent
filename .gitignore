@@ -1,7 +1,7 @@
 *.o
 *.lo
 *.a
-agent.log
+log/agent.log
 agent.pid
 .libs
 .deps

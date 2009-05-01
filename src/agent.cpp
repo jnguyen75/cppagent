@@ -136,7 +136,7 @@ void Agent::addAdapter(const std::string& host, const unsigned int port)
   adapter->setAgent(*this);
 }
 
-bool Agent::addToBuffer(
+unsigned int Agent::addToBuffer(
     const std::string& dataItemName,
     const std::string& value,
     std::string time
@@ -147,7 +147,7 @@ bool Agent::addToBuffer(
   if (dataItem == NULL)
   {
     logEvent("Agent", "Could not find data item" + dataItemName);
-    return false;
+    return 0;
   }
   else
   {
@@ -167,12 +167,13 @@ bool Agent::addToBuffer(
     ComponentEvent *event =
       new ComponentEvent(*dataItem, mSequence, time, value);
     
-    (*mSlidingBuffer)[mSequence] = event;
+    unsigned int seqNum = mSequence++;
+    
+    (*mSlidingBuffer)[seqNum] = event;
     dataItem->setLatestEvent(*event);
     
-    mSequence++;
     mSequenceLock->unlock();
-    return true;
+    return seqNum;
   }
 }
 
