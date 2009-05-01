@@ -38,16 +38,10 @@
 
 #include <libxml++/libxml++.h>
 
-#include "axes.hpp"
 #include "component.hpp"
-#include "controller.hpp"
 #include "device.hpp"
 #include "data_item.hpp"
 #include "globals.hpp"
-#include "linear.hpp"
-#include "power.hpp"
-#include "spindle.hpp"
-#include "thermostat.hpp"
 
 class XmlParser
 {
@@ -60,7 +54,6 @@ public:
   
   /* Get list of devices and data items */
   std::list<Device *> getDevices() const { return mDevices; }
-  std::list<DataItem *> getDataItems() const { return mDataItems; }
   
   /* Return the root node of the xml */
   xmlpp::Node * getRootNode() const;
@@ -71,19 +64,20 @@ protected:
   
   /* Arrays to keep track of all devices and dataItems */
   std::list<Device *> mDevices;
-  std::list<DataItem *> mDataItems;
 
 protected:
   /* Main method to process the nodes and return the objects */
   Component * handleComponent(
     xmlpp::Node * component,
-    Component * parent = NULL
+    Component * parent = NULL,
+    Device *device = NULL
   );
   
   /* Helper to handle/return each component of the device */
   Component * loadComponent(
     xmlpp::Node * node,
-    Component::EComponentSpecs spec
+    Component::EComponentSpecs spec,
+    std::string &name
   );
   
   /* Put all of the attributes of an element into a map */
@@ -92,10 +86,10 @@ protected:
   );
   
   /* Load the data items */
-  void loadDataItem(xmlpp::Node * dataItems, Component * component);
+  void loadDataItem(xmlpp::Node * dataItems, Component * component, Device *device);
   
   /* Perform loading on children and set up relationships */
-  void handleChildren(xmlpp::Node * components, Component * parent = NULL);
+  void handleChildren(xmlpp::Node * components, Component * parent = NULL, Device *device = NULL);
 };
 
 #endif

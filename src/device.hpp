@@ -35,6 +35,7 @@
 #define DEVICE_HPP
 
 #include "component.hpp"
+#include "data_item.hpp"
 
 class Component;
 
@@ -43,16 +44,20 @@ class Device : public Component
 protected:
   /* The iso841Class of the device */
   unsigned int mIso841Class;
+  std::map<std::string, DataItem*> mDeviceDataItems;
   
 public:
   /* Constructor that sets variables from an attribute map */
   Device(std::map<std::string, std::string> attributes);
-  
-  /* Inherited method that returns name of the class */
-  const std::string getClass() const { return "Device"; }
-  
+  ~Device();
+
+  void addDeviceDataItem(DataItem& dataItem) { mDeviceDataItems[dataItem.getName()] = &dataItem; }
+
   /* Retrieve the attributes of the device in an attribute map */
   std::map<std::string, std::string> getAttributes() const;
+  DataItem* getDeviceDataItem(const std::string &aName) { return mDeviceDataItems[aName]; }
+
+  const std::map<std::string, DataItem*> getDeviceDataItems() const { return mDeviceDataItems; }
 };
 
 #endif

@@ -94,7 +94,7 @@ const std::string DataItem::STypeCamel[NumTypes] = {
 /* DataItem public methods */
 DataItem::DataItem(std::map<std::string, std::string> attributes)
 {
-  mId = atoi(attributes["id"].c_str());
+  mId = attributes["id"];
   mName = attributes["name"];
   mType = (EType) getEnumeration(attributes["type"], STypeUpper, NumTypes);
   
@@ -144,7 +144,7 @@ std::map<std::string, std::string> DataItem::getAttributes() const
 {
   std::map<std::string, std::string> attributes;
   
-  attributes["id"] = intToString(mId);
+  attributes["id"] = mId;
   attributes["name"] = mName;
   attributes["type"] = STypeUpper[mType];
   

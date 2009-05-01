@@ -186,8 +186,9 @@ protected:
   );
   
   /* Find devices/data items by name */
-  Device * getDeviceByName(const std::string& name);
-  DataItem * getDataItemByName(const std::string& name);
+  Device * getDeviceByName(const std::string& name) { return mDeviceMap[name]; } 
+  DataItem * getDataItemByName(const std::string& device, const std::string& name);
+  DataItem * getDataItemById(const std::string& id) { return mDataItemMap[id]; }
   
   /* Find if there's data item with that name/source name */
   bool hasDataItem(std::list<DataItem *>& dataItems, const std::string& name);
@@ -210,7 +211,8 @@ protected:
   
   /* Lists of data */
   std::list<Device *> mDevices;
-  std::list<DataItem *> mDataItems;
+  std::map<std::string, Device*> mDeviceMap;
+  std::map<std::string, DataItem*> mDataItemMap;
 };
 
 #endif

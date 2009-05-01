@@ -101,7 +101,7 @@ std::map<std::string, std::string> ComponentEvent::getAttributes()
 {
   std::map<std::string, std::string> attributes;
   
-  attributes["dataItemId"] = intToString(mDataItem->getId());
+  attributes["dataItemId"] = mDataItem->getId();
   attributes["timestamp"] = mTime;
   attributes["subType"] = mDataItem->getSubType();
   attributes["name"] = mDataItem->getName();

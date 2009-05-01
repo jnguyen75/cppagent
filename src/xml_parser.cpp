@@ -78,7 +78,8 @@ xmlpp::Node * XmlParser::getRootNode() const
 /* XmlParser protected methods */
 Component * XmlParser::handleComponent(
     xmlpp::Node * component,
-    Component * parent
+    Component * parent,
+    Device *device
   )
 {
   Component * toReturn = NULL;
@@ -88,30 +89,32 @@ Component * XmlParser::handleComponent(
       Component::SComponentSpecs,
       Component::NumComponentSpecs
     );
-  
+
+  std::string name;
   switch (spec)
   {
-    case Component::AXES:
-    case Component::CONTROLLER:
-    case Component::DEVICE:
-    case Component::LINEAR:
-    case Component::POWER:
-    case Component::SPINDLE:
-    case Component::THERMOSTAT:
-      toReturn = loadComponent(component, spec);
-      break;
-    case Component::COMPONENTS:
-    case Component::DATA_ITEMS:
-      handleChildren(component, parent);
-      break;
-    case Component::DATA_ITEM:
-      loadDataItem(component, parent);
-      break;
-    case Component::TEXT:
-      break;
-    default:
-      logEvent("XmlParser::handleComponent",
-        "Received " + component->get_name());
+  case Component::DEVICE:
+    name = component->get_name().raw();
+    toReturn = device = (Device*) loadComponent(component, spec, name);
+    break;
+    
+  case Component::COMPONENTS:
+  case Component::DATA_ITEMS:
+    handleChildren(component, parent, device);
+    break;
+    
+  case Component::DATA_ITEM:
+    loadDataItem(component, parent, device);
+    break;
+    
+  case Component::TEXT:
+    break;
+    
+  default:
+    // Assume component
+    name = component->get_name().raw();
+    toReturn = loadComponent(component, spec, name);
+    break;
   }
   
   // Construct relationships
@@ -137,7 +140,7 @@ Component * XmlParser::handleComponent(
       }
       else
       {
-        handleComponent(*child, toReturn);
+        handleComponent(*child, toReturn, device);
       }
     }
   }
@@ -147,7 +150,8 @@ Component * XmlParser::handleComponent(
 
 Component * XmlParser::loadComponent(
     xmlpp::Node * node,
-    Component::EComponentSpecs spec
+    Component::EComponentSpecs spec,
+    std::string &name
   )
 {
   const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node);
@@ -155,22 +159,10 @@ Component * XmlParser::loadComponent(
   
   switch (spec)
   {
-    case Component::AXES:
-      return new Axes(attributes);
-    case Component::CONTROLLER:
-      return new Controller(attributes);
-    case Component::DEVICE:
-      return new Device(attributes);
-    case Component::LINEAR:
-      return new Linear(attributes);
-    case Component::POWER:
-      return new Power(attributes);
-    case Component::SPINDLE:
-      return new Spindle(attributes);
-    case Component::THERMOSTAT:
-      return new Thermostat(attributes);
-    default:
-      return NULL;
+  case Component::DEVICE:
+    return new Device(attributes);
+  default:
+    return new Component(name, attributes);
   }
 }
 
@@ -193,7 +185,7 @@ std::map<std::string, std::string> XmlParser::getAttributes(
   return toReturn;
 }
 
-void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent)
+void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent, Device *device)
 {
   const xmlpp::Element* nodeElement =
     dynamic_cast<const xmlpp::Element*>(dataItem);
@@ -219,19 +211,19 @@ void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent)
   }
   
   parent->addDataItem(*d);
-  mDataItems.push_back(d);
+  device->addDeviceDataItem(*d);
 }
 
-void XmlParser::handleChildren(xmlpp::Node * components, Component * parent)
+void XmlParser::handleChildren(xmlpp::Node * components, Component * parent, Device *device)
 {
   if (!dynamic_cast<const xmlpp::ContentNode*>(components))
   {
     xmlpp::Node::NodeList children = components->get_children();
     
     xmlpp::Node::NodeList::iterator child;
-    for (child=children.begin(); child!=children.end(); ++child)
+    for (child = children.begin(); child != children.end(); ++child)
     {
-      handleComponent(*child, parent);
+      handleComponent(*child, parent, device);
     }
   }
 }

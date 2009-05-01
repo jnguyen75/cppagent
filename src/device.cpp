@@ -21,7 +21,7 @@
 * (COLLECTIVELY, THE "AMT PARTIES") AND PARTICIPANTS MAKE NO REPRESENTATION OR
 * WARRANTY OF ANY KIND WHATSOEVER RELATING TO THESE MATERIALS, INCLUDING, WITHOUT
 * LIMITATION, ANY EXPRESS OR IMPLIED WARRANTY OF NONINFRINGEMENT,
-* MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. 
+* MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
 
 * LIMITATION OF LIABILITY. IN NO EVENT SHALL AMT, MTCONNECT, ANY OTHER AMT
 * PARTY, OR ANY PARTICIPANT BE LIABLE FOR THE COST OF PROCURING SUBSTITUTE GOODS
@@ -36,9 +36,13 @@
 
 /* Device public methods */
 Device::Device(std::map<std::string, std::string> attributes)
-: Component(attributes)
+  : Component("Device", attributes)
 {
   mIso841Class = atoi(attributes["iso841Class"].c_str());
+}
+
+Device::~Device()
+{
 }
 
 std::map<std::string, std::string> Device::getAttributes() const

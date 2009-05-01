@@ -128,10 +128,12 @@ unsigned int getCurrentTimeInSec()
   return time(NULL);
 }
 
+extern const char *gLogFile;
+
 void logEvent(const std::string& source, const std::string& message)
 {
   std::ofstream logFile;
-  logFile.open("../log/agent.log", std::ios::app);
+  logFile.open(gLogFile, std::ios::app);
   if (logFile.is_open())
   {
     logFile << "[" << getCurrentTime(LOCAL) << "] ";

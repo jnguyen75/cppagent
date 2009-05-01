@@ -36,13 +36,7 @@
 /* Component static constants */
 const std::string Component::SComponentSpecs[NumComponentSpecs] = {
   // Component parts
-  "Axes",
-  "Controller",
   "Device",
-  "Linear",
-  "Power",
-  "Spindle",
-  "Thermostat",
   // Component details
   "Components",
   "DataItem",
@@ -53,7 +47,7 @@ const std::string Component::SComponentSpecs[NumComponentSpecs] = {
 };
 
 /* Component public methods */
-Component::Component(std::map<std::string, std::string> attributes)
+Component::Component(std::string cls, std::map<std::string, std::string> attributes)
 {
   // TODO: Error checking..?
   mId = atoi(attributes["id"].c_str());
@@ -64,6 +58,11 @@ Component::Component(std::map<std::string, std::string> attributes)
     0.0f : atof(attributes["sampleRate"].c_str());
   
   mParent = NULL;
+  mClass = cls;
+}
+
+Component::~Component()
+{
 }
 
 std::map<std::string, std::string> Component::getAttributes() const

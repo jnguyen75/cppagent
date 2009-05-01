@@ -52,7 +52,16 @@ Agent::Agent(const std::string& configXmlPath)
   
   // Grab data from configuration
   mDevices = mConfig->getDevices();
-  mDataItems = mConfig->getDataItems();
+  for (std::list<Device*>::iterator iter = mDevices.begin(); iter != mDevices.end(); iter++) 
+  {
+    mDeviceMap[(*iter)->getName()] = *iter;
+    std::map<std::string, DataItem*> items = (*iter)->getDeviceDataItems();
+    for (std::map<std::string, DataItem*>::iterator item = items.begin(); item != items.end(); ++item)
+    {
+      DataItem *d = item->second;
+      mDataItemMap[d->getId()] = d;
+    }
+  }
   
   // Unique id number for agent instance
   mInstanceId = getCurrentTimeInSec();
@@ -143,7 +152,7 @@ bool Agent::addToBuffer(
   std::string time
   )
 {
-  DataItem *dataItem = getDataItemByName(dataItemName);
+  DataItem *dataItem = getDataItemByName(device, dataItemName);
   
   if (dataItem == NULL)
   {
@@ -488,7 +497,7 @@ std::list<DataItem *> Agent::getDataItems(
       if (nodeElement->get_name() == "DataItem")
       {
         DataItem *item =
-          getDataItemByName(nodeElement->get_attribute_value("name"));
+          getDataItemById(nodeElement->get_attribute_value("id"));
         
         if (item != NULL)
         {
@@ -499,7 +508,7 @@ std::list<DataItem *> Agent::getDataItems(
           logEvent("Agent", "Data item not found: " + nodename);
         }
       }
-      else if (nodename == "Components" or nodename == "DataItems")
+      else if (nodename == "Components" || nodename == "DataItems")
       {
         // Recursive call
         std::list<DataItem *> toMerge = getDataItems("*", elements[i]);
@@ -570,30 +579,13 @@ int Agent::checkAndGetParam(
   return value;
 }
 
-Device * Agent::getDeviceByName(const std::string& name)
+DataItem * Agent::getDataItemByName(const std::string& device, const std::string& name)
 {
-  std::list<Device *>::iterator device;
-  for (device=mDevices.begin(); device!=mDevices.end(); device++)
-  {
-    if ((*device)->getName() == name)
-    {
-      return *device;
-    }
+  Device *dev = mDeviceMap[device];
+  if (dev) {
+    return dev->getDeviceDataItem(name);
   }
-    
-  return NULL;
-}
-
-DataItem * Agent::getDataItemByName(const std::string& name)
-{
-  std::list<DataItem *>::iterator dataItem;
-  for (dataItem = mDataItems.begin(); dataItem!=mDataItems.end(); dataItem++)
-  {
-    if ((*dataItem)->hasName(name))
-    {
-      return (*dataItem);
-    }
-  }
+  
   return NULL;
 }
 

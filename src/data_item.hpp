@@ -98,7 +98,7 @@ public:
   std::map<std::string, std::string> getAttributes() const;
   
   /* Getter methods for data item specs */
-  unsigned int getId() const { return mId; }
+  std::string getId() const { return mId; }
   std::string getName() const { return mName; }
   std::string getSource() const { return mSource; }
   DataItem::EType getType() const { return mType; }
@@ -126,7 +126,7 @@ public:
   
 protected:
   /* Unique ID for each component */
-  unsigned int mId;
+  std::string mId;
   
   /* Name for itself */
   std::string mName;

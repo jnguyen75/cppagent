@@ -138,6 +138,8 @@ void daemonize()
 }
 
 
+const char *gLogFile = "agent.log";
+
 int main(int aArgc, char *aArgv[])
 {
   int port = 5000;
@@ -149,8 +151,9 @@ int main(int aArgc, char *aArgv[])
   OptionsList option_list;
   option_list.append(new Option("p", port, "HTTP Server Port\nDefault: 5000", "port"));
   option_list.append(new Option("f", config_file, "Configuration file\nDefault: probe.xml", "file"));
-  option_list.append(new Option("i", interactive, "Interactive shell", "interactive"));
-  option_list.append(new Option("d", daemonize_proc, "Daemonize\nDefault: false", "daemonize"));
+  option_list.append(new Option("l", gLogFile, "Log file\nDefault: agent.log", "file"));
+  option_list.append(new Option("i", interactive, "Interactive shell", false));
+  option_list.append(new Option("d", daemonize_proc, "Daemonize\nDefault: false", false));
   option_list.append(new Option("a", adapters, "Location of adapter\n'device:address:port'", "adapters", true));
   option_list.parse(aArgc, (const char**) aArgv);
 
@@ -167,7 +170,7 @@ int main(int aArgc, char *aArgv[])
     {
       // Should have the format device:address:port
       string &adapter = *iter;
-      string device, address, port;
+      string device, address, adapter_port;
       
       unsigned int pos1 = adapter.find_first_of(':');
       if (pos1 == string::npos) {
@@ -182,15 +185,15 @@ int main(int aArgc, char *aArgv[])
 	cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
 	option_list.usage();
       }
-      address = adapter.substr(pos1 + 1, pos2 - pos1);
+      address = adapter.substr(pos1 + 1, (pos2 - pos1) - 1);
 
       if (adapter.length() <= pos2) {
 	cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
 	option_list.usage();
       }
-      port = adapter.substr(pos2 + 1);
+      adapter_port = adapter.substr(pos2 + 1);
 
-      agent->addAdapter(device, address, atoi(port.c_str()));
+      agent->addAdapter(device, address, atoi(adapter_port.c_str()));
     }
         
     // ***** DEBUGGING TOOLS *****

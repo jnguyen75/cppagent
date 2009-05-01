@@ -51,13 +51,7 @@ public:
   enum EComponentSpecs
   {
     // Component parts
-    AXES,
-    CONTROLLER,
     DEVICE,
-    LINEAR,
-    POWER,
-    SPINDLE,
-    THERMOSTAT,
     // Component details
     COMPONENTS,
     DATA_ITEM,
@@ -72,10 +66,11 @@ public:
   
 public:
   /* Take in mapping of attributes */
-  Component(std::map<std::string, std::string> attributes);
+  Component(std::string cls, std::map<std::string, std::string> attributes);
+  virtual ~Component();
   
   /* Return what part of the component it is */
-  virtual const std::string getClass() const = 0;
+  const std::string &getClass() const { return mClass; }
   
   /* Return a map of attributes of all the component specs */
   virtual std::map<std::string, std::string> getAttributes() const;
@@ -111,6 +106,9 @@ protected:
   
   /* Name for itself */
   std::string mName;
+
+  // The class
+  std::string mClass;
   
   /* Universal unique identifier */
   std::string mUuid;
