@@ -123,6 +123,9 @@ public:
   /* Set/get latest component event the data item is associated with */
   void setLatestEvent(ComponentEvent& event);
   ComponentEvent * getLatestEvent() const;
+
+  /* Get the name for the adapter feed */
+  std::string getSourceOrName() { return mSource.empty() ? mName : mSource; }
   
 protected:
   /* Unique ID for each component */

@@ -51,7 +51,7 @@ public:
   Device(std::map<std::string, std::string> attributes);
   ~Device();
 
-  void addDeviceDataItem(DataItem& dataItem) { mDeviceDataItems[dataItem.getName()] = &dataItem; }
+  void addDeviceDataItem(DataItem& dataItem) { mDeviceDataItems[dataItem.getSourceOrName()] = &dataItem; }
 
   /* Retrieve the attributes of the device in an attribute map */
   std::map<std::string, std::string> getAttributes() const;
