@@ -346,12 +346,11 @@ void Agent::streamData(
   
   std::string boundary = md5(intToString(time(NULL)));
   out << "boundary=" << boundary << std::endl << std::endl;
-  boundary = "--" + boundary;
   
   // Loop until the user closes the connection
   while (out.good())
   {
-    out << boundary << std::endl;
+    out << "--" + boundary << std::endl;
     out << "Content-type: text/xml" << std::endl;
     
     std::string content = (current) ?
