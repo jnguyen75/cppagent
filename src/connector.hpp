@@ -37,16 +37,27 @@
 #include "dlib/sockets.h"
 #include "dlib/server.h"
 
+#include "globals.hpp"
+
 using namespace dlib;
 
 class Connector
 {
-private:
-  /* Size of buffer to read at a time from the socket */  
-  static const unsigned int SOCKET_BUFFER_SIZE = 80;
+public:
+  /* Instantiate the server by assigning it a server and port */
+  Connector(const std::string& server, unsigned int port);
   
-  /* Size of buffer to search in the buffer stream */  
-  static const unsigned int LINE_BUFFER_SIZE = 1024;
+  /* Virtual desctructor */
+  virtual ~Connector();
+  
+  /*
+   *  Blocking call to connect to the server/port
+   *  Put data from the socket in the string buffer
+   */
+  void connect();
+  
+  /* Method to handle what to do with each line of data from Socket */
+  virtual void processData(const std::string& data) = 0;
   
 protected:
   /* Name of the server to connect to */
@@ -58,20 +69,12 @@ protected:
   /* The string buffer to hold the data from socket */
   std::string mBuffer;  
   
-public:
-  /* Instantiate the server by assigning it a server and port */
-  Connector(std::string server, unsigned int port);
+private:
+  /* Size of buffer to read at a time from the socket */  
+  static const unsigned int SOCKET_BUFFER_SIZE = 80;
   
-  virtual ~Connector();
-  
-  /*
-   *  Blocking call to connect to the server/port
-   *  Put data from the socket in the string buffer
-   */
-  void connect();
-  
-  /* Method to handle what to do with each line of data from Socket */
-  virtual void processData(std::string line) = 0;
+  /* Size of buffer to search in the buffer stream */  
+  static const unsigned int LINE_BUFFER_SIZE = 1024;
 };
 
 #endif

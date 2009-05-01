@@ -1,4 +1,3 @@
-
 /*
 * Copyright (c) 2008, AMT – The Association For Manufacturing Technology (“AMT”)
 * All rights reserved.
@@ -32,5 +31,60 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#include "linear.hpp"
+#ifndef GLOBALS_HPP
+#define GLOBALS_HPP
+
+#include <ctime>
+#include <string>
+#include <sstream>
+#include <fstream>
+
+/* Port number to put server on */
+const unsigned int SERVER_PORT = 8080;
+
+/* Size of sliding buffer */
+const unsigned int SLIDING_BUFFER_SIZE = 131072;
+
+/* Size of buffer exponent: 2^SLIDING_BUFFER_EXP */
+const unsigned int SLIDING_BUFFER_EXP = 17;
+
+/* Message for when enumerations do not exist in an array/enumeration */
+const int ENUM_MISS = -1;
+
+/* Convert an unsigned integer to string */
+std::string intToString(int i);
+
+/* Convert a float to string */
+std::string floatToString(float f);
+
+/* Convert a string to the same string with all upper case letters */
+std::string toUpperCase(std::string text);
+
+/* Check if each char in a string is a positive integer */
+bool isNonNegativeInteger(const std::string& s);
+
+/* Time format */
+enum TimeFormat
+{
+  HUM_READ,
+  GMT,
+  GMT_UV_SEC,
+  LOCAL
+};
+
+/* Get the current time formatted */
+std::string getCurrentTime(TimeFormat format);
+
+/* Get the current time in number of seconds as an integer */
+unsigned int getCurrentTimeInSec();
+
+void logEvent(const std::string& source, const std::string& message);
+
+int getEnumeration(
+  const std::string& name,
+  const std::string *array,
+  unsigned int size
+);
+
+#endif
 

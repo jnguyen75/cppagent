@@ -152,14 +152,15 @@ void DataItemTest::testComponentEvent()
 {
   CPPUNIT_ASSERT(a->getLatestEvent() == NULL);
   
-  ComponentEvent * event = new ComponentEvent(a, 1, "10:30am Today", "1.34");
+  ComponentEvent event (a, 1, "10:30am Today", "1.34");
   
   a->setLatestEvent(event);
-  CPPUNIT_ASSERT_EQUAL(event, a->getLatestEvent());
   
-  delete event;
-  a->setLatestEvent(NULL);
-  CPPUNIT_ASSERT(a->getLatestEvent() == NULL);
+  std::map<std::string, std::string> attributes1 = event.getAttributes();
+  std::map<std::string, std::string> attributes2 =
+    a->getLatestEvent()->getAttributes();
+  
+  CPPUNIT_ASSERT_EQUAL(attributes1["sequence"], attributes2["sequence"]);
 }
 
 void DataItemTest::testGetTypeEnum()

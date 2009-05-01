@@ -41,11 +41,6 @@ Device::Device(std::map<std::string, std::string> attributes)
   mIso841Class = atoi(attributes["iso841Class"].c_str());
 }
 
-const std::string Device::getClass() const
-{
-  return "Device";
-}
-
 std::map<std::string, std::string> Device::getAttributes() const
 {
   std::map<std::string, std::string> attributes = Component::getAttributes();

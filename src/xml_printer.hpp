@@ -41,19 +41,48 @@
 
 #include "component_event.hpp"
 #include "device.hpp"
+#include "globals.hpp"
 
 class DataItem;
 
-extern std::string intToString(unsigned int i);
-extern std::string floatToString(float i);
-extern std::string getCurrentTime(bool formatted);
-
 namespace XmlPrinter
 {
+  /***** Main methods to call *****/
+  std::string printError(
+    const unsigned int instanceId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
+    const std::string& errorCode,
+    const std::string& errorText
+  );
+  
+  std::string printProbe(
+    const unsigned int instanceId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
+    std::list<Device *>& devices
+  );
+  
+  std::string printCurrent(
+    const unsigned int instanceId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
+    const unsigned int firstSeq,
+    std::list<DataItem *>& dataItems
+  );
+  
+  std::string printSample(
+    const unsigned int instanceId,
+    const unsigned int bufferSize,
+    const unsigned int nextSeq,
+    const unsigned int firstSeq,
+    std::list<ComponentEvent *>& results
+  );
+  
   /***** Helper Methods *****/
   /* Initiate all documents */
   xmlpp::Document * initXmlDoc(
-    const std::string xmlType,
+    const std::string& xmlType,
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
@@ -84,38 +113,6 @@ namespace XmlPrinter
   xmlpp::Element * getDeviceStream(
     xmlpp::Element * element,
     Device * device
-  );
-  
-  /***** Main methods to call *****/
-  std::string printError(
-    const unsigned int instanceId,
-    const unsigned int bufferSize,
-    const unsigned int nextSeq,
-    std::string errorCode,
-    std::string errorText
-  );
-  
-  std::string printProbe(
-    const unsigned int instanceId,
-    const unsigned int bufferSize,
-    const unsigned int nextSeq,
-    std::list<Device *> devices
-  );
-  
-  std::string printCurrent(
-    const unsigned int instanceId,
-    const unsigned int bufferSize,
-    const unsigned int nextSeq,
-    const unsigned int firstSeq,
-    std::list<DataItem *> dataItems
-  );
-  
-  std::string printSample(
-    const unsigned int instanceId,
-    const unsigned int bufferSize,
-    const unsigned int nextSeq,
-    const unsigned int firstSeq,
-    std::list<ComponentEvent *> results
   );
 };
 

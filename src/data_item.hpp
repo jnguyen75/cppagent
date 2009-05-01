@@ -35,12 +35,12 @@
 #define DATA_ITEM_HPP
 
 #include <map>
-#include <iostream>
+
+#include "dlib/threads.h"
 
 #include "component.hpp"
 #include "component_event.hpp"
-
-extern std::string intToString(unsigned int i);
+#include "globals.hpp"
 
 //class Component;
 class ComponentEvent;
@@ -54,7 +54,6 @@ public:
     SAMPLE,
     EVENT
   };
-  
   
   enum EType
   {
@@ -89,8 +88,43 @@ public:
   static const std::string STypeUpper[];
   static const std::string STypeCamel[];
   
+public:
+  /* Construct a data item with appropriate attributes mapping */
+  DataItem(std::map<std::string, std::string> attributes);
   
-protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
+  ~DataItem();
+  
+  /* Get a map of all the attributes of this data item */
+  std::map<std::string, std::string> getAttributes() const;
+  
+  /* Getter methods for data item specs */
+  unsigned int getId() const { return mId; }
+  std::string getName() const { return mName; }
+  std::string getSource() const { return mSource; }
+  DataItem::EType getType() const { return mType; }
+  std::string getTypeString(bool uppercase) const;
+  std::string getSubType() const { return mSubType; }
+  std::string getNativeUnits() const { return mNativeUnits; }
+  float getNativeScale() const { return mNativeScale; }
+  
+  /* Returns if data item has this name (or source name) */
+  bool hasName(const std::string name);
+  
+  /* Returns true if data item is */
+  bool isSample() { return mCategory == SAMPLE; }
+  
+  /* Add a source (extra information) to data item */
+  void addSource(const std::string& source) { mSource = source; }
+  
+  /* Set/get component that data item is associated with */
+  void setComponent(Component& component) { mComponent = &component; }
+  Component * getComponent() const { return mComponent; }
+  
+  /* Set/get latest component event the data item is associated with */
+  void setLatestEvent(ComponentEvent& event);
+  ComponentEvent * getLatestEvent() const;
+  
+protected:
   /* Unique ID for each component */
   unsigned int mId;
   
@@ -130,45 +164,8 @@ protected: // TODO: CREATE ENUMERATIONS FOR EVERYTHING
   /* Pointer to the latest component event that occured for this data item */
   ComponentEvent * mLatestEvent;
   
-public:
-  /* Construct a data item with appropriate attributes mapping */
-  DataItem(std::map<std::string, std::string> attributes);
-  
-  ~DataItem();
-  
-  /* Get a map of all the attributes of this data item */
-  std::map<std::string, std::string> getAttributes() const;
-  
-  /* Getter methods for data item specs */
-  unsigned int getId() const;
-  std::string getName() const;
-  std::string getSource() const;
-  DataItem::EType getType() const;
-  std::string getTypeString(bool uppercase) const;
-  std::string getSubType() const;
-  std::string getNativeUnits() const;
-  float getNativeScale() const;
-  
-  /* Returns if data item has this name (or source name) */
-  bool hasName(const std::string name);
-  
-  /* Returns true if data item is */
-  bool isSample();
-  
-  /* Add a source (extra information) to data item */
-  void addSource(const std::string source);
-  
-  /* Set/get component that data item is associated with */
-  void setComponent(Component * component);
-  Component * getComponent() const;
-  
-  /* Set/get latest component event the data item is associated with */
-  void setLatestEvent(ComponentEvent& event);
-  ComponentEvent * getLatestEvent() const;
-  
-public:
-  /* Get the enumeration corresponding to the string */
-  static DataItem::EType getTypeEnum(const std::string name);
+  /* Lock to update and retrieve the latest event */
+  dlib::mutex * mLatestEventLock;
 };
 
 #endif

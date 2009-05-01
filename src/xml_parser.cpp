@@ -34,7 +34,7 @@
 #include "xml_parser.hpp"
 
 /* XmlParser public methods */
-XmlParser::XmlParser(std::string xmlPath)
+XmlParser::XmlParser(const std::string& xmlPath)
 {
   try
   {
@@ -46,21 +46,22 @@ XmlParser::XmlParser(std::string xmlPath)
     // We want the text to be resolved/unescaped automatically.
     mParser->set_substitute_entities();
     
-    // Parse the input file
     mParser->parse_file(xmlPath);
+    
+    xmlpp::NodeSet devices =
+      getRootNode()->find("//MTConnectDevices/Devices/*");
+    
+    for (unsigned int i=0; i<devices.size(); i++)
+    {
+      // MAKE SURE FIRST ITEMS IN HIERARCHIES ARE DEVICES
+      mDevices.push_back(static_cast<Device *>(handleComponent(devices[i])));
+    }
   }
   catch (std::exception & e)
   {
-    std::cout << "XmlParser.cpp: " << e.what() << std::endl;
-    throw -2;
-  }
-  
-  xmlpp::NodeSet devices = getRootNode()->find("//MTConnectDevices/Devices/*");
-  
-  for (unsigned int i=0; i<devices.size(); i++)
-  {
-    // MAKE SURE FIRST ITEMS IN HIERARCHIES ARE DEVICES
-    mDevices.push_back(static_cast<Device *>(handleComponent(devices[i])));
+    logEvent("XmlParser::XmlParser", e.what());
+    delete mParser;
+    throw e.what();
   }
 }
 
@@ -69,41 +70,12 @@ XmlParser::~XmlParser()
   delete mParser;
 }
 
-std::list<Device *> XmlParser::getDevices() const
-{
-  return mDevices;
-}
-
-std::list<DataItem *> XmlParser::getDataItems() const
-{
-  return mDataItems;
-}
-
 xmlpp::Node * XmlParser::getRootNode() const
 {
   return mParser->get_document()->get_root_node();
 }
 
 /* XmlParser protected methods */
-std::map<std::string, std::string> XmlParser::getAttributes(
-    const xmlpp::Element * element
-  )
-{
-  std::map<std::string, std::string> mapToReturn;
-  
-  // Load all the attributes into the map to return
-  const xmlpp::Element::AttributeList& attributes =
-    element->get_attributes();
-    
-  xmlpp::Element::AttributeList::const_iterator attribute;
-  for (attribute=attributes.begin(); attribute!=attributes.end(); attribute++)
-  {
-    mapToReturn[(*attribute)->get_name()] = (*attribute)->get_value();
-  }
-  
-  return mapToReturn;
-}
-
 Component * XmlParser::handleComponent(
     xmlpp::Node * component,
     Component * parent
@@ -111,7 +83,12 @@ Component * XmlParser::handleComponent(
 {
   Component * toReturn = NULL;
   Component::EComponentSpecs spec =
-    Component::getComponentEnum(component->get_name());
+    (Component::EComponentSpecs) getEnumeration(
+      component->get_name(),
+      Component::SComponentSpecs,
+      Component::NumComponentSpecs
+    );
+  
   switch (spec)
   {
     case Component::AXES:
@@ -133,20 +110,19 @@ Component * XmlParser::handleComponent(
     case Component::TEXT:
       break;
     default:
-      std::cout << "ERROR: parsing XML" << std::endl;
-      std::cout << "Received: " << component->get_name() << std::endl;
+      logEvent("XmlParser::handleComponent",
+        "Received " + component->get_name());
   }
   
-  // Construct
-  if (toReturn != NULL && parent != NULL)
+  // Construct relationships
+  if (toReturn != NULL and parent != NULL)
   {
-    parent->addChild(toReturn);
-    toReturn->setParent(parent);
+    parent->addChild(*toReturn);
+    toReturn->setParent(*parent);
   }
-  
   
   // Check if there are children
-  if (toReturn != NULL && !dynamic_cast<const xmlpp::ContentNode*>(component))
+  if (toReturn != NULL and !dynamic_cast<const xmlpp::ContentNode*>(component))
   {
     xmlpp::Node::NodeList children = component->get_children();
     
@@ -198,12 +174,31 @@ Component * XmlParser::loadComponent(
   }
 }
 
+std::map<std::string, std::string> XmlParser::getAttributes(
+    const xmlpp::Element * element
+  )
+{
+  std::map<std::string, std::string> toReturn;
+  
+  // Load all the attributes into the map to return
+  const xmlpp::Element::AttributeList& attributes =
+    element->get_attributes();
+    
+  xmlpp::Element::AttributeList::const_iterator attribute;
+  for (attribute=attributes.begin(); attribute!=attributes.end(); attribute++)
+  {
+    toReturn[(*attribute)->get_name()] = (*attribute)->get_value();
+  }
+  
+  return toReturn;
+}
+
 void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent)
 {
   const xmlpp::Element* nodeElement =
     dynamic_cast<const xmlpp::Element*>(dataItem);
   DataItem * d = new DataItem(getAttributes(nodeElement));
-  d->setComponent(parent);
+  d->setComponent(*parent);
   
   // Check children for "source"
   if (!dynamic_cast<const xmlpp::ContentNode*>(dataItem))
@@ -215,32 +210,15 @@ void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent)
       xmlpp::Element * source =
         dynamic_cast<xmlpp::Element *>(children.front());
       
-      if (source && source->has_child_text())
+      if (source and source->has_child_text())
       {
         xmlpp::TextNode * nodeText = source->get_child_text();
         d->addSource(nodeText->get_content());
       }
     }
-    /*
-    xmlpp::Node::NodeList::iterator child;
-    for (child=children.begin(); child!=children.end(); ++child)
-    {
-      std::string childName = (*child)->get_name();
-      if (childName == "Source")
-      {
-        xmlpp::Node::NodeList grandChildren = (*child)->get_children();
-        const xmlpp::TextNode* nodeText =
-          dynamic_cast<const xmlpp::TextNode*>(grandChildren.front());
-        
-        if (nodeText)
-        {
-          d->addSource(nodeText->get_content());
-        }
-      }
-    }*/
   }
   
-  parent->addDataItem(d);
+  parent->addDataItem(*d);
   mDataItems.push_back(d);
 }
 

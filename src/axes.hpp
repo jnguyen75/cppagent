@@ -40,10 +40,13 @@ class Axes : public Component
 { 
 public:
   /* Constructor that sets variables from an attribute map */
-  Axes(const std::map<std::string, std::string> attributes);
+  Axes(const std::map<std::string, std::string> attributes)
+  : Component(attributes)
+  {
+  }
   
   /* Inherited method that returns name of the class */
-  const std::string getClass() const;
+  const std::string getClass() const { return "Axes"; }
 };
 
 #endif

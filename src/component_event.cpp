@@ -34,7 +34,8 @@
 #include "component_event.hpp"
 
 /* ComponentEvent public static constants */
-const std::string ComponentEvent::SSimpleUnits[NumSimpleUnits] = {
+const std::string ComponentEvent::SSimpleUnits[NumSimpleUnits] =
+{
   "INCH",
   "FOOT",
   "CENTIMETER",
@@ -61,9 +62,14 @@ const std::string ComponentEvent::SSimpleUnits[NumSimpleUnits] = {
 };
 
 /* ComponentEvent public methods */
-ComponentEvent::ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value)
+ComponentEvent::ComponentEvent(
+    DataItem& dataItem,
+    unsigned int sequence,
+    const std::string& time,
+    const std::string& value
+  )
 {
-  mDataItem = dataItem;
+  mDataItem = &dataItem;
   mSequence = sequence;
   mTime = time;
   
@@ -79,6 +85,9 @@ ComponentEvent::ComponentEvent(ComponentEvent& ce)
   
   mTime = attributes["timestamp"];
   mSequence = atoi(attributes["sequence"].c_str());
+  
+  mAlarmData = attributes["code"] + "|" + attributes["nativeCode"] + "|" +
+    attributes["severity"] + "|" + attributes["state"];
   
   fValue = ce.getFValue();
   sValue = ce.getSValue();
@@ -98,29 +107,41 @@ std::map<std::string, std::string> ComponentEvent::getAttributes()
   attributes["name"] = mDataItem->getName();
   attributes["sequence"] = intToString(mSequence);
   
+  if (getDataItem()->getType() == DataItem::ALARM)
+  {
+    std::istringstream toParse(mAlarmData);
+    std::string token;
+    
+    getline(toParse, token, '|');
+    attributes["code"] = token;
+  
+    getline(toParse, token, '|');
+    attributes["nativeCode"] = token;
+    
+    getline(toParse, token, '|');
+    attributes["severity"] = token;
+    
+    getline(toParse, token, '|');
+    attributes["state"] = token;
+  }
+  
   return attributes;
 }
 
-DataItem * ComponentEvent::getDataItem() const
-{
-  return mDataItem;
-}
-
-float ComponentEvent::getFValue() const
-{
-  return fValue;
-}
-
-std::string ComponentEvent::getSValue() const
-{
-  return sValue;
-}
-
 /* ComponentEvent protected methods */
-void ComponentEvent::convertValue(std::string value)
+void ComponentEvent::convertValue(const std::string& value)
 {
   // Check if the type is an alarm or if it doesn't have units
-  if (mDataItem->getType() == DataItem::ALARM || mDataItem->getNativeUnits().empty())
+  if (mDataItem->getType() == DataItem::ALARM)
+  {
+    logEvent("AlarmData", value);
+    std::string::size_type lastPipe = value.rfind('|');
+    
+    mAlarmData = value.substr(0, lastPipe);
+    sValue = value.substr(lastPipe+1);
+    return;
+  }
+  else if (mDataItem->getNativeUnits().empty())
   {
     sValue = value;
     return;
@@ -129,6 +150,7 @@ void ComponentEvent::convertValue(std::string value)
   std::string units = mDataItem->getNativeUnits();
   std::string::size_type slashLoc = units.find('/');
   
+  // Convert units of numerator / denominator (^ power)
   if (slashLoc == std::string::npos)
   {
     fValue = convertSimple(units, atof(value.c_str()));
@@ -144,7 +166,7 @@ void ComponentEvent::convertValue(std::string value)
     
     std::string::size_type carotLoc = denominator.find('^');
     
-    if (numerator == "REVOLUTION" && denominator == "SECOND")
+    if (numerator == "REVOLUTION" and denominator == "SECOND")
     {
       fValue = atof(value.c_str()) * 60.0f;
     }
@@ -169,9 +191,9 @@ void ComponentEvent::convertValue(std::string value)
   }
 }
 
-float ComponentEvent::convertSimple(std::string units, float v)
+float ComponentEvent::convertSimple(const std::string& units, float v)
 {
-  switch(getSimpleUnitsEnum(units))
+  switch(getEnumeration(units, SSimpleUnits, NumSimpleUnits))
   {
     case INCH:
       return v * 25.4f;
@@ -212,19 +234,5 @@ float ComponentEvent::convertSimple(std::string units, float v)
       // or return value..?
       return v;
   }
-}
-
-/* ComponentEvent public static methods */
-ComponentEvent::ESimpleUnits ComponentEvent::getSimpleUnitsEnum(std::string name)
-{
-  for (unsigned int i=0; i<ComponentEvent::NumSimpleUnits; i++)
-  {
-    if (name == ComponentEvent::SSimpleUnits[i])
-    {
-       return (ComponentEvent::ESimpleUnits) i;
-    }
-  }
-  
-  return (ComponentEvent::ESimpleUnits) -1;
 }
 

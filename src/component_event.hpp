@@ -34,14 +34,12 @@
 #ifndef COMPONENT_EVENT_HPP
 #define COMPONENT_EVENT_HPP
 
-#include "component.hpp"
-#include "data_item.hpp"
-
 #include <string>
-#include <iostream>
 #include <cmath>
 
-extern std::string intToString(unsigned int i);
+#include "component.hpp"
+#include "data_item.hpp"
+#include "globals.hpp"
 
 class DataItem;
 
@@ -80,6 +78,30 @@ public:
   static const unsigned int NumSimpleUnits = 23;
   static const std::string SSimpleUnits[];
   
+public:
+  /* Initialize the ComponentEvent with the type of event, sequence number, time and value */
+  ComponentEvent(
+    DataItem& dataItem,
+    unsigned int sequence,
+    const std::string& time,
+    const std::string& value
+  );
+  
+  /* Copy constructor */
+  ComponentEvent(ComponentEvent& ce);
+  
+  /* Virtual destructor */
+  virtual ~ComponentEvent();
+  
+  /* Extract the component event data into a map */
+  std::map<std::string, std::string> getAttributes();
+  
+  DataItem * getDataItem() const { return mDataItem; }
+  
+  /* Get the value */
+  float getFValue() const { return fValue; }
+  std::string getSValue() const { return sValue; }
+  
 protected:
   /* Holds the data item from the device */
   DataItem * mDataItem;
@@ -93,35 +115,16 @@ protected:
   /* The value of the event */
   float fValue;
   std::string sValue;
+  
+  /* Hold the alarm data: CODE|NATIVECODE|SEVERITY|STATE */
+  std::string mAlarmData;
 
 protected:
   /* Convert the value to the agent unit standards */
-  void convertValue(std::string value);
+  void convertValue(const std::string& value);
   
   /* Convert a simple value from native units to MTConnect units */
-  float convertSimple(std::string units, float v);
-  
-public:
-  /* Initialize the ComponentEvent with the type of event, sequence number, time and value */
-  ComponentEvent(DataItem * dataItem, unsigned int sequence, std::string time, std::string value);
-  
-  /* Copy constructor */
-  ComponentEvent(ComponentEvent& ce);
-  
-  /* Virtual destructor */
-  virtual ~ComponentEvent();
-  
-  /* Extract the component event data into a map */
-  std::map<std::string, std::string> getAttributes();
-  
-  DataItem * getDataItem() const;
-  
-  /* Get the value */
-  float getFValue() const;
-  std::string getSValue() const;
-  
-public:
-  static ComponentEvent::ESimpleUnits getSimpleUnitsEnum(std::string name);
+  float convertSimple(const std::string& units, float v);
 };
 
 #endif

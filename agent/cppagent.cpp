@@ -37,14 +37,30 @@
 #include <options.h>
 
 
-void terminateServerThread(Agent * server)
+void terminateServerThread(Agent *server)
 {
   std::cout << "Press enter at anytime to terminate web server" << std::endl;
   std::cin.get();
  
   // Shut down server by unblocking Agent::start()
   server->clear();
-  delete server;
+}
+
+void addToBufferThread(Agent *server)
+{
+  while (true)
+  {
+    std::string dataItem, value;
+    
+    std::cout << std::endl << "Data item: ";
+    std::cin >> dataItem;
+    
+    std::cout << "Value: ";
+    std::cin >> value;
+    
+    bool added = server->addToBuffer(dataItem, value);
+    std::cout << "Success: " << std::boolalpha << added << std::endl;
+  }
 }
 
 #ifndef WIN32
@@ -119,7 +135,7 @@ void daemonize()
 
 int main()
 {
-  daemonize();
+  //daemonize();
   
   try
   {
@@ -129,15 +145,22 @@ int main()
     Agent * agent = new Agent("../include/haas.xml");
     agent->addAdapter("localhost", 7878);
     
-    // create a thread that will listen for the user to end this program
-    //thread_function t(terminateServerThread, agent);
+    // ***** DEBUGGING TOOLS *****
     
-    agent->set_listening_port(Agent::SERVER_PORT);
-    agent->start();
+    // Create a thread that will listen for the user to end this program
+    //thread_function t(terminateServerThread, &agent);
+    
+    // Use the addToBuffer API to allow user input for data
+    thread_function t(addToBufferThread, &agent);
+    
+    agent.set_listening_port(SERVER_PORT);
+    agent.start();
   }
   catch (std::exception & e)
   {
-    std::cerr << "Agent failed to load." << std::endl;
+    logEvent("Cppagent::Main", e.what());
+    std::cerr << "Agent failed to load: " << e.what() << std::endl;
+    return -1;
   }
   
   return 0;

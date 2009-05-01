@@ -1,6 +1,8 @@
 *.o
 *.lo
 *.a
+agent.log
+agent.pid
 .libs
 .deps
 .DS_Store

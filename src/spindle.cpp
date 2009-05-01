@@ -34,15 +34,3 @@
 
 #include "spindle.hpp"
 
-/* Spindle public methods */
-Spindle::Spindle(const std::map<std::string, std::string> attributes)
-: Component(attributes)
-{
-
-}
-
-const std::string Spindle::getClass() const
-{
-  return "Spindle";
-}
-

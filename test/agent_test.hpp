@@ -58,11 +58,13 @@ class AgentTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(AgentTest);
   CPPUNIT_TEST(testConstructor);
-  CPPUNIT_TEST(testRequest);
+  CPPUNIT_TEST(testBadPath);
+  CPPUNIT_TEST(testProbe);
+  CPPUNIT_TEST(testBadXPath);
   CPPUNIT_TEST(testAddAdapter);
   CPPUNIT_TEST_SUITE_END();
   
-  typedef map<std::string,std::string>::kernel_1a_c map_type;
+  typedef map<std::string, std::string>::kernel_1a_c map_type;
   typedef queue<std::string>::kernel_1a_c queue_type;
   
 protected:
@@ -84,7 +86,9 @@ protected:
   
 protected:
   void testConstructor();
-  void testRequest();
+  void testBadPath();
+  void testProbe();
+  void testBadXPath();
   void testAddAdapter();
   
 public:

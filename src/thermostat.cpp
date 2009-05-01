@@ -34,15 +34,3 @@
 
 #include "thermostat.hpp"
 
-/* Thermostat public methods */
-Thermostat::Thermostat(const std::map<std::string, std::string> attributes)
-: Component(attributes)
-{
-
-}
-
-const std::string Thermostat::getClass() const
-{
-  return "Thermostat";
-}
-

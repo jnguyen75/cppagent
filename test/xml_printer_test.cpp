@@ -317,67 +317,67 @@ void XmlPrinterTest::testPrintCurrent()
   
   d = getDataItemById(6);
   ComponentEvent e6 (d, 10254804, "TIME", "0");
-  d->setLatestEvent(&e6);
+  d->setLatestEvent(e6);
   
   d = getDataItemById(25);
   ComponentEvent e25 (d, 15, "TIME", "100");
-  d->setLatestEvent(&e25);
+  d->setLatestEvent(e25);
   
   d = getDataItemById(12);
   ComponentEvent e12 (d, 10254803, "TIME", "0");
-  d->setLatestEvent(&e12);
+  d->setLatestEvent(e12);
   
   d = getDataItemById(13);
   ComponentEvent e13 (d, 16, "TIME", "100");
-  d->setLatestEvent(&e13);
+  d->setLatestEvent(e13);
   
   d = getDataItemById(14);
   ComponentEvent e14 (d, 10254797, "TIME", "0.00199");
-  d->setLatestEvent(&e14);
+  d->setLatestEvent(e14);
   
   d = getDataItemById(15);
   ComponentEvent e15 (d, 10254800, "TIME", "0.00199");
-  d->setLatestEvent(&e15);
+  d->setLatestEvent(e15);
   
   d = getDataItemById(16);
   ComponentEvent e16 (d, 10254798, "TIME", "0.0002");
-  d->setLatestEvent(&e16);
+  d->setLatestEvent(e16);
   
   d = getDataItemById(17);
   ComponentEvent e17 (d, 10254801, "TIME", "0.0002");
-  d->setLatestEvent(&e17);
+  d->setLatestEvent(e17);
   
   d = getDataItemById(18);
   ComponentEvent e18 (d, 10254799, "TIME", "1");
-  d->setLatestEvent(&e18);
+  d->setLatestEvent(e18);
   
   d = getDataItemById(19);
   ComponentEvent e19 (d, 10254802, "TIME", "1");
-  d->setLatestEvent(&e19);
+  d->setLatestEvent(e19);
   
   d = getDataItemById(20);
   ComponentEvent e20 (d, 10254789, "TIME", "x-0.132010 y-0.158143");
-  d->setLatestEvent(&e20);
+  d->setLatestEvent(e20);
   
   d = getDataItemById(21);
   ComponentEvent e21 (d, 13, "TIME", "AUTOMATIC");
-  d->setLatestEvent(&e21);
+  d->setLatestEvent(e21);
   
   d = getDataItemById(22);
   ComponentEvent e22 (d, 10254796, "TIME", "0");
-  d->setLatestEvent(&e22);
+  d->setLatestEvent(e22);
   
   d = getDataItemById(23);
   ComponentEvent e23 (d, 12, "TIME", "/home/mtconnect/simulator/spiral.ngc");
-  d->setLatestEvent(&e23);
+  d->setLatestEvent(e23);
   
   d = getDataItemById(24);
   ComponentEvent e24 (d, 10254795, "TIME", "READY");
-  d->setLatestEvent(&e24);
+  d->setLatestEvent(e24);
   
   d = getDataItemById(1);
   ComponentEvent e1 (d, 1, "TIME", "ON");
-  d->setLatestEvent(&e1);
+  d->setLatestEvent(e1);
   
   fillAttribute(currentString, "instanceId", "123");
   fillAttribute(currentString, "bufferSize", "9999");
