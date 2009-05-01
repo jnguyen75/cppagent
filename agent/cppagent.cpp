@@ -52,15 +52,18 @@ void addToBufferThread(Agent *server)
 {
   while (true)
   {
-    std::string dataItem, value;
-    
+    std::string device, dataItem, value;
+
+    std::cout << std::endl << "Device: ";
+    std::cin >> device;
+
     std::cout << std::endl << "Data item: ";
     std::cin >> dataItem;
     
     std::cout << "Value: ";
     std::cin >> value;
     
-    bool added = server->addToBuffer(dataItem, value);
+    bool added = server->addToBuffer(device, dataItem, value);
     std::cout << "Success: " << std::boolalpha << added << std::endl;
   }
 }
@@ -187,7 +190,7 @@ int main(int aArgc, char *aArgv[])
       }
       port = adapter.substr(pos2 + 1);
 
-      agent->addAdapter(address, atoi(port.c_str()));
+      agent->addAdapter(device, address, atoi(port.c_str()));
     }
         
     // ***** DEBUGGING TOOLS *****

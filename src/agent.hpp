@@ -104,10 +104,11 @@ public:
   );
   
   /* Add an adapter to the agent */
-  void addAdapter(const std::string& host, const unsigned int port);
+  void addAdapter(const std::string& device, const std::string& host, const unsigned int port);
   
   /* Add component events to the sliding buffer */
   bool addToBuffer(
+    const std::string& device,
     const std::string& dataItemName,
     const std::string& value,
     std::string time = ""

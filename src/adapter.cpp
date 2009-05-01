@@ -34,8 +34,8 @@
 #include "adapter.hpp"
 
 /* Adapter public methods */
-Adapter::Adapter(const std::string &server, const unsigned int port)
-: Connector(server, port)
+Adapter::Adapter(const std::string& device, const std::string &server, const unsigned int port)
+  : Connector(server, port), mDevice(device)
 {
   // Will start threaded object: Adapter::thread()
   start();
@@ -74,17 +74,17 @@ void Adapter::processData(const std::string& data)
       alarmValue += "|" + toUpperCase(value);
     }
     
-    mAgent->addToBuffer(time, key, alarmValue);
+    mAgent->addToBuffer(mDevice, time, key, alarmValue);
   }
   else
   {
     // Add key->value pairings
-    mAgent->addToBuffer(key, value, time);
+    mAgent->addToBuffer(mDevice, key, value, time);
     
     // Look for more key->value pairings in the rest of the data
     while (getline(toParse, key, '|') && getline(toParse, value, '|'))
     {
-      mAgent->addToBuffer(key, value, time);
+      mAgent->addToBuffer(mDevice, key, value, time);
     }
   }
 }

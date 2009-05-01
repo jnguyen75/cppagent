@@ -49,7 +49,7 @@ class Adapter : public Connector, public threaded_object
 {
 public:
   /* Connect the adapter to the server & port */
-  Adapter(const std::string &server, const unsigned int port);
+  Adapter(const std::string& device, const std::string &server, const unsigned int port);
   
   /* Virtual destructor */
   virtual ~Adapter();
@@ -63,6 +63,7 @@ public:
 protected:
   /* Pointer to the agent */
   Agent * mAgent;
+  std::string mDevice;
   
 private:
   /* Inherited and is run as part of the threaded_object */

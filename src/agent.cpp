@@ -130,16 +130,17 @@ bool Agent::on_request(
   return true;
 }
 
-void Agent::addAdapter(const std::string& host, const unsigned int port)
+void Agent::addAdapter(const std::string &device, const std::string& host, const unsigned int port)
 {
-  Adapter *adapter = new Adapter(host, port);
+  Adapter *adapter = new Adapter(device, host, port);
   adapter->setAgent(*this);
 }
 
 bool Agent::addToBuffer(
-    const std::string& dataItemName,
-    const std::string& value,
-    std::string time
+  const std::string& device,
+  const std::string& dataItemName,
+  const std::string& value,
+  std::string time
   )
 {
   DataItem *dataItem = getDataItemByName(dataItemName);
