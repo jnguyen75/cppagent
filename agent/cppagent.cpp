@@ -34,8 +34,10 @@
 #include "../src/agent.hpp"
 #include "fcntl.h"
 #include "sys/stat.h"
-#include <options.h>
+#include <options.hpp>
 
+using namespace std;
+using namespace dlib;
 
 void terminateServerThread(Agent *server)
 {
@@ -133,28 +135,76 @@ void daemonize()
 }
 
 
-int main()
+int main(int aArgc, char *aArgv[])
 {
-  //daemonize();
+  int port = 5000;
+  const char *config_file = "probe.xml";
+  list<string> adapters;
+  bool interactive = false;
+  bool daemonize_proc = false;
+
+  OptionsList option_list;
+  option_list.append(new Option("p", port, "HTTP Server Port\nDefault: 5000", "port"));
+  option_list.append(new Option("f", config_file, "Configuration file\nDefault: probe.xml", "file"));
+  option_list.append(new Option("i", interactive, "Interactive shell", "interactive"));
+  option_list.append(new Option("d", daemonize_proc, "Daemonize\nDefault: false", "daemonize"));
+  option_list.append(new Option("a", adapters, "Location of adapter\n'device:address:port'", "adapters", true));
+  option_list.parse(aArgc, (const char**) aArgv);
+
+
+  if (daemonize_proc)
+  {
+    daemonize();
+  }
   
   try
   {
-    //Agent * agent = new Agent("../include/128.32.164.245.xml");
-    //agent->addAdapter("128.32.164.245", 7878);
-    
-    Agent * agent = new Agent("../include/haas.xml");
-    agent->addAdapter("localhost", 7878);
-    
+    Agent * agent = new Agent(config_file);
+    for (list<string>::iterator iter = adapters.begin(); iter != adapters.end(); iter++)
+    {
+      // Should have the format device:address:port
+      string &adapter = *iter;
+      string device, address, port;
+      
+      unsigned int pos1 = adapter.find_first_of(':');
+      if (pos1 == string::npos) {
+	cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
+	option_list.usage();
+      }
+      
+      device = adapter.substr(0, pos1);
+      
+      unsigned int pos2 = adapter.find_first_of(':', pos1 + 1);
+      if (pos2 == string::npos) {
+	cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
+	option_list.usage();
+      }
+      address = adapter.substr(pos1 + 1, pos2 - pos1);
+
+      if (adapter.length() <= pos2) {
+	cerr << "Bad format for adapter specification, must be: device:address:port" << endl;
+	option_list.usage();
+      }
+      port = adapter.substr(pos2 + 1);
+
+      agent->addAdapter(address, atoi(port.c_str()));
+    }
+        
     // ***** DEBUGGING TOOLS *****
     
     // Create a thread that will listen for the user to end this program
     //thread_function t(terminateServerThread, &agent);
+
+    if (interactive)
+    {
+      // Use the addToBuffer API to allow user input for data
+      thread_function t(addToBufferThread, agent);
+    }
     
-    // Use the addToBuffer API to allow user input for data
-    thread_function t(addToBufferThread, &agent);
-    
-    agent.set_listening_port(SERVER_PORT);
-    agent.start();
+    agent->set_listening_port(port);
+    agent->start();
+
+    delete agent;
   }
   catch (std::exception & e)
   {
