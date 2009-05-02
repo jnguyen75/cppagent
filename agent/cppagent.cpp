@@ -215,13 +215,10 @@ int main(int aArgc, char *aArgv[])
     if (interactive)
     {
       // Use the addToBuffer API to allow user input for data
-      
       interactiveThread = new thread_function(addToBufferThread, agent);
-      cout << agent->is_running() << endl;
     }
     
     agent->set_listening_port(listenPort);
-    cout << agent->is_running() << endl;
     agent->start();
     
     delete interactiveThread;
