@@ -35,6 +35,7 @@
 #include "fcntl.h"
 #include "sys/stat.h"
 #include "../src/options.hpp"
+#include "string.h"
 
 using namespace std;
 using namespace dlib;
@@ -147,6 +148,7 @@ int main(int aArgc, char *aArgv[])
   list<string> adapters;
   bool interactive = false;
   bool daemonize_proc = false;
+  const char *adapters_file = 0;
 
   OptionsList option_list;
   option_list.append(new Option("p", listenPort, "HTTP Server Port\nDefault: 5000", "port"));
@@ -154,7 +156,8 @@ int main(int aArgc, char *aArgv[])
   option_list.append(new Option("l", gLogFile, "Log file\nDefault: agent.log", "file"));
   option_list.append(new Option("i", interactive, "Interactive shell", false));
   option_list.append(new Option("d", daemonize_proc, "Daemonize\nDefault: false", false));
-  option_list.append(new Option("a", adapters, "Location of adapter\n'device:address:port'", "adapters", true));
+  option_list.append(new Option("c", adapters_file, "Adapter configuration file", "file"));
+  option_list.append(new Option("a", adapters, "Location of adapter\n'device:address:port'", "adapters"));
   option_list.parse(aArgc, (const char**) aArgv);
   
   if (daemonize_proc)
@@ -165,6 +168,33 @@ int main(int aArgc, char *aArgv[])
   try
   {
     Agent * agent = new Agent(config_file);
+    if (adapters_file)
+    {
+      ifstream ad_file(adapters_file);
+      if (ad_file)
+      {
+	while (ad_file.good())
+	{
+	  char line[256];
+	  ad_file.getline(line, 255);
+	  line[255] = '\0';
+	  if (strchr(line, ':')) 
+	    adapters.push_back(line);
+	}
+      }
+      else
+      {
+	cerr << "Cannot open file for adapters: " << adapters_file << endl;
+	option_list.usage();
+      }
+    }
+
+    if (adapters.empty())
+    {
+      cerr << "Either -a or -c must be specified" << endl;
+      option_list.usage();
+    }
+    
     for (list<string>::iterator iter = adapters.begin(); iter != adapters.end(); iter++)
     {
       // Should have the format device:address:port
