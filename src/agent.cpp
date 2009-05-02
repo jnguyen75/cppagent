@@ -157,7 +157,7 @@ unsigned int Agent::addToBuffer(
   
   if (dataItem == NULL)
   {
-    logEvent("Agent", "Could not find data item" + dataItemName);
+    logEvent("Agent", "Could not find data item: " + dataItemName);
     return 0;
   }
   else

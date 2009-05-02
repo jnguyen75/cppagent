@@ -106,6 +106,8 @@ public:
   /* Add an adapter to the agent */
   void addAdapter(const std::string& device, const std::string& host, const unsigned int port);
   
+  Device * getDeviceByName(const std::string& name) { return mDeviceMap[name]; } 
+  
   /* Add component events to the sliding buffer */
   unsigned int addToBuffer(
     const std::string& device,
@@ -186,7 +188,6 @@ protected:
   );
   
   /* Find devices/data items by name */
-  Device * getDeviceByName(const std::string& name) { return mDeviceMap[name]; } 
   DataItem * getDataItemByName(const std::string& device, const std::string& name);
   DataItem * getDataItemById(const std::string& id) { return mDataItemMap[id]; }
   

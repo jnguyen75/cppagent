@@ -177,6 +177,12 @@ int main(int aArgc, char *aArgv[])
       }
       
       device = adapter.substr(0, pos1);
+      // Make sure the device exists
+      if (agent->getDeviceByName(device) == 0)
+      {
+        cerr << "Can't locate device " << device << " in XML configuration file." << endl;
+        option_list.usage();
+      }
       
       unsigned int pos2 = adapter.find_first_of(':', pos1 + 1);
       if (pos2 == string::npos) {
