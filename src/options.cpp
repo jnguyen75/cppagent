@@ -135,7 +135,7 @@ void Option::expandFiles(const char *aFileName)
 {
   if (strchr(aFileName, '*') != NULL || strchr(aFileName, '?') != NULL)
   {
-#ifdef WIN32
+#ifdef NOT_DEF
     WIN32_FIND_DATA fileData;
     HANDLE search = FindFirstFile(aFileName, &fileData);
     if (search != INVALID_HANDLE_VALUE)

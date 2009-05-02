@@ -56,7 +56,7 @@ public:
   const char *getName() const     { return name_; }
   const char *getUsage() const    { return usage_; }
   const char *getArgDesc() const  { return argDesc_; }
-  bool		getOrder() const    { return order_; }
+  int		getOrder() const    { return order_; }
   bool		ignoreCase() const  { return ignoreCase_; }
   bool     hasArgument() const { return argument_; }
   bool     hasSwitch() const   { return switch_; }

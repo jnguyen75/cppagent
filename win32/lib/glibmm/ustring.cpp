@@ -2,7 +2,9 @@
 #include "ustring.h"
 
 namespace Glib {
-ustring::ustring(std::string &str) : std::string(str) 
-{ }
+  ustring::ustring(std::string &str) : std::string(str) 
+  { }
 
+  std::string &ustring::raw() { return *this; }
+    
 }

@@ -166,7 +166,7 @@ void ComponentEvent::convertValue(const std::string& value)
     
     std::string::size_type carotLoc = denominator.find('^');
     
-    if (numerator == "REVOLUTION" and denominator == "SECOND")
+    if (numerator == "REVOLUTION" && denominator == "SECOND")
     {
       fValue = atof(value.c_str()) * 60.0f;
     }

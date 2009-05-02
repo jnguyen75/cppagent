@@ -224,7 +224,7 @@ bool Agent::handleCall(
     return handleStream(out, result, devicesAndPath(path, deviceName), true,
       freq);
   }
-  else if (call == "probe" or call.empty())
+  else if (call == "probe" || call.empty())
   {
     result = handleProbe(deviceName);
     return true;
@@ -246,7 +246,7 @@ bool Agent::handleCall(
       start = checkAndGetParam(result, queries, "from", 0);
     }
     
-    if (freq == PARAM_ERROR or count == PARAM_ERROR or start == PARAM_ERROR)
+    if (freq == PARAM_ERROR || count == PARAM_ERROR || start == PARAM_ERROR)
     {
       return true;
     }
@@ -559,7 +559,7 @@ int Agent::checkAndGetParam(
   
   long int value = strtol(queries[param].c_str(), NULL, 10);
   
-  if (minValue != NO_VALUE and value < minValue)
+  if (minValue != NO_VALUE && value < minValue)
   {
     if (minError)
     {
@@ -570,7 +570,7 @@ int Agent::checkAndGetParam(
     return minValue;
   }
   
-  if (maxValue != NO_VALUE and value > maxValue)
+  if (maxValue != NO_VALUE && value > maxValue)
   {
     result = printError("QUERY_ERROR",
       "'" + param + "' must be less than "

@@ -184,7 +184,7 @@ std::string DataItem::getTypeString(bool uppercase) const
 
 bool DataItem::hasName(const std::string name)
 {
-  return mName == name or (!mSource.empty() and mSource == name);
+  return mName == name || (!mSource.empty() && mSource == name);
 }
 
 void DataItem::setLatestEvent(ComponentEvent& event)

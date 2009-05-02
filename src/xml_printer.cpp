@@ -306,7 +306,7 @@ std::string XmlPrinter::printNode(
   std::string toReturn;
 
   // Ignore empty whitespace
-  if (nodeText and nodeText->is_white_space())
+  if (nodeText && nodeText->is_white_space())
   {
     return "";
   }
@@ -314,7 +314,7 @@ std::string XmlPrinter::printNode(
   Glib::ustring nodename = node->get_name();
   
   // Element node: i.e. "<element"
-  if (!nodeText and !nodename.empty())
+  if (!nodeText && !nodename.empty())
   {
     toReturn += printIndentation(indentation) + "<" + nodename;
   }
@@ -355,7 +355,7 @@ std::string XmlPrinter::printNode(
   }
   
   // Close off xml tag, i.e. </tag>
-  if (!nodeText and !nodename.empty() and hasChildren)// or indentation == 0)
+  if (!nodeText && !nodename.empty() && hasChildren)// || indentation == 0)
   {
     if (!nodeElement->has_child_text())
     {
@@ -456,7 +456,7 @@ xmlpp::Element * XmlPrinter::getDeviceStream(
   {
     xmlpp::Element * nodeElement = dynamic_cast<xmlpp::Element *>(*child);
     
-    if (nodeElement and
+    if (nodeElement &&
       nodeElement->get_attribute_value("name") == device->getName())
     {
       return nodeElement;

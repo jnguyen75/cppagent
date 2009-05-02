@@ -20,6 +20,7 @@ namespace Glib {
 		template<class InputIterator> ustring (InputIterator begin, InputIterator end) : std::string(begin, end) { }
 
 		size_type bytes() const { return length(); }
+		std::string &raw();
 	};
 }
 

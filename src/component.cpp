@@ -54,7 +54,7 @@ Component::Component(std::string cls, std::map<std::string, std::string> attribu
   mName = attributes["name"];
   
   mUuid = attributes["uuid"];
-  mSampleRate = (attributes["sampleRate"].empty()) ?
+  mSampleRate = (float) (attributes["sampleRate"].empty()) ?
     0.0f : atof(attributes["sampleRate"].c_str());
   
   mParent = NULL;

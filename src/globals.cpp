@@ -79,6 +79,20 @@ bool isNonNegativeInteger(const std::string& s)
 
 std::string getCurrentTime(TimeFormat format)
 {
+#ifdef WIN32
+  SYSTEMTIME st;
+  char timestamp[64];
+  GetSystemTime(&st);
+  sprintf(timestamp, "%4d-%02d-%02dT%02d:%02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour,
+	  st.wMinute, st.wSecond);
+  
+  if (format == GMT_UV_SEC)
+  {
+    sprintf(timestamp + strlen(timestamp), ".%04d", st.wMilliseconds);
+  }
+  
+  return timestamp;
+#else
   char timeBuffer [30];
   time_t rawtime;
   struct tm * timeinfo;
@@ -121,6 +135,7 @@ std::string getCurrentTime(TimeFormat format)
   }
   
   return toReturn;
+#endif
 }
 
 unsigned int getCurrentTimeInSec()

@@ -118,14 +118,14 @@ Component * XmlParser::handleComponent(
   }
   
   // Construct relationships
-  if (toReturn != NULL and parent != NULL)
+  if (toReturn != NULL && parent != NULL)
   {
     parent->addChild(*toReturn);
     toReturn->setParent(*parent);
   }
   
   // Check if there are children
-  if (toReturn != NULL and !dynamic_cast<const xmlpp::ContentNode*>(component))
+  if (toReturn != NULL && !dynamic_cast<const xmlpp::ContentNode*>(component))
   {
     xmlpp::Node::NodeList children = component->get_children();
     
@@ -202,7 +202,7 @@ void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent, Device 
       xmlpp::Element * source =
         dynamic_cast<xmlpp::Element *>(children.front());
       
-      if (source and source->has_child_text())
+      if (source && source->has_child_text())
       {
         xmlpp::TextNode * nodeText = source->get_child_text();
         d->addSource(nodeText->get_content());
