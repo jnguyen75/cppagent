@@ -243,7 +243,7 @@ bool Agent::handleCall(
     
     if (start == NO_START) // If there was no data in queries
     {
-      start = checkAndGetParam(result, queries, "from", 0);
+      start = checkAndGetParam(result, queries, "from", 1);
     }
     
     if (freq == PARAM_ERROR || count == PARAM_ERROR || start == PARAM_ERROR)
@@ -367,6 +367,10 @@ void Agent::streamData(
     
     std::string content = (current) ?
       fetchCurrentData(dataItems) : fetchSampleData(dataItems, start, count);
+    logEvent("Start", intToString(start));
+    logEvent("Count", intToString(count));
+    
+    start = (start + count < mSequence) ? (start + count) : mSequence - 1;
     
     out << "Content-length: " << content.length() << std::endl;
     
@@ -406,9 +410,9 @@ std::string Agent::fetchSampleData(
   
   // START SHOULD BE BETWEEN 0 AND SEQUENCE NUMBER
   start = (start <= firstSeq) ? firstSeq  : start;
-  unsigned int end = (count + start >= mSequence) ? mSequence-1 : count+start;
+  unsigned int end = (count + start >= mSequence) ? mSequence : count+start;
   
-  for (unsigned int i = start; i <= end; i++)
+  for (unsigned int i = start; i < end; i++)
   {
     // Filter out according to if it exists in the list
     const std::string dataName = (*mSlidingBuffer)[i]->getDataItem()->getName();

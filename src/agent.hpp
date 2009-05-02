@@ -149,7 +149,7 @@ protected:
     std::list<DataItem *>& dataItems,
     bool current,
     unsigned int frequency,
-    unsigned int start = 0,
+    unsigned int start = 1,
     unsigned int count = 0
   );
   

@@ -25,18 +25,12 @@ SOURCES= \
 cppagent.cpp \
 agent.cpp \
 adapter.cpp \
-axes.cpp \
-controller.cpp \
 component.cpp \
 component_event.cpp \
 connector.cpp \
 data_item.cpp \
 device.cpp \
-linear.cpp \
 options.cpp \
-power.cpp \
-spindle.cpp \
-thermostat.cpp \
 xml_parser.cpp \
 xml_printer.cpp \
 globals.cpp
@@ -58,5 +52,5 @@ agent: $(OBJS)
 	@echo Compiling $<
 	@g++ -c ${CXXFLAGS} $<
 
-agent.o: adapter.hpp connector.hpp component_event.hpp axes.hpp controller.hpp device.hpp \
-	data_item.hpp linear.hpp power.hpp thermostat.hpp spindle.hpp xml_printer.hpp
+agent.o: adapter.hpp connector.hpp component.hpp component_event.hpp device.hpp \
+	data_item.hpp xml_printer.hpp
