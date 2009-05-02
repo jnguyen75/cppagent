@@ -252,7 +252,7 @@ bool Agent::handleCall(
     }
     
     return handleStream(out, result, devicesAndPath(path, deviceName), false,
-      freq, start, count);
+			freq, start, count);
   }
   else
   {
@@ -408,7 +408,7 @@ std::string Agent::fetchSampleData(
   start = (start <= firstSeq) ? firstSeq  : start;
   unsigned int end = (count + start >= mSequence) ? mSequence-1 : count+start;
   
-  for (unsigned int i = start; i<end; i++)
+  for (unsigned int i = start; i <= end; i++)
   {
     // Filter out according to if it exists in the list
     const std::string dataName = (*mSlidingBuffer)[i]->getDataItem()->getName();
