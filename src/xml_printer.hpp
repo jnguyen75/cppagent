@@ -109,7 +109,7 @@ namespace XmlPrinter
   
   xmlpp::Element * searchParentsForId(
     std::list<xmlpp::Element *> elements,
-    const unsigned int id
+    const std::string id
   );
   
   xmlpp::Element * getDeviceStream(

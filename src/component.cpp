@@ -50,7 +50,7 @@ const std::string Component::SComponentSpecs[NumComponentSpecs] = {
 Component::Component(std::string cls, std::map<std::string, std::string> attributes)
 {
   // TODO: Error checking..?
-  mId = atoi(attributes["id"].c_str());
+  mId = attributes["id"];
   mName = attributes["name"];
   
   mUuid = attributes["uuid"];
@@ -69,7 +69,7 @@ std::map<std::string, std::string> Component::getAttributes() const
 {
   std::map<std::string, std::string> attributes;
   
-  attributes["id"] = intToString(mId);
+  attributes["id"] = mId;
   attributes["name"] = mName;
   
   if (mSampleRate != 0.0f)

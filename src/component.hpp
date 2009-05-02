@@ -76,7 +76,7 @@ public:
   virtual std::map<std::string, std::string> getAttributes() const;
   
   /* Getter methods for the component ID/Name */
-  unsigned int getId() const { return mId; }
+  std::string getId() const { return mId; }
   std::string getName() const { return mName; }
   std::string getUuid() const { return mUuid; }
   
@@ -102,7 +102,7 @@ public:
 protected:
   /* Component specs */
   /* Unique ID for each component */
-  unsigned int mId;
+  std::string mId;
   
   /* Name for itself */
   std::string mName;

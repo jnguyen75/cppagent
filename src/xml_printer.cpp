@@ -133,8 +133,7 @@ std::string XmlPrinter::printCurrent(
         
         componentStream->set_attribute("component", component->getClass());
         componentStream->set_attribute("name", component->getName());
-        componentStream->set_attribute("componentId",
-          intToString(component->getId()));
+        componentStream->set_attribute("componentId", component->getId());
         
         bool sample = (*dataItem)->isSample();
         
@@ -212,8 +211,7 @@ std::string XmlPrinter::printSample(
       
       componentStream->set_attribute("component", component->getClass());
       componentStream->set_attribute("name", component->getName());
-      componentStream->set_attribute("componentId",
-        intToString(component->getId()));
+      componentStream->set_attribute("componentId", component->getId());
       
       bool sample = (*result)->getDataItem()->isSample();
       
@@ -472,14 +470,13 @@ xmlpp::Element * XmlPrinter::getDeviceStream(
 
 xmlpp::Element * XmlPrinter::searchParentsForId(
     std::list<xmlpp::Element *> elements,
-    const unsigned int componentId
+    const std::string componentId
   )
 {
   std::list<xmlpp::Element *>::iterator element;
   for (element=elements.begin(); element!=elements.end(); element++)
   {
-    if ((*element)->get_parent()->get_attribute_value("componentId") ==
-      intToString(componentId))
+    if ((*element)->get_parent()->get_attribute_value("componentId") == componentId)
     {
       return *element;
     }
