@@ -92,7 +92,8 @@ const std::string DataItem::STypeCamel[NumTypes] = {
 
 
 /* DataItem public methods */
-DataItem::DataItem(std::map<std::string, std::string> attributes)
+DataItem::DataItem(std::map<std::string, std::string> attributes) 
+  : mHasNativeScale(false), mHasSignificantDigits(false)
 {
   mId = attributes["id"];
   mName = attributes["name"];
@@ -114,12 +115,18 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
   {
     mUnits = attributes["units"];
   }
-  
-  mNativeScale = (!attributes["nativeScale"].empty()) ?
-    atof(attributes["nativeScale"].c_str()) : 0.0f;
-  
-  mSignificantDigits = (!attributes["significantDigits"].empty()) ?
-    atoi(attributes["significantDigits"].c_str()) : 0;
+
+  if (!attributes["nativeScale"].empty())
+  {
+    mNativeScale = atof(attributes["nativeScale"].c_str());
+    mHasNativeScale = true;
+  }
+
+  if (!attributes["significantDigits"].empty())
+  {
+    mSignificantDigits = atoi(attributes["significantDigits"].c_str());
+    mHasSignificantDigits = true;
+  }
   
   if (!attributes["coordinateSystem"].empty())
   {
@@ -164,10 +171,16 @@ std::map<std::string, std::string> DataItem::getAttributes() const
   {
     attributes["units"] = mUnits;
   }
-  
-  attributes["nativeScale"] = floatToString(mNativeScale);
-  
-  attributes["significantDigits"] = intToString(mSignificantDigits);
+
+  if (mHasNativeScale)
+  {
+    attributes["nativeScale"] = floatToString(mNativeScale);
+  }
+
+  if (mHasSignificantDigits)
+  {
+    attributes["significantDigits"] = intToString(mSignificantDigits);
+  }
   
   if (!mCoordinateSystem.empty())
   {

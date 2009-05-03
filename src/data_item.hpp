@@ -151,9 +151,11 @@ protected:
   
   /* Native scale of data item */
   float mNativeScale;
+  bool mHasNativeScale;
   
   /* Sig figs of data item */
   unsigned int mSignificantDigits;
+  bool mHasSignificantDigits;
   
   /* Coordinate system of data item */
   std::string mCoordinateSystem;
