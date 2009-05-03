@@ -79,20 +79,20 @@ void GlobalsTest::testIsNonNegativeInteger()
 
 void GlobalsTest::testTime()
 {
-  std::string time1 = getCurrentTime(false);
-  std::string time2 = getCurrentTime(false);
+  std::string time1 = getCurrentTime(GMT);
+  std::string time2 = getCurrentTime(GMT);
   CPPUNIT_ASSERT_EQUAL(time1, time2);
   
   sleep(1);
-  std::string time3 = getCurrentTime(false);
+  std::string time3 = getCurrentTime(GMT);
   CPPUNIT_ASSERT(time1 != time3);
   
-  std::string time4 = getCurrentTime(true);
-  std::string time5 = getCurrentTime(true);
+  std::string time4 = getCurrentTime(GMT);
+  std::string time5 = getCurrentTime(GMT);
   CPPUNIT_ASSERT_EQUAL(time4, time5);
   
   sleep(1);
-  std::string time6 = getCurrentTime(true);
+  std::string time6 = getCurrentTime(GMT);
   CPPUNIT_ASSERT(time4 != time6);
   
   unsigned int time7 = getCurrentTimeInSec();

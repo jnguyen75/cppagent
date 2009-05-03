@@ -51,6 +51,8 @@ const unsigned int SLIDING_BUFFER_EXP = 17;
 /* Message for when enumerations do not exist in an array/enumeration */
 const int ENUM_MISS = -1;
 
+extern const char *gLogFile;
+
 /* Convert an unsigned integer to string */
 std::string intToString(int i);
 

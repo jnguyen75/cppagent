@@ -53,9 +53,13 @@ void ComponentEventTest::setUp()
   attributes2["subType"] = "ACTUAL";
   attributes2["category"] = "SAMPLE";
   d2 = new DataItem(attributes2);
-  
-  a = new ComponentEvent(d1, 2, "NOW", "ON");
-  b = new ComponentEvent(d2, 4, "LATER", "1.1231");
+
+  std::string time("NOW");
+  std::string value("ON");
+  a = new ComponentEvent(*d1, 2, time, value);
+  time = "LATER";
+  value = "1.1231";
+  b = new ComponentEvent(*d2, 4, time, value);
 }
 
 void ComponentEventTest::tearDown()
@@ -117,35 +121,37 @@ void ComponentEventTest::testConvertValue()
   attributes["name"] = "DataItemTest1";
   attributes["type"] = "ACCELERATION";
   attributes["category"] = "SAMPLE";
+
+  std::string time("NOW"), value("2.0");
   
   attributes["nativeUnits"] = "REVOLUTION/MINUTE";
   DataItem data1 (attributes);
-  ComponentEvent event1 (&data1, 123, "NOW", "2.0");
+  ComponentEvent event1(data1, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f, event1.getFValue());
   CPPUNIT_ASSERT(event1.getSValue().empty());
   
   attributes["nativeUnits"] = "REVOLUTION/SECOND";
   DataItem data2 (attributes);
-  ComponentEvent event2 (&data2, 123, "NOW", "2.0");
+  ComponentEvent event2 (data2, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f * 60.0f, event2.getFValue());
   CPPUNIT_ASSERT(event2.getSValue().empty());
   
   attributes["nativeUnits"] = "GRAM/INCH";
   DataItem data3 (attributes);
-  ComponentEvent event3 (&data3, 123, "NOW", "2.0");
+  ComponentEvent event3 (data3, 123, time, value);
   CPPUNIT_ASSERT_EQUAL((2.0f / 1000.0f) / 25.4f, event3.getFValue());
   CPPUNIT_ASSERT(event3.getSValue().empty());
   
   attributes["nativeUnits"] = "MILLIMETER/MINUTE^3";
   DataItem data4 (attributes);
-  ComponentEvent event4 (&data4, 123, "NOW", "2.0");
+  ComponentEvent event4 (data4, 123, time, value);
   CPPUNIT_ASSERT_EQUAL((2.0f) / (60.0f * 60.0f * 60.0f), event4.getFValue());
   CPPUNIT_ASSERT(event4.getSValue().empty());
   
   attributes["nativeUnits"] = "MILLIMETER/MINUTE^3";
   attributes["nativeScale"] = "0.5";
   DataItem data5 (attributes);
-  ComponentEvent event5 (&data5, 123, "NOW", "2.0");
+  ComponentEvent event5 (data5, 123, time, value);
   CPPUNIT_ASSERT_EQUAL((2.0f) / (60.0f * 60.0f * 60.0f * 0.5f),
     event5.getFValue());
   CPPUNIT_ASSERT(event5.getSValue().empty());
@@ -159,81 +165,82 @@ void ComponentEventTest::testConvertSimpleUnits()
   attributes["type"] = "ACCELERATION";
   attributes["category"] = "SAMPLE";
   
+  std::string time("NOW"), value("2.0");
   attributes["nativeUnits"] = "INCH";
   DataItem data1 (attributes);
-  ComponentEvent event1 (&data1, 123, "NOW", "2.0");
+  ComponentEvent event1 (data1, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f * 25.4f, event1.getFValue());
   CPPUNIT_ASSERT(event1.getSValue().empty());
   
   attributes["nativeUnits"] = "FOOT";
   DataItem data2 (attributes);
-  ComponentEvent event2 (&data2, 123, "NOW", "2.0");
+  ComponentEvent event2 (data2, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f * 304.8f, event2.getFValue());
   CPPUNIT_ASSERT(event2.getSValue().empty());
   
   attributes["nativeUnits"] = "CENTIMETER";
   DataItem data3 (attributes);
-  ComponentEvent event3 (&data3, 123, "NOW", "2.0");
+  ComponentEvent event3 (data3, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f * 10.0f, event3.getFValue());
   CPPUNIT_ASSERT(event3.getSValue().empty());
   
   attributes["nativeUnits"] = "DECIMETER";
   DataItem data4 (attributes);
-  ComponentEvent event4 (&data4, 123, "NOW", "2.0");
+  ComponentEvent event4 (data4, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f * 100.0f, event4.getFValue());
   CPPUNIT_ASSERT(event4.getSValue().empty());
   
   attributes["nativeUnits"] = "METER";
   DataItem data5 (attributes);
-  ComponentEvent event5 (&data5, 123, "NOW", "2.0");
+  ComponentEvent event5 (data5, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f * 1000.0f, event5.getFValue());
   CPPUNIT_ASSERT(event5.getSValue().empty());
   
   attributes["nativeUnits"] = "FAHRENHEIT";
   DataItem data6 (attributes);
-  ComponentEvent event6 (&data6, 123, "NOW", "2.0");
+  ComponentEvent event6 (data6, 123, "NOW", "2.0");
   CPPUNIT_ASSERT_EQUAL((2.0f - 32.0f) * (5.0f / 9.0f), event6.getFValue());
   CPPUNIT_ASSERT(event6.getSValue().empty());
   
   attributes["nativeUnits"] = "POUND";
   DataItem data7 (attributes);
-  ComponentEvent event7 (&data7, 123, "NOW", "2.0");
+  ComponentEvent event7 (data7, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f * 0.45359237f, event7.getFValue());
   CPPUNIT_ASSERT(event7.getSValue().empty());
   
   attributes["nativeUnits"] = "GRAM";
   DataItem data8 (attributes);
-  ComponentEvent event8 (&data8, 123, "NOW", "2.0");
+  ComponentEvent event8 (data8, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f / 1000.0f, event8.getFValue());
   CPPUNIT_ASSERT(event8.getSValue().empty());
   
   attributes["nativeUnits"] = "RADIAN";
   DataItem data9 (attributes);
-  ComponentEvent event9 (&data9, 123, "NOW", "2.0");
+  ComponentEvent event9 (data9, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f * 57.2957795f, event9.getFValue());
   CPPUNIT_ASSERT(event9.getSValue().empty());
   
   attributes["nativeUnits"] = "MINUTE";
   DataItem data10 (attributes);
-  ComponentEvent event10 (&data10, 123, "NOW", "2.0");
+  ComponentEvent event10 (data10, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f * 60.0f, event10.getFValue());
   CPPUNIT_ASSERT(event10.getSValue().empty());
   
   attributes["nativeUnits"] = "HOUR";
   DataItem data11 (attributes);
-  ComponentEvent event11 (&data11, 123, "NOW", "2.0");
+  ComponentEvent event11 (data11, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f * 3600.0f, event11.getFValue());
   CPPUNIT_ASSERT(event11.getSValue().empty());
   
   attributes["nativeUnits"] = "MILLIMETER";
   DataItem data12 (attributes);
-  ComponentEvent event12 (&data12, 123, "NOW", "2.0");
+  ComponentEvent event12 (data12, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f, event12.getFValue());
   CPPUNIT_ASSERT(event12.getSValue().empty());
   
   attributes["nativeUnits"] = "PERCENT";
   DataItem data13 (attributes);
-  ComponentEvent event13 (&data13, 123, "NOW", "2.0");
+  ComponentEvent event13 (data13, 123, time, value);
   CPPUNIT_ASSERT_EQUAL(2.0f, event13.getFValue());
   CPPUNIT_ASSERT(event13.getSValue().empty());
 }

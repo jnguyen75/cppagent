@@ -127,6 +127,8 @@ public:
 
   /* Get the name for the adapter feed */
   std::string getSourceOrName() { return mSource.empty() ? mName : mSource; }
+
+  static EType getTypeEnum(const std::string &aType);
   
 protected:
   /* Unique ID for each component */

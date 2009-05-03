@@ -90,6 +90,10 @@ const std::string DataItem::STypeCamel[NumTypes] = {
   "AngularVelocity"
 };
 
+DataItem::EType DataItem::getTypeEnum(const std::string &aType)
+{
+  return (EType) getEnumeration(aType, STypeUpper, NumTypes);
+}
 
 /* DataItem public methods */
 DataItem::DataItem(std::map<std::string, std::string> attributes) 

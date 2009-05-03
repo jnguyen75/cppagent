@@ -143,7 +143,7 @@ unsigned int getCurrentTimeInSec()
   return time(NULL);
 }
 
-extern const char *gLogFile;
+const char *gLogFile;
 
 void logEvent(const std::string& source, const std::string& message)
 {

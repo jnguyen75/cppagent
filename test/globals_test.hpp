@@ -39,13 +39,7 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
-
-extern std::string intToString(unsigned int i);
-extern std::string floatToString(float f);
-extern std::string toUpperCase(std::string text);
-extern bool isNonNegativeInteger(const std::string& s);
-extern std::string getCurrentTime(bool formatted);
-extern unsigned int getCurrentTimeInSec();
+#include <globals.hpp>
 
 class GlobalsTest : public CppUnit::TestFixture
 {

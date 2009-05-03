@@ -135,8 +135,8 @@ void DeviceTest::testChildren()
   
   CPPUNIT_ASSERT(a->getChildren().empty());
   
-  a->addChild(d1);
-  a->addChild(d2);
+  a->addChild(*d1);
+  a->addChild(*d2);
   
   CPPUNIT_ASSERT_EQUAL((size_t) 2, a->getChildren().size());
   CPPUNIT_ASSERT_EQUAL(d1, dynamic_cast<Device *>(a->getChildren().front()));
@@ -163,8 +163,8 @@ void DeviceTest::testDataItems()
     
   DataItem * d2 = new DataItem(attributes2);
   
-  a->addDataItem(d1);
-  a->addDataItem(d2);
+  a->addDataItem(*d1);
+  a->addDataItem(*d2);
   
   CPPUNIT_ASSERT_EQUAL((size_t) 2, a->getDataItems().size());
   CPPUNIT_ASSERT_EQUAL(d1, a->getDataItems().front());

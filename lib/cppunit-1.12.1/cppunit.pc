@@ -1,4 +1,4 @@
-prefix=/usr/local
+prefix=/Users/will/projects/SystemInsights/cppagent/lib/cppunit-1.12.1
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

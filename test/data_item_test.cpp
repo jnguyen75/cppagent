@@ -67,7 +67,7 @@ void DataItemTest::tearDown()
 
 void DataItemTest::testGetters()
 {
-  CPPUNIT_ASSERT_EQUAL((unsigned) 1, a->getId());
+  CPPUNIT_ASSERT_EQUAL((std::string) "1", a->getId());
   CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest1", a->getName());
   CPPUNIT_ASSERT_EQUAL(DataItem::ACCELERATION, a->getType());
   CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", a->getTypeString(true));
@@ -76,7 +76,7 @@ void DataItemTest::testGetters()
   CPPUNIT_ASSERT(a->getNativeUnits().empty());
   CPPUNIT_ASSERT_EQUAL(0.0f, a->getNativeScale());
   
-  CPPUNIT_ASSERT_EQUAL((unsigned) 3, b->getId());
+  CPPUNIT_ASSERT_EQUAL((std::string) "3", b->getId());
   CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest2", b->getName());
   CPPUNIT_ASSERT_EQUAL(DataItem::ACCELERATION, b->getType());
   CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", b->getTypeString(true));
@@ -131,28 +131,23 @@ void DataItemTest::testIsSample()
 
 void DataItemTest::testComponent()
 {
-  CPPUNIT_ASSERT(a->getComponent() == NULL);
-  
   std::map<std::string, std::string> attributes1;
   attributes1["id"] = "3";
   attributes1["name"] = "AxesTestA";
   attributes1["uuid"] = "UniversalUniqueIdA";
   attributes1["sampleRate"] = "100.11";
-  Axes * axes = new Axes(attributes1);
-  a->setComponent(axes);
+  Component * axes = new Component("Axes", attributes1);
+  a->setComponent(*axes);
   
-  CPPUNIT_ASSERT_EQUAL(axes, dynamic_cast<Axes *>(a->getComponent()));
-  
+  CPPUNIT_ASSERT_EQUAL(axes, a->getComponent());
   delete axes;
-  a->setComponent(NULL);
-  CPPUNIT_ASSERT(a->getComponent() == NULL);
 }
 
 void DataItemTest::testComponentEvent()
 {
   CPPUNIT_ASSERT(a->getLatestEvent() == NULL);
   
-  ComponentEvent event (a, 1, "10:30am Today", "1.34");
+  ComponentEvent event (*a, 1, (std::string) "10:30am Today", (std::string) "1.34");
   
   a->setLatestEvent(event);
   

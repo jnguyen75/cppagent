@@ -40,7 +40,6 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../src/axes.hpp"
 #include "../src/component_event.hpp"
 #include "../src/data_item.hpp"
 

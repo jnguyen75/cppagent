@@ -48,8 +48,8 @@
 #include "../src/device.hpp"
 #include "../src/xml_parser.hpp"
 #include "../src/xml_printer.hpp"
+#include <globals.hpp>
 
-extern std::string getCurrentTime(bool formatted);
 extern void fillAttribute(
   std::string& toFill,
   const std::string& attribute,
@@ -73,7 +73,6 @@ class XmlPrinterTest : public CppUnit::TestFixture
   
 protected:
   XmlParser * config;
-  std::list<DataItem *> dataItems;
   std::list<Device *> devices;
   
 protected:
@@ -88,7 +87,7 @@ protected:
   void testPrintCurrent();
   void testPrintSample();
   
-  DataItem * getDataItemById(unsigned int id);
+  DataItem * getDataItemById(const char *);
   
 public:
   void setUp();

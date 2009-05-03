@@ -40,11 +40,11 @@ void XmlParserTest::setUp()
 {
   try
   {
-    a = new XmlParser("../include/test_config.xml");
+    a = new XmlParser("../samples/test_config.xml");
   }
   catch (std::exception & e)
   {
-    CPPUNIT_FAIL("Could not locate test xml: ../include/test_config.xml");
+    CPPUNIT_FAIL("Could not locate test xml: ../samples/test_config.xml");
   }
 }
 
@@ -55,17 +55,23 @@ void XmlParserTest::tearDown()
 
 void XmlParserTest::testConstructor()
 {
-  CPPUNIT_ASSERT_THROW(new XmlParser("../include/badPath.xml"), int);
-  CPPUNIT_ASSERT_NO_THROW(new XmlParser("../include/test_config.xml"));
+  CPPUNIT_ASSERT_THROW(new XmlParser("../samples/badPath.xml"), int);
+  CPPUNIT_ASSERT_NO_THROW(new XmlParser("../samples/test_config.xml"));
 }
 
 void XmlParserTest::testGetters()
 {
   std::list<Device *> devices = a->getDevices();
-  
   CPPUNIT_ASSERT_EQUAL((size_t) 1, devices.size());
-  
-  std::list<DataItem *> dataItems = a->getDataItems();
+
+  Device *device = devices.front();
+  std::list<DataItem*> dataItems;
+  std::map<std::string, DataItem*> dataItemsMap = device->getDeviceDataItems();  
+  std::map<std::string, DataItem*>::iterator iter;
+  for (iter = dataItemsMap.begin(); iter != dataItemsMap.end(); iter++)
+  {
+    dataItems.push_back(iter->second);
+  }
   
   CPPUNIT_ASSERT_EQUAL((size_t) 17, dataItems.size());
   
@@ -75,12 +81,12 @@ void XmlParserTest::testGetters()
   std::list<DataItem *>::iterator dataItem;
   for (dataItem=dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
   {
-    if ((*dataItem)->getId() == 24 and (*dataItem)->getName() == "execution")
+    if ((*dataItem)->getId() == "24" and (*dataItem)->getName() == "execution")
     {
       hasExec = true;
     }
     
-    if ((*dataItem)->getId() == 19 and (*dataItem)->getName() == "Zcom")
+    if ((*dataItem)->getId() == "19" and (*dataItem)->getName() == "Zcom")
     {
       hasZcom = true;
     }

@@ -64,7 +64,7 @@ void AgentTest::testBadPath()
   fillAttribute(pathError, "errorCode", "UNSUPPORTED");
   fillAttribute(pathError, "instanceId", agentId);
   fillAttribute(pathError, "bufferSize", "131072");
-  fillAttribute(pathError, "creationTime", getCurrentTime(false));
+  fillAttribute(pathError, "creationTime", getCurrentTime(GMT));
   
   CPPUNIT_ASSERT(response);
   CPPUNIT_ASSERT_EQUAL(pathError, result);
@@ -78,7 +78,7 @@ void AgentTest::testBadPath()
   fillAttribute(pathError, "errorCode", "UNSUPPORTED");
   fillAttribute(pathError, "instanceId", agentId);
   fillAttribute(pathError, "bufferSize", "131072");
-  fillAttribute(pathError, "creationTime", getCurrentTime(false));
+  fillAttribute(pathError, "creationTime", getCurrentTime(GMT));
   
   CPPUNIT_ASSERT(response);
   CPPUNIT_ASSERT_EQUAL(pathError, result);
@@ -92,7 +92,7 @@ void AgentTest::testBadPath()
   fillAttribute(pathError, "errorCode", "UNSUPPORTED");
   fillAttribute(pathError, "instanceId", agentId);
   fillAttribute(pathError, "bufferSize", "131072");
-  fillAttribute(pathError, "creationTime", getCurrentTime(false));
+  fillAttribute(pathError, "creationTime", getCurrentTime(GMT));
   
   CPPUNIT_ASSERT(response);
   CPPUNIT_ASSERT_EQUAL(pathError, result);
@@ -107,7 +107,7 @@ void AgentTest::testProbe()
   std::string pathError = getFile("../include/test_probe.xml");
   fillAttribute(pathError, "instanceId", agentId);
   fillAttribute(pathError, "bufferSize", "131072");
-  fillAttribute(pathError, "creationTime", getCurrentTime(false));
+  fillAttribute(pathError, "creationTime", getCurrentTime(GMT));
   
   CPPUNIT_ASSERT(response);
   CPPUNIT_ASSERT_EQUAL(pathError, result);
@@ -119,7 +119,7 @@ void AgentTest::testProbe()
   pathError = getFile("../include/test_probe.xml");
   fillAttribute(pathError, "instanceId", agentId);
   fillAttribute(pathError, "bufferSize", "131072");
-  fillAttribute(pathError, "creationTime", getCurrentTime(false));
+  fillAttribute(pathError, "creationTime", getCurrentTime(GMT));
   
   CPPUNIT_ASSERT(response);
   CPPUNIT_ASSERT_EQUAL(pathError, result);
@@ -142,7 +142,7 @@ void AgentTest::testBadXPath()
   fillAttribute(pathError, "errorCode", "UNSUPPORTED");
   fillAttribute(pathError, "instanceId", agentId);
   fillAttribute(pathError, "bufferSize", "131072");
-  fillAttribute(pathError, "creationTime", getCurrentTime(false));
+  fillAttribute(pathError, "creationTime", getCurrentTime(GMT));
   
   CPPUNIT_ASSERT(response);
   CPPUNIT_ASSERT_EQUAL(pathError, result);

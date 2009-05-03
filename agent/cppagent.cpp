@@ -139,8 +139,6 @@ void daemonize()
 }
 
 
-const char *gLogFile = "agent.log";
-
 int main(int aArgc, char *aArgv[])
 {
   int listenPort = 5000;
@@ -149,7 +147,8 @@ int main(int aArgc, char *aArgv[])
   bool interactive = false;
   bool daemonize_proc = false;
   const char *adapters_file = 0;
-
+  gLogFile = "agent.log";
+  
   OptionsList option_list;
   option_list.append(new Option("p", listenPort, "HTTP Server Port\nDefault: 5000", "port"));
   option_list.append(new Option("f", config_file, "Configuration file\nDefault: probe.xml", "file"));
