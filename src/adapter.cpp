@@ -93,6 +93,11 @@ void Adapter::processData(const std::string& data)
 void Adapter::thread()
 {
   // Start the connection to the socket
-  connect();
+  while (true)
+  {
+    connect();
+    // Try to reconnect every 10 seconds
+    dlib::sleep(10 * 1000);
+  }
 }
 
