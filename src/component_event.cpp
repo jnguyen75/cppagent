@@ -111,7 +111,7 @@ std::map<std::string, std::string> ComponentEvent::getAttributes()
   attributes["name"] = mDataItem->getName();
   attributes["sequence"] = intToString(mSequence);
   
-  if (getDataItem()->getType() == DataItem::ALARM)
+  if (getDataItem()->getType() == "ALARM")
   {
     std::istringstream toParse(mAlarmData);
     std::string token;
@@ -136,7 +136,7 @@ std::map<std::string, std::string> ComponentEvent::getAttributes()
 void ComponentEvent::convertValue(const std::string& value)
 {
   // Check if the type is an alarm or if it doesn't have units
-  if (mDataItem->getType() == DataItem::ALARM)
+  if (mDataItem->getType() == "ALARM")
   {
     logEvent("AlarmData", value);
     std::string::size_type lastPipe = value.rfind('|');

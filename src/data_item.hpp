@@ -55,39 +55,6 @@ public:
     EVENT
   };
   
-  enum EType
-  {
-    ACCELERATION,
-    ALARM,
-    ANGLE,
-    ANGULAR_ACCELERATION,
-    BLOCK,
-    CODE,
-    DIRECTION,
-    EXECUTION,
-    PATH_FEEDRATE,
-    AXIS_FEEDRATE,
-    LINE,
-    LOAD,
-    CONTROLLER_MODE,
-    OTHER,
-    POSITION,
-    POWER_STATUS,
-    PRESSURE,
-    PROGRAM,
-    SPINDLE_SPEED,
-    STATUS,
-    TEMPERATURE,
-    TICK,
-    TRANSFER,
-    VELOCITY,
-    ANGULAR_VELOCITY
-  };
-  
-  static const unsigned int NumTypes = 25;
-  static const std::string STypeUpper[];
-  static const std::string STypeCamel[];
-  
 public:
   /* Construct a data item with appropriate attributes mapping */
   DataItem(std::map<std::string, std::string> attributes);
@@ -101,7 +68,7 @@ public:
   std::string getId() const { return mId; }
   std::string getName() const { return mName; }
   std::string getSource() const { return mSource; }
-  DataItem::EType getType() const { return mType; }
+  std::string getType() const { return mType; }
   std::string getTypeString(bool uppercase) const;
   std::string getSubType() const { return mSubType; }
   std::string getNativeUnits() const { return mNativeUnits; }
@@ -128,7 +95,7 @@ public:
   /* Get the name for the adapter feed */
   std::string getSourceOrName() { return mSource.empty() ? mName : mSource; }
 
-  static EType getTypeEnum(const std::string &aType);
+  static std::string getCamelType(const std::string &aType);
   
 protected:
   /* Unique ID for each component */
@@ -138,7 +105,8 @@ protected:
   std::string mName;
   
   /* Type of data item */
-  EType mType;
+  std::string mType;
+  std::string mCamelType;
   
   /* Subtype of data item */
   std::string mSubType;

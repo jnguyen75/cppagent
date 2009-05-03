@@ -33,6 +33,7 @@
 
 #include "agent.hpp"
 #include <time.h>
+#include <iostream>
 
 /* Agent public methods */
 Agent::Agent(const std::string& configXmlPath)
@@ -55,6 +56,8 @@ Agent::Agent(const std::string& configXmlPath)
   for (std::list<Device*>::iterator iter = mDevices.begin(); iter != mDevices.end(); iter++) 
   {
     mDeviceMap[(*iter)->getName()] = *iter;
+
+    std::cout << "Loaded device: " << (*iter)->getName() << std::endl;
     
     std::map<std::string, DataItem*> items = (*iter)->getDeviceDataItems();
     for (std::map<std::string, DataItem*>::iterator item = items.begin(); item != items.end(); ++item)

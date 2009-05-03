@@ -33,66 +33,24 @@
 
 #include "data_item.hpp"
 
-/* DataItem public static constants */
-const std::string DataItem::STypeUpper[NumTypes] = {
-  "ACCELERATION",
-  "ALARM",
-  "ANGLE",
-  "ANGULAR_ACCELERATION",
-  "BLOCK",
-  "CODE",
-  "DIRECTION",
-  "EXECUTION",
-  "PATH_FEEDRATE",
-  "AXIS_FEEDRATE",
-  "LINE",
-  "LOAD",
-  "CONTROLLER_MODE",
-  "OTHER",
-  "POSITION",
-  "POWER_STATUS",
-  "PRESSURE",
-  "PROGRAM",
-  "SPINDLE_SPEED",
-  "STATUS",
-  "TEMPERATURE",
-  "TICK",
-  "TRANSFER",
-  "VELOCITY",
-  "ANGULAR_VELOCITY"
-};
-
-const std::string DataItem::STypeCamel[NumTypes] = {
-  "Acceleration",
-  "Alarm",
-  "Angle",
-  "AngularAcceleration",
-  "Block",
-  "Code",
-  "Direction",
-  "Execution",
-  "PathFeedrate",
-  "AxisFeedrate",
-  "Line",
-  "Load",
-  "ControllerMode",
-  "Other",
-  "Position",
-  "PowerStatus",
-  "Pressure",
-  "Program",
-  "SpindleSpeed",
-  "Status",
-  "Temperature",
-  "Tick",
-  "Transfer",
-  "Velocity",
-  "AngularVelocity"
-};
-
-DataItem::EType DataItem::getTypeEnum(const std::string &aType)
+std::string DataItem::getCamelType(const std::string &aType)
 {
-  return (EType) getEnumeration(aType, STypeUpper, NumTypes);
+  std::string camel = aType;
+  std::string::iterator second = camel.begin();
+  second++;
+  std::transform(second, camel.end(), second, ::tolower);
+
+  std::string::iterator word = find(second, camel.end(), '_');
+  while (word != camel.end())
+  {
+    word++;
+    std::transform(word, word + 1, word, ::toupper);
+    word--;
+    camel.erase(word);
+    word = find(word, camel.end(), '_');
+  }
+
+  return camel;
 }
 
 /* DataItem public methods */
@@ -101,7 +59,8 @@ DataItem::DataItem(std::map<std::string, std::string> attributes)
 {
   mId = attributes["id"];
   mName = attributes["name"];
-  mType = (EType) getEnumeration(attributes["type"], STypeUpper, NumTypes);
+  mType = attributes["type"];
+  mCamelType = getCamelType(mType);
   
   if (!attributes["subType"].empty())
   {
@@ -157,7 +116,7 @@ std::map<std::string, std::string> DataItem::getAttributes() const
   
   attributes["id"] = mId;
   attributes["name"] = mName;
-  attributes["type"] = STypeUpper[mType];
+  attributes["type"] = mType;
   
   if (!mSubType.empty())
   {
@@ -196,7 +155,7 @@ std::map<std::string, std::string> DataItem::getAttributes() const
 
 std::string DataItem::getTypeString(bool uppercase) const
 {
-  return (uppercase) ? STypeUpper[mType] : STypeCamel[mType];
+  return (uppercase) ? mType : mCamelType;
 }
 
 bool DataItem::hasName(const std::string name)
