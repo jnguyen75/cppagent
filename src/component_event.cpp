@@ -103,7 +103,11 @@ std::map<std::string, std::string> ComponentEvent::getAttributes()
   
   attributes["dataItemId"] = mDataItem->getId();
   attributes["timestamp"] = mTime;
-  attributes["subType"] = mDataItem->getSubType();
+  if (!mDataItem->getSubType().empty())
+  {
+    attributes["subType"] = mDataItem->getSubType();
+  }
+  
   attributes["name"] = mDataItem->getName();
   attributes["sequence"] = intToString(mSequence);
   
