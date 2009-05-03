@@ -111,7 +111,8 @@ public:
   bool hasName(const std::string name);
   
   /* Returns true if data item is */
-  bool isSample() { return mCategory == SAMPLE; }
+  bool isSample() const { return mCategory == SAMPLE; }
+  bool hasNativeScale() const { return mHasNativeScale; }
   
   /* Add a source (extra information) to data item */
   void addSource(const std::string& source) { mSource = source; }

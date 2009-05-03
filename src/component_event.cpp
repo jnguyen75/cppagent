@@ -189,7 +189,7 @@ void ComponentEvent::convertValue(const std::string& value)
     }
   }
   
-  if (mDataItem->getNativeScale() != 0.0f)
+  if (mDataItem->hasNativeScale())
   {
     fValue /= mDataItem->getNativeScale();
   }
@@ -235,7 +235,7 @@ float ComponentEvent::convertSimple(const std::string& units, float v)
     case NEWTON_MILLIMETER:
     case HERTZ:
     default:
-      // or return value..?
+      // Already in correct units
       return v;
   }
 }
