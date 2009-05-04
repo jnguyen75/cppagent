@@ -257,6 +257,11 @@ bool Agent::handleCall(
     return handleStream(out, result, devicesAndPath(path, deviceName), false,
 			freq, start, count);
   }
+  else if (hasDevice(call) && device.empty())
+  {
+    result = handleProbe(call);
+    return true;
+  }
   else
   {
     result = printError("UNSUPPORTED",
@@ -607,6 +612,19 @@ bool Agent::hasDataItem(
   for (dataItem=dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
   {
     if ((*dataItem)->hasName(name))
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Agent::hasDevice(const std::string& name)
+{
+  std::list<Device *>::iterator device;
+  for (device=mDevices.begin(); device!=mDevices.end(); device++)
+  {
+    if ((*device)->getName() == name)
     {
       return true;
     }

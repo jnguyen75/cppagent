@@ -187,12 +187,15 @@ protected:
     const int maxValue = NO_VALUE
   );
   
-  /* Find devices/data items by name */
+  /* Find data items by name/id */
   DataItem * getDataItemByName(const std::string& device, const std::string& name);
   DataItem * getDataItemById(const std::string& id) { return mDataItemMap[id]; }
   
   /* Find if there's data item with that name/source name */
   bool hasDataItem(std::list<DataItem *>& dataItems, const std::string& name);
+  
+  /* See if device is available */
+  bool hasDevice(const std::string& name);
   
 protected:
   /* Unique id based on the time of creation */
