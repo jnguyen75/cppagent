@@ -11,6 +11,12 @@ config.log
 config.h
 *.la
 *~
+*.gcda
+*.gcno
+*.suo
+*.ncb
+Debug
+Release
 emc/Makefile
 fake/Makefile
 lib/dlib/Makefile
@@ -68,3 +74,7 @@ lib/libxml++-2.24.0/libxml++.spec
 lib/libxml++-2.24.0/libxml++/libxml++config.h
 lib/libxml++-2.24.0/libxml++/stamp-h2
 lib/libxml++-2.24.0/stamp-h1
+lib/cppunit-1.12.1/bin
+lib/cppunit-1.12.1/lib/*.dylib
+lib/cppunit-1.12.1/lib/*.so
+*.vcproj.*
