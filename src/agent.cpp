@@ -621,14 +621,7 @@ bool Agent::hasDataItem(
 
 bool Agent::hasDevice(const std::string& name)
 {
-  std::list<Device *>::iterator device;
-  for (device=mDevices.begin(); device!=mDevices.end(); device++)
-  {
-    if ((*device)->getName() == name)
-    {
-      return true;
-    }
-  }
-  return false;
+  Device *dev = mDeviceMap[name];
+  return dev != 0;
 }
 
