@@ -2,33 +2,33 @@
 <MTConnectDevices>
   <Header version="0.9" sender="localhost" creationTime="2009-03-30T15:18:50-07:00" bufferSize="100000" instanceId="1236966574"/>
   <Devices>
-    <Device sampleRate="0.0" iso841Class="0" name="CMP" id="4" uuid="CMP">
+    <Device iso841Class="6" name="CMP" id="4" uuid="CMP">
       <DataItems>
-        <DataItem type="ALARM" significantDigits="0" name="device_alarm" category="EVENT" id="3" nativeScale="0.0"/>
+        <DataItem type="ALARM" name="device_alarm" category="EVENT" id="3"/>
       </DataItems>
       <Components>
-        <Axes sampleRate="0.0" iso841Class="0" name="Axes" id="5">
+        <Axes name="Axes" id="5">
           <Components>
-            <Linear sampleRate="0.0" iso841Class="0" name="Z" id="6">
+            <Linear name="Z" id="6">
               <DataItems>
-                <DataItem type="FRICTION" significantDigits="0" name="Zfriction" category="SAMPLE" id="7" nativeScale="0.0">
+                <DataItem type="FRICTION" name="Zfriction" category="SAMPLE" id="7">
                   <Source>Friction</Source>
                 </DataItem>
-                <DataItem type="POSITION" significantDigits="0" nativeUnits="MILLIMETER" name="Zpos" category="SAMPLE" subType="ACTUAL" id="8" units="MILLIMETER" nativeScale="0.0">
+                <DataItem type="POSITION" nativeUnits="MILLIMETER" name="Zpos" category="SAMPLE" subType="ACTUAL" id="8" units="MILLIMETER">
                   <Source>Head</Source>
                 </DataItem>
               </DataItems>
             </Linear>
           </Components>
         </Axes>
-        <Thermostat sampleRate="0.0" iso841Class="0" name="Thermostat" id="9">
+        <Thermostat name="Thermostat" id="9">
           <DataItems>
-            <DataItem type="TEMPERATURE" significantDigits="0" nativeUnits="CELSIUS" name="Temp" category="SAMPLE" id="10" units="CELSIUS" nativeScale="0.0"/>
+            <DataItem type="TEMPERATURE" nativeUnits="CELSIUS" name="Temp" category="SAMPLE" id="10" units="CELSIUS"/>
           </DataItems>
         </Thermostat>
-        <Power sampleRate="0.0" iso841Class="0" name="power" id="2">
+        <Power name="power" id="2">
           <DataItems>
-            <DataItem type="POWER_STATUS" significantDigits="0" name="power" category="EVENT" id="1" nativeScale="0.0">
+            <DataItem type="POWER_STATUS" name="power" category="EVENT" id="1">
               <Source>Power</Source>
             </DataItem>
           </DataItems>
