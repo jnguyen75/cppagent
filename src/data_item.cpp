@@ -43,10 +43,8 @@ std::string DataItem::getCamelType(const std::string &aType)
   std::string::iterator word = find(second, camel.end(), '_');
   while (word != camel.end())
   {
-    word++;
-    std::transform(word, word + 1, word, ::toupper);
-    word--;
     camel.erase(word);
+    camel.replace(word, word + 1, 1, ::toupper(*word));
     word = find(word, camel.end(), '_');
   }
 
