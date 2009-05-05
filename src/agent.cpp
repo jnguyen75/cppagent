@@ -74,6 +74,8 @@ Agent::Agent(const std::string& configXmlPath)
   mSequence = 1;
   mSlidingBuffer = new sliding_buffer_kernel_1<ComponentEvent *>();
   mSlidingBuffer->set_size(SLIDING_BUFFER_EXP);
+  for (int i = 0; i < mSlidingBuffer->size(); i++)
+    (*mSlidingBuffer)[i] = 0;
   
   // Mutex used for synchronized access to sliding buffer and sequence number
   mSequenceLock = new dlib::mutex;
@@ -621,14 +623,7 @@ bool Agent::hasDataItem(
 
 bool Agent::hasDevice(const std::string& name)
 {
-  std::list<Device *>::iterator device;
-  for (device=mDevices.begin(); device!=mDevices.end(); device++)
-  {
-    if ((*device)->getName() == name)
-    {
-      return true;
-    }
-  }
-  return false;
+  Device *dev = mDeviceMap[name];
+  return dev != 0;
 }
 

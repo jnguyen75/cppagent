@@ -118,6 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="..\lib;..\..\lib;&quot;..\..\lib\libxml++-2.24.0\MSVC_Net2005\libxml++&quot;;&quot;..\..\lib\libxml++-2.24.0&quot;;..\..\agent;..\..\devices;&quot;..\libxml2-2.7.3.win32\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -136,7 +137,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="xml++-2.6.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;..\..\lib\libxml++-2.24.0\MSVC_Net2005\libxml++\Release&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
