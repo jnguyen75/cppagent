@@ -29,29 +29,22 @@ SOURCES= \
 test.cpp \
 adapter.cpp \
 agent.cpp \
-axes.cpp \
 component.cpp \
 component_event.cpp \
 connector.cpp \
-controller.cpp \
 data_item.cpp \
 device.cpp \
-linear.cpp \
-power.cpp \
-spindle.cpp \
-thermostat.cpp \
 xml_parser.cpp \
 xml_printer.cpp \
 globals.cpp \
-agent_test.cpp \
-axes_test.cpp \
 component_event_test.cpp \
 globals_test.cpp \
 data_item_test.cpp \
 device_test.cpp \
 test_globals.cpp \
 xml_parser_test.cpp \
-xml_printer_test.cpp
+#agent_test.cpp \
+#xml_printer_test.cpp
 
 OBJS=$(SOURCES:%.cpp=%.o)
 LIBS=$(LIBRARIES:%=-l%)

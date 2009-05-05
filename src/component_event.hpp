@@ -101,8 +101,6 @@ public:
   /* Get the value */
   float getFValue() const { return fValue; }
   std::string getSValue() const { return sValue; }
-
-  static ESimpleUnits getSimpleUnitsEnum(const std::string &aUnit);
   
 protected:
   /* Holds the data item from the device */

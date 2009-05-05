@@ -41,7 +41,7 @@
 #include "component.hpp"
 #include "device.hpp"
 #include "data_item.hpp"
-#include "globals.hpp"
+#include "../src/globals.hpp"
 
 class XmlParser
 {

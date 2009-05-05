@@ -69,7 +69,7 @@ void DataItemTest::testGetters()
 {
   CPPUNIT_ASSERT_EQUAL((std::string) "1", a->getId());
   CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest1", a->getName());
-  CPPUNIT_ASSERT_EQUAL(DataItem::ACCELERATION, a->getType());
+  CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", a->getType());
   CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", a->getTypeString(true));
   CPPUNIT_ASSERT_EQUAL((std::string) "Acceleration", a->getTypeString(false));
   CPPUNIT_ASSERT(a->getSubType().empty());
@@ -78,7 +78,7 @@ void DataItemTest::testGetters()
   
   CPPUNIT_ASSERT_EQUAL((std::string) "3", b->getId());
   CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest2", b->getName());
-  CPPUNIT_ASSERT_EQUAL(DataItem::ACCELERATION, b->getType());
+  CPPUNIT_ASSERT_EQUAL((std::string) "Acceleration", b->getType());
   CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", b->getTypeString(true));
   CPPUNIT_ASSERT_EQUAL((std::string) "Acceleration", b->getTypeString(false));
   CPPUNIT_ASSERT_EQUAL((std::string) "ACTUAL", b->getSubType());
@@ -156,20 +156,5 @@ void DataItemTest::testComponentEvent()
     a->getLatestEvent()->getAttributes();
   
   CPPUNIT_ASSERT_EQUAL(attributes1["sequence"], attributes2["sequence"]);
-}
-
-void DataItemTest::testGetTypeEnum()
-{
-  CPPUNIT_ASSERT_EQUAL(DataItem::ACCELERATION,
-    DataItem::getTypeEnum("ACCELERATION"));
-  CPPUNIT_ASSERT_EQUAL(DataItem::POWER_STATUS,
-    DataItem::getTypeEnum("POWER_STATUS"));
-  CPPUNIT_ASSERT_EQUAL(DataItem::TRANSFER,
-    DataItem::getTypeEnum("TRANSFER"));
-  CPPUNIT_ASSERT_EQUAL(DataItem::ANGULAR_VELOCITY,
-    DataItem::getTypeEnum("ANGULAR_VELOCITY"));
-  
-  CPPUNIT_ASSERT_EQUAL((DataItem::EType) -1,
-    DataItem::getTypeEnum("NON_EXISTANT"));
 }
 

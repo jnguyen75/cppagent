@@ -48,7 +48,7 @@
 #include "../src/device.hpp"
 #include "../src/xml_parser.hpp"
 #include "../src/xml_printer.hpp"
-#include <globals.hpp>
+#include <../src/globals.hpp>
 
 extern void fillAttribute(
   std::string& toFill,

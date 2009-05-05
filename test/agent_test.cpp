@@ -38,7 +38,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(AgentTest);
 
 void AgentTest::setUp()
 {
-  a = new Agent("../include/test_config.xml");
+  a = new Agent("../samples/test_config.xml");
   agentId = intToString(getCurrentTimeInSec());
 }
 
@@ -73,7 +73,7 @@ void AgentTest::testBadPath()
   response = a->on_request(path, result, queries, cookies, new_cookies, incoming_headers,
     response_headers, foreign_ip, local_ip, 123, 321, out);
   
-  pathError = getFile("../include/test_error.xml");
+  pathError = getFile("../samples/test_error.xml");
   fillErrorText(pathError, "The following path is invalid: " + path);
   fillAttribute(pathError, "errorCode", "UNSUPPORTED");
   fillAttribute(pathError, "instanceId", agentId);
@@ -87,7 +87,7 @@ void AgentTest::testBadPath()
   response = a->on_request(path, result, queries, cookies, new_cookies, incoming_headers,
     response_headers, foreign_ip, local_ip, 123, 321, out);
   
-  pathError = getFile("../include/test_error.xml");
+  pathError = getFile("../samples/test_error.xml");
   fillErrorText(pathError, "The following path is invalid: " + path);
   fillAttribute(pathError, "errorCode", "UNSUPPORTED");
   fillAttribute(pathError, "instanceId", agentId);
@@ -104,7 +104,7 @@ void AgentTest::testProbe()
   bool response = a->on_request(path, result, queries, cookies, new_cookies, incoming_headers,
     response_headers, foreign_ip, local_ip, 123, 321, out);
   
-  std::string pathError = getFile("../include/test_probe.xml");
+  std::string pathError = getFile("../samples/test_probe.xml");
   fillAttribute(pathError, "instanceId", agentId);
   fillAttribute(pathError, "bufferSize", "131072");
   fillAttribute(pathError, "creationTime", getCurrentTime(GMT));
@@ -116,7 +116,7 @@ void AgentTest::testProbe()
   response = a->on_request(path, result, queries, cookies, new_cookies, incoming_headers,
     response_headers, foreign_ip, local_ip, 123, 321, out);
   
-  pathError = getFile("../include/test_probe.xml");
+  pathError = getFile("../samples/test_probe.xml");
   fillAttribute(pathError, "instanceId", agentId);
   fillAttribute(pathError, "bufferSize", "131072");
   fillAttribute(pathError, "creationTime", getCurrentTime(GMT));
@@ -137,7 +137,7 @@ void AgentTest::testBadXPath()
   bool response = a->on_request(path, result, queries, cookies, new_cookies, incoming_headers,
     response_headers, foreign_ip, local_ip, 123, 321, out);
   
-  std::string pathError = getFile("../include/test_error.xml");
+  std::string pathError = getFile("../samples/test_error.xml");
   fillErrorText(pathError, "The following path is invalid: " + path);
   fillAttribute(pathError, "errorCode", "UNSUPPORTED");
   fillAttribute(pathError, "instanceId", agentId);

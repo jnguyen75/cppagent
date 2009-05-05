@@ -33,16 +33,16 @@
 
 #include "component_event_test.hpp"
 
-// Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(ComponentEventTest);
 
+/* ComponentEventTest public methods */
 void ComponentEventTest::setUp()
 {
   std::map<std::string, std::string> attributes1, attributes2;
   
   attributes1["id"] = "1";
   attributes1["name"] = "DataItemTest1";
-  attributes1["type"] = "ACCELERATION";
+  attributes1["type"] = "ALARM";
   attributes1["category"] = "EVENT";
   d1 = new DataItem(attributes1);
   
@@ -54,9 +54,9 @@ void ComponentEventTest::setUp()
   attributes2["category"] = "SAMPLE";
   d2 = new DataItem(attributes2);
 
-  std::string time("NOW");
-  std::string value("ON");
+  std::string time("NOW"), value("CODE|NATIVE|CRITICAL|ACTIVE|DESCRIPTION");
   a = new ComponentEvent(*d1, 2, time, value);
+  
   time = "LATER";
   value = "1.1231";
   b = new ComponentEvent(*d2, 4, time, value);
@@ -70,6 +70,19 @@ void ComponentEventTest::tearDown()
   delete d2;
 }
 
+void ComponentEventTest::testConstructors()
+{
+  ComponentEvent ce(*a);
+  
+  // Copy constructor allocates different objects, so it has different addresses
+  CPPUNIT_ASSERT(a != &ce);
+  
+  // But the values should be the same
+  CPPUNIT_ASSERT_EQUAL(a->getDataItem(), ce.getDataItem());
+  CPPUNIT_ASSERT_EQUAL(a->getFValue(), ce.getFValue());
+  CPPUNIT_ASSERT_EQUAL(a->getSValue(), ce.getSValue());
+}
+
 void ComponentEventTest::testGetAttributes()
 {
   std::map<std::string, std::string> attributes1, attributes2;
@@ -81,6 +94,12 @@ void ComponentEventTest::testGetAttributes()
   CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest1", attributes1["name"]);
   CPPUNIT_ASSERT_EQUAL((std::string) "2", attributes1["sequence"]);
   
+  // Alarm data
+  CPPUNIT_ASSERT_EQUAL((std::string) "CODE", attributes1["code"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "NATIVE", attributes1["nativeCode"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "CRITICAL", attributes1["severity"]);
+  CPPUNIT_ASSERT_EQUAL((std::string) "ACTIVE", attributes1["state"]);
+  
   attributes2 = b->getAttributes();
   CPPUNIT_ASSERT_EQUAL((std::string) "3", attributes2["dataItemId"]);
   CPPUNIT_ASSERT_EQUAL((std::string) "LATER", attributes2["timestamp"]);
@@ -89,29 +108,13 @@ void ComponentEventTest::testGetAttributes()
   CPPUNIT_ASSERT_EQUAL((std::string) "4", attributes2["sequence"]);
 }
 
-void ComponentEventTest::testGetDataItem()
+void ComponentEventTest::testGetters()
 {
   CPPUNIT_ASSERT_EQUAL(d1, a->getDataItem());
   CPPUNIT_ASSERT_EQUAL(d2, b->getDataItem());
-}
-
-void ComponentEventTest::testGetValue()
-{
-  CPPUNIT_ASSERT_EQUAL((std::string) "ON", a->getSValue());
-  CPPUNIT_ASSERT_EQUAL(1.1231f, b->getFValue());
-}
-
-void ComponentEventTest::testGetSimpleUnits()
-{
-  CPPUNIT_ASSERT_EQUAL(ComponentEvent::INCH,
-    ComponentEvent::getSimpleUnitsEnum("INCH"));
-  CPPUNIT_ASSERT_EQUAL(ComponentEvent::RADIAN,
-    ComponentEvent::getSimpleUnitsEnum("RADIAN"));
-  CPPUNIT_ASSERT_EQUAL(ComponentEvent::HERTZ,
-    ComponentEvent::getSimpleUnitsEnum("HERTZ"));
   
-  CPPUNIT_ASSERT_EQUAL((ComponentEvent::ESimpleUnits) -1,
-    ComponentEvent::getSimpleUnitsEnum("NON_EXISTANT"));
+  CPPUNIT_ASSERT_EQUAL((std::string) "DESCRIPTION", a->getSValue());
+  CPPUNIT_ASSERT_EQUAL(1.1231f, b->getFValue());
 }
 
 void ComponentEventTest::testConvertValue()
@@ -124,124 +127,58 @@ void ComponentEventTest::testConvertValue()
 
   std::string time("NOW"), value("2.0");
   
-  attributes["nativeUnits"] = "REVOLUTION/MINUTE";
-  DataItem data1 (attributes);
-  ComponentEvent event1(data1, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f, event1.getFValue());
-  CPPUNIT_ASSERT(event1.getSValue().empty());
+  testValueHelper(attributes, "REVOLUTION/MINUTE", 2.0f, value);
+  testValueHelper(attributes, "REVOLUTION/SECOND", 2.0f * 60.0f, value);
+  testValueHelper(attributes, "GRAM/INCH", (2.0f / 1000.0f) / 25.4f, value);
+  testValueHelper(attributes, "MILLIMETER/MINUTE^3",
+    (2.0f) / (60.0f * 60.0f * 60.0f), value);
   
-  attributes["nativeUnits"] = "REVOLUTION/SECOND";
-  DataItem data2 (attributes);
-  ComponentEvent event2 (data2, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f * 60.0f, event2.getFValue());
-  CPPUNIT_ASSERT(event2.getSValue().empty());
-  
-  attributes["nativeUnits"] = "GRAM/INCH";
-  DataItem data3 (attributes);
-  ComponentEvent event3 (data3, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL((2.0f / 1000.0f) / 25.4f, event3.getFValue());
-  CPPUNIT_ASSERT(event3.getSValue().empty());
-  
-  attributes["nativeUnits"] = "MILLIMETER/MINUTE^3";
-  DataItem data4 (attributes);
-  ComponentEvent event4 (data4, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL((2.0f) / (60.0f * 60.0f * 60.0f), event4.getFValue());
-  CPPUNIT_ASSERT(event4.getSValue().empty());
-  
-  attributes["nativeUnits"] = "MILLIMETER/MINUTE^3";
   attributes["nativeScale"] = "0.5";
-  DataItem data5 (attributes);
-  ComponentEvent event5 (data5, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL((2.0f) / (60.0f * 60.0f * 60.0f * 0.5f),
-    event5.getFValue());
-  CPPUNIT_ASSERT(event5.getSValue().empty());
+  testValueHelper(attributes, "MILLIMETER/MINUTE^3",
+    (2.0f) / (60.0f * 60.0f * 60.0f * 0.5f), value);
 }
 
 void ComponentEventTest::testConvertSimpleUnits()
 {
   std::map<std::string, std::string> attributes;
   attributes["id"] = "1";
-  attributes["name"] = "DataItemTest1";
+  attributes["name"] = "DataItemTest";
   attributes["type"] = "ACCELERATION";
   attributes["category"] = "SAMPLE";
   
-  std::string time("NOW"), value("2.0");
-  attributes["nativeUnits"] = "INCH";
-  DataItem data1 (attributes);
-  ComponentEvent event1 (data1, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f * 25.4f, event1.getFValue());
-  CPPUNIT_ASSERT(event1.getSValue().empty());
+  std::string value("2.0");
   
-  attributes["nativeUnits"] = "FOOT";
-  DataItem data2 (attributes);
-  ComponentEvent event2 (data2, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f * 304.8f, event2.getFValue());
-  CPPUNIT_ASSERT(event2.getSValue().empty());
+  testValueHelper(attributes, "INCH", 2.0f * 25.4f, value);
+  testValueHelper(attributes, "FOOT", 2.0f * 304.8f, value);
+  testValueHelper(attributes, "CENTIMETER", 2.0f * 10.0f, value);
+  testValueHelper(attributes, "DECIMETER", 2.0f * 100.0f, value);
+  testValueHelper(attributes, "METER", 2.0f * 1000.0f, value);
+  testValueHelper(attributes, "FAHRENHEIT",
+    (2.0f - 32.0f) * (5.0f / 9.0f), value);
+  testValueHelper(attributes, "POUND", 2.0f * 0.45359237f, value);
+  testValueHelper(attributes, "GRAM", 2.0f / 1000.0f, value);
+  testValueHelper(attributes, "RADIAN", 2.0f * 57.2957795f, value);
+  testValueHelper(attributes, "MINUTE", 2.0f * 60.0f, value);
+  testValueHelper(attributes, "HOUR", 2.0f * 3600.0f, value);
+  testValueHelper(attributes, "MILLIMETER", 2.0f, value);
+  testValueHelper(attributes, "PERCENT", 2.0f, value);
+}
+
+void ComponentEventTest::testValueHelper(
+    std::map<std::string, std::string>& attributes,
+    const std::string& nativeUnits,
+    float expected,
+    const std::string& value
+  )
+{
+  std::string time("NOW");
   
-  attributes["nativeUnits"] = "CENTIMETER";
-  DataItem data3 (attributes);
-  ComponentEvent event3 (data3, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f * 10.0f, event3.getFValue());
-  CPPUNIT_ASSERT(event3.getSValue().empty());
+  attributes["nativeUnits"] = nativeUnits;
+  DataItem dataItem(attributes);
   
-  attributes["nativeUnits"] = "DECIMETER";
-  DataItem data4 (attributes);
-  ComponentEvent event4 (data4, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f * 100.0f, event4.getFValue());
-  CPPUNIT_ASSERT(event4.getSValue().empty());
+  ComponentEvent event(dataItem, 123, time, value);
   
-  attributes["nativeUnits"] = "METER";
-  DataItem data5 (attributes);
-  ComponentEvent event5 (data5, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f * 1000.0f, event5.getFValue());
-  CPPUNIT_ASSERT(event5.getSValue().empty());
-  
-  attributes["nativeUnits"] = "FAHRENHEIT";
-  DataItem data6 (attributes);
-  ComponentEvent event6 (data6, 123, "NOW", "2.0");
-  CPPUNIT_ASSERT_EQUAL((2.0f - 32.0f) * (5.0f / 9.0f), event6.getFValue());
-  CPPUNIT_ASSERT(event6.getSValue().empty());
-  
-  attributes["nativeUnits"] = "POUND";
-  DataItem data7 (attributes);
-  ComponentEvent event7 (data7, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f * 0.45359237f, event7.getFValue());
-  CPPUNIT_ASSERT(event7.getSValue().empty());
-  
-  attributes["nativeUnits"] = "GRAM";
-  DataItem data8 (attributes);
-  ComponentEvent event8 (data8, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f / 1000.0f, event8.getFValue());
-  CPPUNIT_ASSERT(event8.getSValue().empty());
-  
-  attributes["nativeUnits"] = "RADIAN";
-  DataItem data9 (attributes);
-  ComponentEvent event9 (data9, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f * 57.2957795f, event9.getFValue());
-  CPPUNIT_ASSERT(event9.getSValue().empty());
-  
-  attributes["nativeUnits"] = "MINUTE";
-  DataItem data10 (attributes);
-  ComponentEvent event10 (data10, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f * 60.0f, event10.getFValue());
-  CPPUNIT_ASSERT(event10.getSValue().empty());
-  
-  attributes["nativeUnits"] = "HOUR";
-  DataItem data11 (attributes);
-  ComponentEvent event11 (data11, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f * 3600.0f, event11.getFValue());
-  CPPUNIT_ASSERT(event11.getSValue().empty());
-  
-  attributes["nativeUnits"] = "MILLIMETER";
-  DataItem data12 (attributes);
-  ComponentEvent event12 (data12, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f, event12.getFValue());
-  CPPUNIT_ASSERT(event12.getSValue().empty());
-  
-  attributes["nativeUnits"] = "PERCENT";
-  DataItem data13 (attributes);
-  ComponentEvent event13 (data13, 123, time, value);
-  CPPUNIT_ASSERT_EQUAL(2.0f, event13.getFValue());
-  CPPUNIT_ASSERT(event13.getSValue().empty());
+  CPPUNIT_ASSERT_EQUAL(expected, event.getFValue());
+  CPPUNIT_ASSERT(event.getSValue().empty());
 }
 

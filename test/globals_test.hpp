@@ -39,7 +39,7 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <globals.hpp>
+#include <../src/globals.hpp>
 
 class GlobalsTest : public CppUnit::TestFixture
 {

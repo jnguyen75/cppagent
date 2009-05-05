@@ -52,7 +52,6 @@ class DataItemTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testIsSample);
   CPPUNIT_TEST(testComponent);
   CPPUNIT_TEST(testComponentEvent);
-  CPPUNIT_TEST(testGetTypeEnum);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
@@ -65,7 +64,6 @@ protected:
   void testIsSample();
   void testComponent();
   void testComponentEvent();
-  void testGetTypeEnum();
   
 public:
   void setUp();

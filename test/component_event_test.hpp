@@ -45,29 +45,34 @@
 class ComponentEventTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(ComponentEventTest);
+  CPPUNIT_TEST(testConstructors);
   CPPUNIT_TEST(testGetAttributes);
-  CPPUNIT_TEST(testGetDataItem);
-  CPPUNIT_TEST(testGetValue);
-  CPPUNIT_TEST(testGetSimpleUnits);
   CPPUNIT_TEST(testConvertValue);
   CPPUNIT_TEST(testConvertSimpleUnits);
   CPPUNIT_TEST_SUITE_END();
+  
+public:
+  void setUp();
+  void tearDown();
   
 protected:
   ComponentEvent * a, * b;
   DataItem * d1, * d2;
   
 protected:
+  void testConstructors();
   void testGetAttributes();
-  void testGetDataItem();
-  void testGetValue();
-  void testGetSimpleUnits();
+  void testGetters();
   void testConvertValue();
   void testConvertSimpleUnits();
   
-public:
-  void setUp();
-  void tearDown();
+  /* Helper to test values */
+  void testValueHelper(
+    std::map<std::string, std::string>& attributes,
+    const std::string& nativeUnits,
+    float expected,
+    const std::string& value
+  );
 };
 
 #endif

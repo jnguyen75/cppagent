@@ -41,7 +41,7 @@
 
 #include "component_event.hpp"
 #include "device.hpp"
-#include "globals.hpp"
+#include "../src/globals.hpp"
 
 class DataItem;
 

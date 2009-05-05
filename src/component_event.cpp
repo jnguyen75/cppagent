@@ -195,11 +195,6 @@ void ComponentEvent::convertValue(const std::string& value)
   }
 }
 
-ComponentEvent::ESimpleUnits ComponentEvent::getSimpleUnitsEnum(const std::string &aUnit)
-{
-  return (ComponentEvent::ESimpleUnits) getEnumeration(aUnit, SSimpleUnits, NumSimpleUnits);
-}
-
 float ComponentEvent::convertSimple(const std::string& units, float v)
 {
   switch(getEnumeration(units, SSimpleUnits, NumSimpleUnits))
