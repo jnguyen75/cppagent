@@ -74,6 +74,8 @@ Agent::Agent(const std::string& configXmlPath)
   mSequence = 1;
   mSlidingBuffer = new sliding_buffer_kernel_1<ComponentEvent *>();
   mSlidingBuffer->set_size(SLIDING_BUFFER_EXP);
+  for (int i = 0; i < mSlidingBuffer->size(); i++)
+    (*mSlidingBuffer)[i] = 0;
   
   // Mutex used for synchronized access to sliding buffer and sequence number
   mSequenceLock = new dlib::mutex;
