@@ -33,8 +33,10 @@
 
 #include "component.hpp"
 
+using namespace std;
+
 /* Component static constants */
-const std::string Component::SComponentSpecs[NumComponentSpecs] = {
+const string Component::SComponentSpecs[NumComponentSpecs] = {
   // Component parts
   "Device",
   // Component details
@@ -47,9 +49,8 @@ const std::string Component::SComponentSpecs[NumComponentSpecs] = {
 };
 
 /* Component public methods */
-Component::Component(std::string cls, std::map<std::string, std::string> attributes)
+Component::Component(const string& cls, std::map<string, string> attributes)
 {
-  // TODO: Error checking..?
   mId = attributes["id"];
   mName = attributes["name"];
   
@@ -65,9 +66,9 @@ Component::~Component()
 {
 }
 
-std::map<std::string, std::string> Component::getAttributes() const
+std::map<string, string> Component::getAttributes() const
 {
-  std::map<std::string, std::string> attributes;
+  std::map<string, string> attributes;
   
   attributes["id"] = mId;
   attributes["name"] = mName;
@@ -85,7 +86,7 @@ std::map<std::string, std::string> Component::getAttributes() const
   return attributes;
 }
 
-void Component::addDescription(std::map<std::string, std::string> attributes)
+void Component::addDescription(std::map<string, string> attributes)
 {
   if (!attributes["manufacturer"].empty())
   {
@@ -103,9 +104,9 @@ void Component::addDescription(std::map<std::string, std::string> attributes)
   }
 }
 
-std::map<std::string, std::string> Component::getDescription() const
+std::map<string, string> Component::getDescription() const
 {
-  std::map<std::string, std::string> description;
+  std::map<string, string> description;
   
   if (!mManufacturer.empty())
   {

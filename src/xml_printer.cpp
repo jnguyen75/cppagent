@@ -33,13 +33,15 @@
 
 #include "xml_printer.hpp"
 
+using namespace std;
+
 /* XmlPrinter main methods */
-std::string XmlPrinter::printError(
+string XmlPrinter::printError(
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
-    const std::string& errorCode,
-    const std::string& errorText
+    const string& errorCode,
+    const string& errorText
   )
 {
   xmlpp::Document * mErrorXml = initXmlDoc(
@@ -53,52 +55,52 @@ std::string XmlPrinter::printError(
   error->set_attribute("errorCode", errorCode);
   error->set_child_text(errorText);
   
-  std::string toReturn = printNode(mErrorXml->get_root_node());
+  string toReturn = printNode(mErrorXml->get_root_node());
   
   delete mErrorXml;
   
   return appendXmlEncode(toReturn);
 }
 
-std::string XmlPrinter::printProbe(
+string XmlPrinter::printProbe(
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
-    std::list<Device *>& deviceList
+    list<Device *>& deviceList
   )
 {
-  xmlpp::Document * mProbeXml = initXmlDoc(
+  xmlpp::Document *mProbeXml = initXmlDoc(
     "Devices",
     instanceId,
     bufferSize,
     nextSeq
   );
   
-  xmlpp::Element * devices = mProbeXml->get_root_node()->add_child("Devices");
+  xmlpp::Element *devices = mProbeXml->get_root_node()->add_child("Devices");
   
-  std::list<Device *>::iterator d;
-  for (d=deviceList.begin(); d!=deviceList.end(); d++)
+  list<Device *>::iterator dev;
+  for (dev = deviceList.begin(); dev != deviceList.end(); dev++)
   {
-    xmlpp::Element * device = devices->add_child("Device");
-    printProbeHelper(device, *d);
+    xmlpp::Element *device = devices->add_child("Device");
+    printProbeHelper(device, *dev);
   }
   
-  std::string toReturn = printNode(mProbeXml->get_root_node());
+  string toReturn = printNode(mProbeXml->get_root_node());
   
   delete mProbeXml;
   
   return appendXmlEncode(toReturn);
 }
 
-std::string XmlPrinter::printCurrent(
+string XmlPrinter::printCurrent(
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq,
-    std::list<DataItem *>& dataItems
+    list<DataItem *>& dataItems
   )
 {
-  xmlpp::Document * mSampleXml = initXmlDoc(
+  xmlpp::Document *mSampleXml = initXmlDoc(
     "Streams",
     instanceId,
     bufferSize,
@@ -106,24 +108,24 @@ std::string XmlPrinter::printCurrent(
     firstSeq
   );
   
-  xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
+  xmlpp::Element *streams = mSampleXml->get_root_node()->add_child("Streams");
   
-  std::list<xmlpp::Element *> elements;
+  list<xmlpp::Element *> elements;
   
-  std::list<DataItem *>::iterator dataItem;
-  for (dataItem=dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
+  list<DataItem *>::iterator dataItem;
+  for (dataItem = dataItems.begin(); dataItem != dataItems.end(); dataItem++)
   {
     if ((*dataItem)->getLatestEvent() != NULL)
     {
-      Component * component = (*dataItem)->getComponent();
+      Component *component = (*dataItem)->getComponent();
       
-      xmlpp::Element * deviceStream = 
+      xmlpp::Element *deviceStream = 
         getDeviceStream(streams, component->getDevice());
       
-      xmlpp::Element * element = 
+      xmlpp::Element *element = 
         searchParentsForId(elements, component->getId());
       
-      xmlpp::Element * child;
+      xmlpp::Element *child;
       
       if (element == NULL)
       {
@@ -137,9 +139,9 @@ std::string XmlPrinter::printCurrent(
         
         bool sample = (*dataItem)->isSample();
         
-        std::string dataName = (sample) ? "Samples" : "Events";
+        string dataName = (sample) ? "Samples" : "Events";
         
-        xmlpp::Element * data = componentStream->add_child(dataName);
+        xmlpp::Element *data = componentStream->add_child(dataName);
         
         elements.push_back(data);
         
@@ -165,19 +167,19 @@ std::string XmlPrinter::printCurrent(
     }
   }
   
-  std::string toReturn = printNode(mSampleXml->get_root_node());
+  string toReturn = printNode(mSampleXml->get_root_node());
   
   delete mSampleXml;
   
   return appendXmlEncode(toReturn);
 }
 
-std::string XmlPrinter::printSample(
+string XmlPrinter::printSample(
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq,
-    std::list<ComponentEvent *>& results
+    list<ComponentEvent *>& results
   )
 {
   xmlpp::Document * mSampleXml = initXmlDoc(
@@ -188,25 +190,26 @@ std::string XmlPrinter::printSample(
     firstSeq
   );
     
-  xmlpp::Element * streams = mSampleXml->get_root_node()->add_child("Streams");
+  xmlpp::Element *streams = mSampleXml->get_root_node()->add_child("Streams");
   
-  std::list<xmlpp::Element *> elements;
+  list<xmlpp::Element *> elements;
   
-  std::list<ComponentEvent *>::iterator result;
-  for (result=results.begin(); result!=results.end(); result++)
+  list<ComponentEvent *>::iterator result;
+  for (result = results.begin(); result != results.end(); result++)
   {
-    Component * component = (*result)->getDataItem()->getComponent();
+    Component *component = (*result)->getDataItem()->getComponent();
     
-    xmlpp::Element * element = 
+    xmlpp::Element *element = 
       searchParentsForId(elements, component->getId());
-    xmlpp::Element * child;
+    
+    xmlpp::Element *child;
     
     if (element == NULL)
     {
-      xmlpp::Element * deviceStream = 
+      xmlpp::Element *deviceStream = 
         getDeviceStream(streams, component->getDevice());
       
-      xmlpp::Element * componentStream = 
+      xmlpp::Element *componentStream = 
         deviceStream->add_child("ComponentStream");
       
       componentStream->set_attribute("component", component->getClass());
@@ -215,9 +218,9 @@ std::string XmlPrinter::printSample(
       
       bool sample = (*result)->getDataItem()->isSample();
       
-      std::string dataName = (sample) ? "Samples" : "Events";
+      string dataName = (sample) ? "Samples" : "Events";
       
-      xmlpp::Element * data = componentStream->add_child(dataName);
+      xmlpp::Element *data = componentStream->add_child(dataName);
       
       elements.push_back(data);
       
@@ -241,7 +244,7 @@ std::string XmlPrinter::printSample(
     addAttributes(child, (*result)->getAttributes());
   }
   
-  std::string toReturn = printNode(mSampleXml->get_root_node());
+  string toReturn = printNode(mSampleXml->get_root_node());
   
   delete mSampleXml;
   
@@ -250,18 +253,18 @@ std::string XmlPrinter::printSample(
 
 /* XmlPrinter helper Methods */
 xmlpp::Document * XmlPrinter::initXmlDoc(
-    const std::string& xmlType,
+    const string& xmlType,
     const unsigned int instanceId,
     const unsigned int bufferSize,
     const unsigned int nextSeq,
     const unsigned int firstSeq
   )
 {
-  xmlpp::Document * doc = new xmlpp::Document;
+  xmlpp::Document *doc = new xmlpp::Document;
   
-  std::string rootName = "MTConnect" + xmlType;
-  std::string xmlns = "urn:mtconnect.com:MTConnect" + xmlType + ":1.0";
-  std::string xsi = "urn:mtconnect.com:MTConnect" + xmlType +
+  string rootName = "MTConnect" + xmlType;
+  string xmlns = "urn:mtconnect.com:MTConnect" + xmlType + ":1.0";
+  string xsi = "urn:mtconnect.com:MTConnect" + xmlType +
     ":1.0 /schemas/MTConnect" + xmlType + ".xsd";
   
   // Root
@@ -289,8 +292,8 @@ xmlpp::Document * XmlPrinter::initXmlDoc(
   return doc;
 }
 
-std::string XmlPrinter::printNode(
-    const xmlpp::Node* node,
+string XmlPrinter::printNode(
+    const xmlpp::Node *node,
     const unsigned int indentation
   )
 {
@@ -301,7 +304,7 @@ std::string XmlPrinter::printNode(
   xmlpp::Node::NodeList children = node->get_children();
   bool hasChildren = (children.size() > 0);
   
-  std::string toReturn;
+  string toReturn;
 
   // Ignore empty whitespace
   if (nodeText && nodeText->is_white_space())
@@ -327,11 +330,11 @@ std::string XmlPrinter::printNode(
     const xmlpp::Element::AttributeList& attributes =
       nodeElement->get_attributes();
     
-    xmlpp::Element::AttributeList::const_iterator attribute;
-    for (attribute=attributes.begin(); attribute!=attributes.end(); attribute++)
+    xmlpp::Element::AttributeList::const_iterator attr;
+    for (attr = attributes.begin(); attr != attributes.end(); attr++)
     {
-      toReturn += " " + (*attribute)->get_name() +
-        "=\"" + (*attribute)->get_value() + "\"";
+      toReturn += " " + (*attr)->get_name() +
+       "=\"" + (*attr)->get_value() + "\"";
     }
     
     toReturn += (hasChildren) ? ">" : " />";
@@ -346,7 +349,7 @@ std::string XmlPrinter::printNode(
   if (!dynamic_cast<const xmlpp::ContentNode*>(node))
   {
     xmlpp::Node::NodeList::iterator child;
-    for (child=children.begin(); child!= children.end(); child++)
+    for (child = children.begin(); child != children.end(); child++)
     {
       toReturn += printNode(*child, indentation + 2);
     }
@@ -372,7 +375,7 @@ void XmlPrinter::printProbeHelper(
 {
   addAttributes(element, component->getAttributes());
     
-  std::map<std::string, std::string> desc = component->getDescription();
+  std::map<string, string> desc = component->getDescription();
   
   if (desc.size() > 0)
   {
@@ -380,18 +383,17 @@ void XmlPrinter::printProbeHelper(
     addAttributes(description, desc);
   }
   
-  std::list<DataItem *> datum = component->getDataItems();
+  list<DataItem *> datum = component->getDataItems();
   if (datum.size() > 0)
   {
     xmlpp::Element * dataItems = element->add_child("DataItems");
-    for (std::list<DataItem *>::iterator data=datum.begin();
-          data!=datum.end();
-          data++
-        )
+    
+    list<DataItem *>::iterator data;
+    for (data = datum.begin(); data!= datum.end(); data++)
     {
       xmlpp::Element * dataItem = dataItems->add_child("DataItem");
       addAttributes(dataItem, (*data)->getAttributes());
-      std::string source = (*data)->getSource();
+      string source = (*data)->getSource();
       if (!source.empty())
       {
         xmlpp::Element * src = dataItem->add_child("Source");
@@ -400,15 +402,14 @@ void XmlPrinter::printProbeHelper(
     }
   }
 
-  std::list<Component *> children = component->getChildren();
+  list<Component *> children = component->getChildren();
   
   if (children.size() > 0)
   {
     xmlpp::Element * components = element->add_child("Components");
-    for (std::list<Component *>::iterator child=children.begin();
-          child!=children.end();
-          child++
-        )
+    
+    list<Component *>::iterator child;
+    for (child = children.begin(); child != children.end(); child++)
     {
       xmlpp::Element * component = components->add_child((*child)->getClass());
       printProbeHelper(component, *child);
@@ -416,15 +417,15 @@ void XmlPrinter::printProbeHelper(
   }
 }
 
-std::string XmlPrinter::appendXmlEncode(const std::string& xml)
+string XmlPrinter::appendXmlEncode(const string& xml)
 {
   return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xml;
 }
 
-std::string XmlPrinter::printIndentation(unsigned int indentation)
+string XmlPrinter::printIndentation(unsigned int indentation)
 {
-  std::string indents;
-  for(unsigned int i = 0; i < indentation; ++i)
+  string indents;
+  for (unsigned int i = 0; i < indentation; i++)
   {
     indents += " ";
   }
@@ -432,29 +433,29 @@ std::string XmlPrinter::printIndentation(unsigned int indentation)
 }
 
 void XmlPrinter::addAttributes(
-    xmlpp::Element * element,
-    std::map<std::string, std::string> attributes
+    xmlpp::Element *element,
+    std::map<string, string> attributes
   )
 {
-  std::map<std::string, std::string>::iterator attribute;
-  for (attribute=attributes.begin(); attribute!=attributes.end(); attribute++)
+  std::map<string, string>::iterator attr;
+  for (attr=attributes.begin(); attr!=attributes.end(); attr++)
   {
-    element->set_attribute(attribute->first, attribute->second);
+    element->set_attribute(attr->first, attr->second);
   }
 }
 
 xmlpp::Element * XmlPrinter::getDeviceStream(
-    xmlpp::Element * element,
-    Device * device
+    xmlpp::Element *element,
+    Device *device
   )
 {
   xmlpp::Node::NodeList children = element->get_children("DeviceStream");
   xmlpp::Node::NodeList::iterator child;
-  for (child=children.begin(); child!=children.end(); child++)
+  for (child = children.begin(); child != children.end(); child++)
   {
     xmlpp::Element * nodeElement = dynamic_cast<xmlpp::Element *>(*child);
     
-    if (nodeElement &&
+    if (nodeElement and
       nodeElement->get_attribute_value("name") == device->getName())
     {
       return nodeElement;
@@ -462,19 +463,19 @@ xmlpp::Element * XmlPrinter::getDeviceStream(
   }
   
   // No element for device found, create a new one
-  xmlpp::Element * deviceStream = element->add_child("DeviceStream");
+  xmlpp::Element *deviceStream = element->add_child("DeviceStream");
   deviceStream->set_attribute("name", device->getName());
   deviceStream->set_attribute("uuid", device->getUuid());
   return deviceStream;
 }
 
 xmlpp::Element * XmlPrinter::searchParentsForId(
-    std::list<xmlpp::Element *> elements,
-    const std::string componentId
+    list<xmlpp::Element *> elements,
+    const string& componentId
   )
 {
-  std::list<xmlpp::Element *>::iterator element;
-  for (element=elements.begin(); element!=elements.end(); element++)
+  list<xmlpp::Element *>::iterator element;
+  for (element = elements.begin(); element != elements.end(); element++)
   {
     if ((*element)->get_parent()->get_attribute_value("componentId") == componentId)
     {

@@ -33,12 +33,13 @@
 
 #include "connector.hpp"
 
+using namespace std;
+
 /* Connector public methods */
-Connector::Connector(const std::string& server, unsigned int port)
+Connector::Connector(const string& server, unsigned int port)
 {
   mServer = server;
   mPort = port;
-  //mBuffer;
 }
 
 Connector::~Connector()
@@ -75,21 +76,21 @@ void Connector::connect()
       size_t newLine = mBuffer.find_last_of('\n');
       
       // Check to see if there is even a '\n' in buffer
-      if (newLine != std::string::npos)
+      if (newLine != string::npos)
       {
         // If the '\n' is not at the end of the buffer, then save the overflow
-        std::string overflow = "";
+        string overflow = "";
         
         if (newLine != mBuffer.length() - 1)
         {
           overflow = mBuffer.substr(newLine + 1);
-          std::string newBuffer = mBuffer.substr(0, newLine);
+          string newBuffer = mBuffer.substr(0, newLine);
           mBuffer = newBuffer;
         }
         
         // Search the buffer for new complete lines
         char buf[LINE_BUFFER_SIZE];
-        std::stringstream stream (mBuffer);
+        stringstream stream (mBuffer);
         
         while (stream.getline(buf, LINE_BUFFER_SIZE))
         {
@@ -107,7 +108,7 @@ void Connector::connect()
     // Close the connection gracefully
     close_gracefully(con);
   }
-  catch (std::exception & e)
+  catch (exception & e)
   {
     logEvent("Connector::connect", e.what());
   }

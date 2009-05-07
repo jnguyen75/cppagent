@@ -33,8 +33,14 @@
 
 #include "adapter.hpp"
 
+using namespace std;
+
 /* Adapter public methods */
-Adapter::Adapter(const std::string& device, const std::string &server, const unsigned int port)
+Adapter::Adapter(
+    const string& device,
+    const string& server,
+    const unsigned int port
+  )
   : Connector(server, port), mDevice(device)
 {
   // Will start threaded object: Adapter::thread()
@@ -48,26 +54,32 @@ Adapter::~Adapter()
   wait();
 }
 
-void Adapter::processData(const std::string& data)
+/**
+ * Expected data to parse in SDHR format:
+ *   Time|Alarm|Code|NativeCode|Severity|State|Description
+ *   Time|Item|Value
+ *   Time|Item1|Value1|Item2|Value2...
+ */
+
+void Adapter::processData(const string& data)
 {
-  std::istringstream toParse(data);
-  std::string key;
-  
-  // Parse data
-  getline(toParse, key, '|');
-  std::string time = key;
+  istringstream toParse(data);
+  string key;
   
   getline(toParse, key, '|');
-  std::string type = key;
+  string time = key;
   
-  std::string value;
+  getline(toParse, key, '|');
+  string type = key;
+  
+  string value;
   getline(toParse, value, '|');
   
   // Check for alarm
   if (type == "Alarm")
   {
     // Convert the rest of the data into upper case with pipe delimeter
-    std::string alarmValue = toUpperCase(value);
+    string alarmValue = toUpperCase(value);
     
     while (getline(toParse, value, '|'))
     {

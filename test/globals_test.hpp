@@ -49,6 +49,7 @@ class GlobalsTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testToUpperCase);
   CPPUNIT_TEST(testIsNonNegativeInteger);
   CPPUNIT_TEST(testTime);
+  CPPUNIT_TEST(testLogEvent);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
@@ -57,6 +58,7 @@ protected:
   void testToUpperCase();
   void testIsNonNegativeInteger();
   void testTime();
+  void testLogEvent();
   
 public:
   void setUp();

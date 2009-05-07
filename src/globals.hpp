@@ -39,6 +39,8 @@
 #include <sstream>
 #include <fstream>
 
+/***** CONSTANTS *****/
+
 /* Port number to put server on */
 const unsigned int SERVER_PORT = 8080;
 
@@ -51,19 +53,8 @@ const unsigned int SLIDING_BUFFER_EXP = 17;
 /* Message for when enumerations do not exist in an array/enumeration */
 const int ENUM_MISS = -1;
 
+/* Log file for logging events */
 extern const char *gLogFile;
-
-/* Convert an unsigned integer to string */
-std::string intToString(int i);
-
-/* Convert a float to string */
-std::string floatToString(float f);
-
-/* Convert a string to the same string with all upper case letters */
-std::string toUpperCase(std::string text);
-
-/* Check if each char in a string is a positive integer */
-bool isNonNegativeInteger(const std::string& s);
 
 /* Time format */
 enum TimeFormat
@@ -73,6 +64,20 @@ enum TimeFormat
   GMT_UV_SEC,
   LOCAL
 };
+
+/***** METHODS *****/
+
+/* Convert an unsigned integer to string */
+std::string intToString(int i);
+
+/* Convert a float to string */
+std::string floatToString(float f);
+
+/* Convert a string to the same string with all upper case letters */
+std::string toUpperCase(std::string& text);
+
+/* Check if each char in a string is a positive integer */
+bool isNonNegativeInteger(const std::string& s);
 
 /* Get the current time formatted */
 std::string getCurrentTime(TimeFormat format);

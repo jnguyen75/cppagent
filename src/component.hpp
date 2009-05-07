@@ -5,9 +5,9 @@
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
 *     * Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
+*       notice, this std::list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
+*       notice, this std::list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
 *     * Neither the name of the AMT nor the
 *       names of its contributors may be used to endorse or promote products
@@ -47,7 +47,7 @@ class Device;
 class Component
 {
 public:
-  /* String enumeration for component parts and details */
+  /* std::string enumeration for component parts and details */
   enum EComponentSpecs
   {
     // Component parts
@@ -61,16 +61,21 @@ public:
     TEXT
   };
   
-  static const unsigned int NumComponentSpecs = 13;
+  static const unsigned int NumComponentSpecs = 7;
   static const std::string SComponentSpecs[];
   
 public:
-  /* Take in mapping of attributes */
-  Component(std::string cls, std::map<std::string, std::string> attributes);
+  /* Take in a class name & mapping of attributes */
+  Component(
+    const std::string& cls,
+    std::map<std::string, std::string> attributes
+  );
+  
+  /* Virtual destructor */
   virtual ~Component();
   
   /* Return what part of the component it is */
-  const std::string &getClass() const { return mClass; }
+  const std::string& getClass() const { return mClass; }
   
   /* Return a map of attributes of all the component specs */
   virtual std::map<std::string, std::string> getAttributes() const;
@@ -91,23 +96,22 @@ public:
   void setParent(Component& parent) { mParent = &parent; }
   Component * getParent() const { return mParent; }
   
-  /* Add to/get the component's list of children */
+  /* Add to/get the component's std::list of children */
   void addChild(Component& child) { mChildren.push_back(&child); }
   std::list<Component *> getChildren() { return mChildren; }
   
-  /* Add to/get the component's list of data items */
+  /* Add to/get the component's std::list of data items */
   void addDataItem(DataItem& dataItem) { mDataItems.push_back(&dataItem); }
   std::list<DataItem *> getDataItems() const { return mDataItems; }
   
 protected:
-  /* Component specs */
   /* Unique ID for each component */
   std::string mId;
   
   /* Name for itself */
   std::string mName;
 
-  // The class
+  /* The class */
   std::string mClass;
   
   /* Universal unique identifier */
@@ -125,7 +129,7 @@ protected:
   /* Pointer to the parent component */
   Component * mParent;
   
-  /* Each component keeps track of it's children in a list */
+  /* Each component keeps track of it's children in a std::list */
   std::list<Component *> mChildren;
   
   /* Keep Track of all the data items associated with this component */

@@ -79,7 +79,7 @@ public:
   static const std::string SSimpleUnits[];
   
 public:
-  /* Initialize the ComponentEvent with the type of event, sequence number, time and value */
+  /* Initialize with the data item reference, sequence number, time and value */
   ComponentEvent(
     DataItem& dataItem,
     unsigned int sequence,
@@ -96,6 +96,7 @@ public:
   /* Extract the component event data into a map */
   std::map<std::string, std::string> getAttributes();
   
+  /* Get the data item associated with this event */
   DataItem * getDataItem() const { return mDataItem; }
   
   /* Get the value */
@@ -112,7 +113,7 @@ protected:
   /* Timestamp of the event's occurence */
   std::string mTime;
   
-  /* The value of the event */
+  /* The value of the event, either as a float or a string */
   float fValue;
   std::string sValue;
   

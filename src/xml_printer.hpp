@@ -41,7 +41,7 @@
 
 #include "component_event.hpp"
 #include "device.hpp"
-#include "../src/globals.hpp"
+#include "globals.hpp"
 
 class DataItem;
 
@@ -91,30 +91,32 @@ namespace XmlPrinter
   
   /* Function to parse and write XML */
   std::string printNode(
-    const xmlpp::Node* node, 
+    const xmlpp::Node *node,
     const unsigned int indentation = 0
   );
   
-  void printProbeHelper(xmlpp::Element * element, Component * component);
+  /* Helper to print individual components and details */
+  void printProbeHelper(xmlpp::Element *element, Component *component);
   
+  /* Append the xml encoding at the top of the document */
   std::string appendXmlEncode(const std::string& xml);
   
   /* Simple helper function to put indentations into the XML stream */
   std::string printIndentation(const unsigned int indentation);
   
+  /* Add attributes to an xml element */
   void addAttributes(
-    xmlpp::Element * element,
+    xmlpp::Element *element,
     std::map<std::string, std::string> attributes
   );
   
+  /* Get a device stream from the element, else append a new device stream */
+  xmlpp::Element * getDeviceStream(xmlpp::Element *element, Device *device);
+  
+  /* Search an element's parents for the component id */
   xmlpp::Element * searchParentsForId(
     std::list<xmlpp::Element *> elements,
-    const std::string id
-  );
-  
-  xmlpp::Element * getDeviceStream(
-    xmlpp::Element * element,
-    Device * device
+    const std::string& componentId
   );
 };
 

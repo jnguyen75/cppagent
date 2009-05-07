@@ -33,8 +33,10 @@
 
 #include "xml_parser.hpp"
 
+using namespace std;
+
 /* XmlParser public methods */
-XmlParser::XmlParser(const std::string& xmlPath)
+XmlParser::XmlParser(const string& xmlPath)
 {
   try
   {
@@ -51,13 +53,13 @@ XmlParser::XmlParser(const std::string& xmlPath)
     xmlpp::NodeSet devices =
       getRootNode()->find("//MTConnectDevices/Devices/*");
     
-    for (unsigned int i=0; i<devices.size(); i++)
+    for (unsigned int i = 0; i < devices.size(); i++)
     {
       // MAKE SURE FIRST ITEMS IN HIERARCHIES ARE DEVICES
       mDevices.push_back(static_cast<Device *>(handleComponent(devices[i])));
     }
   }
-  catch (std::exception & e)
+  catch (exception & e)
   {
     logEvent("XmlParser::XmlParser", e.what());
     delete mParser;
@@ -90,7 +92,7 @@ Component * XmlParser::handleComponent(
       Component::NumComponentSpecs
     );
 
-  std::string name;
+  string name;
   switch (spec)
   {
   case Component::DEVICE:
@@ -130,12 +132,12 @@ Component * XmlParser::handleComponent(
     xmlpp::Node::NodeList children = component->get_children();
     
     xmlpp::Node::NodeList::iterator child;
-    for (child=children.begin(); child!=children.end(); ++child)
+    for (child = children.begin(); child != children.end(); ++child)
     {
       if ((*child)->get_name() == "Description")
       {
-        const xmlpp::Element* nodeElement =
-          dynamic_cast<const xmlpp::Element*>(*child);
+        const xmlpp::Element *nodeElement =
+          dynamic_cast<const xmlpp::Element *>(*child);
         toReturn->addDescription(getAttributes(nodeElement));
       }
       else
@@ -149,13 +151,13 @@ Component * XmlParser::handleComponent(
 }
 
 Component * XmlParser::loadComponent(
-    xmlpp::Node * node,
+    xmlpp::Node *node,
     Component::EComponentSpecs spec,
-    std::string &name
+    string& name
   )
 {
-  const xmlpp::Element* nodeElement = dynamic_cast<const xmlpp::Element*>(node);
-  std::map<std::string, std::string> attributes = getAttributes(nodeElement);
+  const xmlpp::Element *nodeElement = dynamic_cast<const xmlpp::Element*>(node);
+  std::map<string, string> attributes = getAttributes(nodeElement);
   
   switch (spec)
   {
@@ -166,30 +168,32 @@ Component * XmlParser::loadComponent(
   }
 }
 
-std::map<std::string, std::string> XmlParser::getAttributes(
-    const xmlpp::Element * element
-  )
+std::map<string, string> XmlParser::getAttributes(const xmlpp::Element *element)
 {
-  std::map<std::string, std::string> toReturn;
+  std::map<string, string> toReturn;
   
   // Load all the attributes into the map to return
   const xmlpp::Element::AttributeList& attributes =
     element->get_attributes();
     
-  xmlpp::Element::AttributeList::const_iterator attribute;
-  for (attribute=attributes.begin(); attribute!=attributes.end(); attribute++)
+  xmlpp::Element::AttributeList::const_iterator attr;
+  for (attr = attributes.begin(); attr != attributes.end(); attr++)
   {
-    toReturn[(*attribute)->get_name()] = (*attribute)->get_value();
+    toReturn[(*attr)->get_name()] = (*attr)->get_value();
   }
   
   return toReturn;
 }
 
-void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent, Device *device)
+void XmlParser::loadDataItem(
+    xmlpp::Node *dataItem,
+    Component *parent,
+    Device *device
+  )
 {
   const xmlpp::Element* nodeElement =
     dynamic_cast<const xmlpp::Element*>(dataItem);
-  DataItem * d = new DataItem(getAttributes(nodeElement));
+  DataItem *d = new DataItem(getAttributes(nodeElement));
   d->setComponent(*parent);
   
   // Check children for "source"
@@ -214,7 +218,11 @@ void XmlParser::loadDataItem(xmlpp::Node * dataItem, Component * parent, Device 
   device->addDeviceDataItem(*d);
 }
 
-void XmlParser::handleChildren(xmlpp::Node * components, Component * parent, Device *device)
+void XmlParser::handleChildren(
+    xmlpp::Node *components,
+    Component *parent,
+    Device *device
+  )
 {
   if (!dynamic_cast<const xmlpp::ContentNode*>(components))
   {

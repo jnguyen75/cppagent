@@ -41,7 +41,7 @@
 #include "component.hpp"
 #include "device.hpp"
 #include "data_item.hpp"
-#include "../src/globals.hpp"
+#include "globals.hpp"
 
 class XmlParser
 {
@@ -68,28 +68,36 @@ protected:
 protected:
   /* Main method to process the nodes and return the objects */
   Component * handleComponent(
-    xmlpp::Node * component,
-    Component * parent = NULL,
+    xmlpp::Node *component,
+    Component *parent = NULL,
     Device *device = NULL
   );
   
   /* Helper to handle/return each component of the device */
   Component * loadComponent(
-    xmlpp::Node * node,
+    xmlpp::Node *node,
     Component::EComponentSpecs spec,
     std::string &name
   );
   
   /* Put all of the attributes of an element into a map */
   std::map<std::string, std::string> getAttributes(
-    const xmlpp::Element * element
+    const xmlpp::Element *element
   );
   
   /* Load the data items */
-  void loadDataItem(xmlpp::Node * dataItems, Component * component, Device *device);
+  void loadDataItem(
+    xmlpp::Node *dataItems,
+    Component *component,
+    Device *device
+  );
   
   /* Perform loading on children and set up relationships */
-  void handleChildren(xmlpp::Node * components, Component * parent = NULL, Device *device = NULL);
+  void handleChildren(
+    xmlpp::Node *components,
+    Component *parent = NULL,
+    Device *device = NULL
+  );
 };
 
 #endif

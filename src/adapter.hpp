@@ -34,6 +34,8 @@
 #ifndef ADAPTER_HPP
 #define ADAPTER_HPP
 
+#include <string>
+
 #include "dlib/sockets.h"
 #include "dlib/threads.h"
 
@@ -48,8 +50,12 @@ using namespace dlib;
 class Adapter : public Connector, public threaded_object
 {
 public:
-  /* Connect the adapter to the server & port */
-  Adapter(const std::string& device, const std::string &server, const unsigned int port);
+  /* Associate adapter with a device & connect to the server & port */
+  Adapter(
+    const std::string& device,
+    const std::string& server, 
+    const unsigned int port
+  );
   
   /* Virtual destructor */
   virtual ~Adapter();
@@ -62,7 +68,9 @@ public:
   
 protected:
   /* Pointer to the agent */
-  Agent * mAgent;
+  Agent *mAgent;
+  
+  /* Name of device associated with adapter */
   std::string mDevice;
   
 private:

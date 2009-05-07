@@ -5,9 +5,9 @@
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
 *     * Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
+*       notice, this std::list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
+*       notice, this std::list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
 *     * Neither the name of the AMT nor the
 *       names of its contributors may be used to endorse or promote products
@@ -37,6 +37,7 @@
 #include <sstream>
 #include <string>
 #include <list>
+#include <map>
 
 #include "dlib/md5.h"
 #include "dlib/server.h"
@@ -104,8 +105,13 @@ public:
   );
   
   /* Add an adapter to the agent */
-  void addAdapter(const std::string& device, const std::string& host, const unsigned int port);
+  void addAdapter(
+    const std::string& device,
+    const std::string& host,
+    const unsigned int port
+  );
   
+  /* Get device from device map */
   Device * getDeviceByName(const std::string& name) { return mDeviceMap[name]; } 
   
   /* Add component events to the sliding buffer */
@@ -128,9 +134,7 @@ protected:
   );
   
   /* Handle probe calls */
-  std::string handleProbe(
-    const std::string& device
-  );
+  std::string handleProbe(const std::string& device);
   
   /* Handle stream calls, which includes both current and sample */
   bool handleStream(
@@ -153,9 +157,9 @@ protected:
     unsigned int count = 0
   );
   
-  /* Fetch the current/sample data and return the XML in a string */
+  /* Fetch the current/sample data and return the XML in a std::string */
   std::string fetchCurrentData(std::list<DataItem *>& dataItems);
-  std::string fetchSampleData (
+  std::string fetchSampleData(
     std::list<DataItem *>& dataItems,
     unsigned int start,
     unsigned int count
@@ -170,7 +174,7 @@ protected:
     const std::string& device
   );
   
-  /* Get list of data items in path */
+  /* Get std::list of data items in path */
   std::list<DataItem *> getDataItems(
     const std::string& path,
     xmlpp::Node * node = NULL
@@ -188,35 +192,35 @@ protected:
   );
   
   /* Find data items by name/id */
-  DataItem * getDataItemByName(const std::string& device, const std::string& name);
   DataItem * getDataItemById(const std::string& id) { return mDataItemMap[id]; }
+  DataItem * getDataItemByName(
+    const std::string& device,
+    const std::string& name
+  );
   
   /* Find if there's data item with that name/source name */
   bool hasDataItem(std::list<DataItem *>& dataItems, const std::string& name);
-  
-  /* See if device is available */
-  bool hasDevice(const std::string& name);
   
 protected:
   /* Unique id based on the time of creation */
   unsigned int mInstanceId;
   
   /* Pointer to the configuration file for node access */
-  XmlParser * mConfig;
+  XmlParser *mConfig;
   
   /* For access to the sequence number and sliding buffer, use the mutex */
-  dlib::mutex * mSequenceLock;
+  dlib::mutex *mSequenceLock;
   
   /* Sequence number */
   unsigned int mSequence;
   
   /* The sliding/circular buffer to hold all of the events/sample data */
-  dlib::sliding_buffer_kernel_1<ComponentEvent *> * mSlidingBuffer;
+  dlib::sliding_buffer_kernel_1<ComponentEvent *> *mSlidingBuffer;
   
-  /* Lists of data */
+  /* Data containers */
   std::list<Device *> mDevices;
-  std::map<std::string, Device*> mDeviceMap;
-  std::map<std::string, DataItem*> mDataItemMap;
+  std::map<std::string, Device *> mDeviceMap;
+  std::map<std::string, DataItem *> mDataItemMap;
 };
 
 #endif

@@ -34,6 +34,8 @@
 #ifndef DEVICE_HPP
 #define DEVICE_HPP
 
+#include <map>
+
 #include "component.hpp"
 #include "data_item.hpp"
 
@@ -41,25 +43,36 @@ class Component;
 
 class Device : public Component
 { 
-protected:
-  /* The iso841Class of the device */
-  unsigned int mIso841Class;
-  std::map<std::string, DataItem*> mDeviceDataItems;
-  
 public:
   /* Constructor that sets variables from an attribute map */
   Device(std::map<std::string, std::string> attributes);
+  
+  /* Destructor */
   ~Device();
-
-  void addDeviceDataItem(DataItem& dataItem) { mDeviceDataItems[dataItem.getSourceOrName()] = &dataItem; }
+  
+  /* Add/get items to/from the device name to data item mapping */
+  void addDeviceDataItem(DataItem& dataItem) {
+    mDeviceDataItems[dataItem.getSourceOrName()] = &dataItem;
+  }
+  DataItem * getDeviceDataItem(const std::string& aName) {
+    return mDeviceDataItems[aName];
+  }
 
   /* Retrieve the attributes of the device in an attribute map */
   std::map<std::string, std::string> getAttributes() const;
-  DataItem* getDeviceDataItem(const std::string &aName) { return mDeviceDataItems[aName]; }
-
-  const std::map<std::string, DataItem*> getDeviceDataItems() const { return mDeviceDataItems; }
+  
+  /* Return the mapping of Device to data items */
+  const std::map<std::string, DataItem *> getDeviceDataItems() const {
+    return mDeviceDataItems;
+  }
+  
+protected:
+  /* The iso841Class of the device */
+  unsigned int mIso841Class;
+  
+  /* Mapping of device names to data items*/
+  std::map<std::string, DataItem *> mDeviceDataItems;
 };
 
 #endif
-
 

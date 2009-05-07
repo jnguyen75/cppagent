@@ -33,26 +33,10 @@
 
 #include "data_item.hpp"
 
-std::string DataItem::getCamelType(const std::string &aType)
-{
-  std::string camel = aType;
-  std::string::iterator second = camel.begin();
-  second++;
-  std::transform(second, camel.end(), second, ::tolower);
-
-  std::string::iterator word = find(second, camel.end(), '_');
-  while (word != camel.end())
-  {
-    camel.erase(word);
-    camel.replace(word, word + 1, 1, ::toupper(*word));
-    word = find(word, camel.end(), '_');
-  }
-
-  return camel;
-}
+using namespace std;
 
 /* DataItem public methods */
-DataItem::DataItem(std::map<std::string, std::string> attributes) 
+DataItem::DataItem(std::map<string, string> attributes) 
   : mHasNativeScale(false), mHasSignificantDigits(false)
 {
   mId = attributes["id"];
@@ -108,9 +92,9 @@ DataItem::~DataItem()
   }
 }
 
-std::map<std::string, std::string> DataItem::getAttributes() const
+std::map<string, string> DataItem::getAttributes() const
 {
-  std::map<std::string, std::string> attributes;
+  std::map<string, string> attributes;
   
   attributes["id"] = mId;
   attributes["name"] = mName;
@@ -151,12 +135,12 @@ std::map<std::string, std::string> DataItem::getAttributes() const
   return attributes;
 }
 
-std::string DataItem::getTypeString(bool uppercase) const
+string DataItem::getTypeString(bool uppercase) const
 {
   return (uppercase) ? mType : mCamelType;
 }
 
-bool DataItem::hasName(const std::string name)
+bool DataItem::hasName(const string& name)
 {
   return mName == name || (!mSource.empty() && mSource == name);
 }
@@ -181,5 +165,23 @@ ComponentEvent * DataItem::getLatestEvent() const
   mLatestEventLock->unlock();
   
   return toReturn;
+}
+
+string DataItem::getCamelType(const string& aType)
+{
+  string camel = aType;
+  string::iterator second = camel.begin();
+  second++;
+  transform(second, camel.end(), second, ::tolower);
+
+  string::iterator word = find(second, camel.end(), '_');
+  while (word != camel.end())
+  {
+    camel.erase(word);
+    camel.replace(word, word + 1, 1, ::toupper(*word));
+    word = find(word, camel.end(), '_');
+  }
+
+  return camel;
 }
 

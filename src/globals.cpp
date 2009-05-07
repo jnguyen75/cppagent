@@ -36,26 +36,28 @@
 
 #include "globals.hpp"
 
+using namespace std;
+
 /* Convert an unsigned integer to string */
-std::string intToString(int i)
+string intToString(int i)
 {
-  std::ostringstream stm;
+  ostringstream stm;
   stm << i;
   return stm.str();
 }
 
 /* Convert a float to string */
-std::string floatToString(float f)
+string floatToString(float f)
 {
-  std::ostringstream stm;
+  ostringstream stm;
   stm << f;
   return stm.str();
 }
 
 /* Convert a string to the same string with all upper case letters */
-std::string toUpperCase(std::string text)
+string toUpperCase(string& text)
 {
-  for (unsigned int i=0; i<text.length();++i)
+  for (unsigned int i = 0; i < text.length(); i++)
   {
     text[i] = toupper(text[i]);
   }
@@ -64,11 +66,11 @@ std::string toUpperCase(std::string text)
 }
 
 /* Check if each char in a string is a positive integer */
-bool isNonNegativeInteger(const std::string& s)
+bool isNonNegativeInteger(const string& s)
 {
-  for (unsigned int i=0; i<s.length(); i++)
+  for (unsigned int i = 0; i < s.length(); i++)
   {
-    if (!std::isdigit(s[i]))
+    if (!isdigit(s[i]))
     {
       return false;
     }
@@ -77,14 +79,14 @@ bool isNonNegativeInteger(const std::string& s)
   return true;
 }
 
-std::string getCurrentTime(TimeFormat format)
+string getCurrentTime(TimeFormat format)
 {
 #ifdef WIN32
   SYSTEMTIME st;
   char timestamp[64];
   GetSystemTime(&st);
-  sprintf(timestamp, "%4d-%02d-%02dT%02d:%02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour,
-	  st.wMinute, st.wSecond);
+  sprintf(timestamp, "%4d-%02d-%02dT%02d:%02d:%02d", st.wYear, st.wMonth,
+    st.wDay, st.wHour, st.wMinute, st.wSecond);
   
   if (format == GMT_UV_SEC)
   {
@@ -93,7 +95,7 @@ std::string getCurrentTime(TimeFormat format)
   
   return timestamp;
 #else
-  char timeBuffer [30];
+  char timeBuffer[50];
   time_t rawtime;
   struct tm * timeinfo;
 
@@ -104,30 +106,31 @@ std::string getCurrentTime(TimeFormat format)
   switch (format)
   {
     case HUM_READ:
-      strftime (timeBuffer, 50, "%a, %d %b %Y %H:%M:%S %Z", timeinfo);
+      strftime(timeBuffer, 50, "%a, %d %b %Y %H:%M:%S %Z", timeinfo);
       break;
     case GMT:
-      strftime (timeBuffer, 50, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
+      strftime(timeBuffer, 50, "%Y-%m-%dT%H:%M:%S+00:00", timeinfo);
       break;
     case GMT_UV_SEC:
     case LOCAL:
-      strftime (timeBuffer, 50, "%Y-%m-%dT%H:%M:%S", timeinfo);
+      strftime(timeBuffer, 50, "%Y-%m-%dT%H:%M:%S", timeinfo);
       break;
   }
   
-  std::string toReturn (timeBuffer);
+  string toReturn(timeBuffer);
   
   if (format == GMT_UV_SEC)
   {
     timeval timEval;
     gettimeofday(&timEval, NULL);
     
-    std::ostringstream ostm;
+    ostringstream ostm;
     ostm << timEval.tv_usec;
-    std::string toAppend = ostm.str();
+    string toAppend = ostm.str();
     
+    // Precision is 6 digits
     toReturn += ".";
-    for (unsigned int i=toAppend.length(); i<6; i++)
+    for (unsigned int i = toAppend.length(); i < 6; i++)
     {
       toReturn += "0";
     }
@@ -145,26 +148,21 @@ unsigned int getCurrentTimeInSec()
 
 const char *gLogFile;
 
-void logEvent(const std::string& source, const std::string& message)
+void logEvent(const string& source, const string& message)
 {
-  std::ofstream logFile;
-  logFile.open(gLogFile, std::ios::app);
+  ofstream logFile;
+  logFile.open(gLogFile, ios::app);
   if (logFile.is_open())
   {
     logFile << "[" << getCurrentTime(LOCAL) << "] ";
-    logFile << source << ": ";
-    logFile << message << std::endl; 
+    logFile << source << ": " << message << endl; 
   }
   logFile.close();
 }
 
-int getEnumeration(
-    const std::string& name,
-    const std::string *array,
-    unsigned int size
-  )
+int getEnumeration(const string& name, const string *array, unsigned int size)
 {
-  for (unsigned int i=0; i<size; i++)
+  for (unsigned int i = 0; i < size; i++)
   {
     if (name == array[i])
     {

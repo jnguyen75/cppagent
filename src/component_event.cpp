@@ -33,8 +33,10 @@
 
 #include "component_event.hpp"
 
+using namespace std;
+
 /* ComponentEvent public static constants */
-const std::string ComponentEvent::SSimpleUnits[NumSimpleUnits] =
+const string ComponentEvent::SSimpleUnits[NumSimpleUnits] =
 {
   "INCH",
   "FOOT",
@@ -65,8 +67,8 @@ const std::string ComponentEvent::SSimpleUnits[NumSimpleUnits] =
 ComponentEvent::ComponentEvent(
     DataItem& dataItem,
     unsigned int sequence,
-    const std::string& time,
-    const std::string& value
+    const string& time,
+    const string& value
   )
 {
   mDataItem = &dataItem;
@@ -79,7 +81,7 @@ ComponentEvent::ComponentEvent(
 
 ComponentEvent::ComponentEvent(ComponentEvent& ce)
 {
-  std::map<std::string, std::string> attributes = ce.getAttributes();
+  std::map<string, string> attributes = ce.getAttributes();
   
   mDataItem = ce.getDataItem();
   
@@ -97,9 +99,9 @@ ComponentEvent::~ComponentEvent()
 {
 }
 
-std::map<std::string, std::string> ComponentEvent::getAttributes()
+std::map<string, string> ComponentEvent::getAttributes()
 {
-  std::map<std::string, std::string> attributes;
+  std::map<string, string> attributes;
   
   attributes["dataItemId"] = mDataItem->getId();
   attributes["timestamp"] = mTime;
@@ -113,8 +115,9 @@ std::map<std::string, std::string> ComponentEvent::getAttributes()
   
   if (getDataItem()->getType() == "ALARM")
   {
-    std::istringstream toParse(mAlarmData);
-    std::string token;
+    // Format to parse: CODE|NATIVECODE|SEVERITY|STATE
+    istringstream toParse(mAlarmData);
+    string token;
     
     getline(toParse, token, '|');
     attributes["code"] = token;
@@ -133,15 +136,17 @@ std::map<std::string, std::string> ComponentEvent::getAttributes()
 }
 
 /* ComponentEvent protected methods */
-void ComponentEvent::convertValue(const std::string& value)
+void ComponentEvent::convertValue(const string& value)
 {
   // Check if the type is an alarm or if it doesn't have units
   if (mDataItem->getType() == "ALARM")
   {
-    logEvent("AlarmData", value);
-    std::string::size_type lastPipe = value.rfind('|');
+    string::size_type lastPipe = value.rfind('|');
     
+    // Alarm data = CODE|NATIVECODE|SEVERITY|STATE
     mAlarmData = value.substr(0, lastPipe);
+    
+    // sValue = DESCRIPTION
     sValue = value.substr(lastPipe+1);
     return;
   }
@@ -151,11 +156,11 @@ void ComponentEvent::convertValue(const std::string& value)
     return;
   }
   
-  std::string units = mDataItem->getNativeUnits();
-  std::string::size_type slashLoc = units.find('/');
+  string units = mDataItem->getNativeUnits();
+  string::size_type slashLoc = units.find('/');
   
   // Convert units of numerator / denominator (^ power)
-  if (slashLoc == std::string::npos)
+  if (slashLoc == string::npos)
   {
     fValue = convertSimple(units, atof(value.c_str()));
   }
@@ -165,23 +170,24 @@ void ComponentEvent::convertValue(const std::string& value)
   }
   else
   {
-    std::string numerator = units.substr(0, slashLoc);
-    std::string denominator = units.substr(slashLoc+1);
+    string numerator = units.substr(0, slashLoc);
+    string denominator = units.substr(slashLoc+1);
     
-    std::string::size_type carotLoc = denominator.find('^');
+    string::size_type carotLoc = denominator.find('^');
     
     if (numerator == "REVOLUTION" && denominator == "SECOND")
     {
       fValue = atof(value.c_str()) * 60.0f;
     }
-    else if (carotLoc == std::string::npos)
+    else if (carotLoc == string::npos)
     {
-      fValue = convertSimple(numerator, atof(value.c_str())) / convertSimple(denominator, 1.0);
+      fValue = convertSimple(numerator,
+        atof(value.c_str())) / convertSimple(denominator, 1.0);
     }
     else
     {
-      std::string unit = denominator.substr(0, carotLoc);
-      std::string power = denominator.substr(carotLoc+1);
+      string unit = denominator.substr(0, carotLoc);
+      string power = denominator.substr(carotLoc+1);
       
       double div = pow((double) convertSimple(unit, 1.0f),
         (double) atof(power.c_str()));
@@ -195,7 +201,7 @@ void ComponentEvent::convertValue(const std::string& value)
   }
 }
 
-float ComponentEvent::convertSimple(const std::string& units, float v)
+float ComponentEvent::convertSimple(const string& units, float v)
 {
   switch(getEnumeration(units, SSimpleUnits, NumSimpleUnits))
   {

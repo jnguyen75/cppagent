@@ -50,13 +50,13 @@ public:
   /* Virtual desctructor */
   virtual ~Connector();
   
-  /*
+  /**
    *  Blocking call to connect to the server/port
    *  Put data from the socket in the string buffer
    */
   void connect();
   
-  /* Method to handle what to do with each line of data from Socket */
+  /* Abstract method to handle what to do with each line of data from Socket */
   virtual void processData(const std::string& data) = 0;
   
 protected:

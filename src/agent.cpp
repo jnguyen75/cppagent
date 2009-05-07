@@ -32,18 +32,18 @@
 */
 
 #include "agent.hpp"
-#include <time.h>
-#include <iostream>
+
+using namespace std;
 
 /* Agent public methods */
-Agent::Agent(const std::string& configXmlPath)
+Agent::Agent(const string& configXmlPath)
 {
   try
   {
     // Load the configuration for the Agent
     mConfig = new XmlParser(configXmlPath);
   }
-  catch (std::exception & e)
+  catch (exception & e)
   {
     logEvent("Agent::Agent",
       "Error loading xml configuration: " + configXmlPath);
@@ -53,14 +53,16 @@ Agent::Agent(const std::string& configXmlPath)
   
   // Grab data from configuration
   mDevices = mConfig->getDevices();
-  for (std::list<Device*>::iterator iter = mDevices.begin(); iter != mDevices.end(); iter++) 
+  
+  list<Device *>::iterator device;
+  for (device = mDevices.begin(); device != mDevices.end(); device++) 
   {
-    mDeviceMap[(*iter)->getName()] = *iter;
-
-    std::cout << "Loaded device: " << (*iter)->getName() << std::endl;
+    mDeviceMap[(*device)->getName()] = *device;
     
-    std::map<std::string, DataItem*> items = (*iter)->getDeviceDataItems();
-    for (std::map<std::string, DataItem*>::iterator item = items.begin(); item != items.end(); ++item)
+    std::map<string, DataItem*> items = (*device)->getDeviceDataItems();
+    
+    std::map<string, DataItem *>::iterator item;
+    for (item = items.begin(); item != items.end(); item++)
     {
       DataItem *d = item->second;
       mDataItemMap[d->getId()] = d;
@@ -74,8 +76,12 @@ Agent::Agent(const std::string& configXmlPath)
   mSequence = 1;
   mSlidingBuffer = new sliding_buffer_kernel_1<ComponentEvent *>();
   mSlidingBuffer->set_size(SLIDING_BUFFER_EXP);
-  for (int i = 0; i < mSlidingBuffer->size(); i++)
+  
+  // Initialize the buffer
+  for (unsigned int i = 0; i < mSlidingBuffer->size(); i++)
+  {
     (*mSlidingBuffer)[i] = 0;
+  }
   
   // Mutex used for synchronized access to sliding buffer and sequence number
   mSequenceLock = new dlib::mutex;
@@ -89,33 +95,33 @@ Agent::~Agent()
 }
 
 bool Agent::on_request(
-    const std::string& path,
-    std::string& result,
+    const string& path,
+    string& result,
     const map_type& queries,
     const map_type& cookies,
     queue_type& new_cookies,
     const map_type& incoming_headers,
     map_type& response_headers,
-    const std::string& foreign_ip,
-    const std::string& local_ip,
+    const string& foreign_ip,
+    const string& local_ip,
     unsigned short foreign_port,
     unsigned short local_port,
-    std::ostream& out
+    ostream& out
   )
 {
   try 
   {
     // Parse the URL path looking for '/'
-    std::string::size_type loc1 = path.find("/", 1);
+    string::size_type loc1 = path.find("/", 1);
     
-    std::string::size_type end = (path[path.length()-1] == '/') ?
-      path.length()-1 : std::string::npos;
+    string::size_type end = (path[path.length()-1] == '/') ?
+      path.length()-1 : string::npos;
     
     // If a '/' was found
     if (loc1 < end)
     {
       // Look for another '/'
-      std::string::size_type loc2 = path.find("/", loc1+1);
+      string::size_type loc2 = path.find("/", loc1+1);
       
       if (loc2 == end)
       {
@@ -136,26 +142,30 @@ bool Agent::on_request(
       return handleCall(out, path, result, queries, path.substr(1, loc1-1));
     }
   }
-  catch (std::exception & e)
+  catch (exception & e)
   {
-    logEvent("Agent", (std::string) e.what());
-    printError("SERVER_EXCEPTION",(std::string) e.what()); 
+    logEvent("Agent", (string) e.what());
+    printError("SERVER_EXCEPTION",(string) e.what()); 
   }
   
   return true;
 }
 
-void Agent::addAdapter(const std::string &device, const std::string& host, const unsigned int port)
+void Agent::addAdapter(
+    const string& device,
+    const string& host,
+    const unsigned int port
+  )
 {
   Adapter *adapter = new Adapter(device, host, port);
   adapter->setAgent(*this);
 }
 
 unsigned int Agent::addToBuffer(
-  const std::string& device,
-  const std::string& dataItemName,
-  const std::string& value,
-  std::string time
+    const string& device,
+    const string& dataItemName,
+    const string& value,
+    string time
   )
 {
   DataItem *dataItem = getDataItemByName(device, dataItemName);
@@ -174,7 +184,7 @@ unsigned int Agent::addToBuffer(
       delete (*mSlidingBuffer)[mSequence];
     }
     
-    // If this function is being used as an API, add the current data in
+    // If this function is being used as an API, add the current time in
     if (time.empty())
     {
       time = getCurrentTime(GMT_UV_SEC);
@@ -195,15 +205,15 @@ unsigned int Agent::addToBuffer(
 
 /* Agent protected methods */
 bool Agent::handleCall(
-    std::ostream& out,
-    const std::string& path,
-    std::string& result,
+    ostream& out,
+    const string& path,
+    string& result,
     const map_type& queries,
-    const std::string& call,
-    const std::string& device
+    const string& call,
+    const string& device
   )
 {
-  std::string deviceName;
+  string deviceName;
   if (!device.empty())
   {
     deviceName = device;
@@ -215,8 +225,7 @@ bool Agent::handleCall(
   
   if (call == "current")
   {
-    const std::string path = queries.is_in_domain("path") ?
-      queries["path"] : "";
+    const string path = queries.is_in_domain("path") ? queries["path"] : "";
     
     int freq = checkAndGetParam(result, queries, "frequency", NO_FREQ,
       FASTEST_FREQ, false, SLOWEST_FREQ);
@@ -236,7 +245,7 @@ bool Agent::handleCall(
   }
   else if (call == "sample")
   {
-    std::string path = queries.is_in_domain("path") ?
+    string path = queries.is_in_domain("path") ?
       queries["path"] : "";
     
     int count = checkAndGetParam(result, queries, "count", DEFAULT_COUNT,
@@ -257,9 +266,9 @@ bool Agent::handleCall(
     }
     
     return handleStream(out, result, devicesAndPath(path, deviceName), false,
-			freq, start, count);
+      freq, start, count);
   }
-  else if (hasDevice(call) && device.empty())
+  else if ((mDeviceMap[call] != NULL) && device.empty())
   {
     result = handleProbe(call);
     return true;
@@ -272,9 +281,9 @@ bool Agent::handleCall(
   }
 }
 
-std::string Agent::handleProbe(const std::string& name)
+string Agent::handleProbe(const string& name)
 {
-  std::list<Device *> mDeviceList;
+  list<Device *> mDeviceList;
   
   if (!name.empty())
   {
@@ -299,21 +308,21 @@ std::string Agent::handleProbe(const std::string& name)
 }
 
 bool Agent::handleStream(
-    std::ostream& out,
-    std::string& result,
-    const std::string& path,
+    ostream& out,
+    string& result,
+    const string& path,
     bool current,
     unsigned int frequency,
     unsigned int start,
     unsigned int count
   )
 {
-  std::list<DataItem *> dataItems;
+  list<DataItem *> dataItems;
   try
   {
     dataItems = getDataItems(path);
   }
-  catch (std::exception& e)
+  catch (exception& e)
   {
     result = printError("INVALID_XPATH", e.what());
     logEvent("Agent::handleStream", e.what());
@@ -349,8 +358,8 @@ bool Agent::handleStream(
 }
 
 void Agent::streamData(
-    std::ostream& out,
-    std::list<DataItem *>& dataItems,
+    ostream& out,
+    list<DataItem *>& dataItems,
     bool current,
     unsigned int frequency,
     unsigned int start,
@@ -358,59 +367,56 @@ void Agent::streamData(
   )
 {
   // Create header
-  out << "HTTP/1.1 200 OK" << std::endl;
-  out << "Connection: close" << std::endl;
-  out << "Date: " << getCurrentTime(HUM_READ) << std::endl;
-  out << "Status: 200 OK" << std::endl;
-  out << "Content-Disposition: inline" << std::endl;
-  out << "X-Runtime: 144ms" << std::endl;
+  out << "HTTP/1.1 200 OK" << endl;
+  out << "Connection: close" << endl;
+  out << "Date: " << getCurrentTime(HUM_READ) << endl;
+  out << "Status: 200 OK" << endl;
+  out << "Content-Disposition: inline" << endl;
+  out << "X-Runtime: 144ms" << endl;
   out << "Content-Type: multipart/x-mixed-replace;";
   
-  std::string boundary = md5(intToString(time(NULL)));
-  out << "boundary=" << boundary << std::endl << std::endl;
+  string boundary = md5(intToString(time(NULL)));
+  out << "boundary=" << boundary << endl << endl;
   
   // Loop until the user closes the connection
   while (out.good())
   {
-    out << "--" + boundary << std::endl;
-    out << "Content-type: text/xml" << std::endl;
+    out << "--" + boundary << endl;
+    out << "Content-type: text/xml" << endl;
     
-    std::string content = (current) ?
+    string content = (current) ?
       fetchCurrentData(dataItems) : fetchSampleData(dataItems, start, count);
-    logEvent("Start", intToString(start));
-    logEvent("Count", intToString(count));
     
     start = (start + count < mSequence) ? (start + count) : mSequence - 1;
     
-    out << "Content-length: " << content.length() << std::endl;
-    
-    out << std::endl << content;
+    out << "Content-length: " << content.length() << endl;
+    out << endl << content;
     
     out.flush();
     dlib::sleep(frequency);
   }
 }
 
-std::string Agent::fetchCurrentData(std::list<DataItem *>& dataItems)
+string Agent::fetchCurrentData(list<DataItem *>& dataItems)
 {
   mSequenceLock->lock();
   unsigned int firstSeq = (mSequence > SLIDING_BUFFER_SIZE) ?
     mSequence - SLIDING_BUFFER_SIZE : 1;
   
-  std::string toReturn = XmlPrinter::printCurrent(mInstanceId,
-    SLIDING_BUFFER_SIZE, mSequence, firstSeq, dataItems);
+  string toReturn = XmlPrinter::printCurrent(mInstanceId, SLIDING_BUFFER_SIZE,
+    mSequence, firstSeq, dataItems);
   
   mSequenceLock->unlock();
   return toReturn;
 }
 
-std::string Agent::fetchSampleData(
-    std::list<DataItem *>& dataItems,
+string Agent::fetchSampleData(
+    list<DataItem *>& dataItems,
     unsigned int start,
     unsigned int count
   )
 {
-  std::list<ComponentEvent *> results;
+  list<ComponentEvent *> results;
   
   mSequenceLock->lock();
 
@@ -419,13 +425,13 @@ std::string Agent::fetchSampleData(
     mSequence - SLIDING_BUFFER_SIZE : 1;
   
   // START SHOULD BE BETWEEN 0 AND SEQUENCE NUMBER
-  start = (start <= firstSeq) ? firstSeq  : start;
-  unsigned int end = (count + start >= mSequence) ? mSequence : count+start;
+  start = (start <= firstSeq) ? firstSeq : start;
+  unsigned int end = (count + start >= mSequence) ? mSequence : count + start;
   
   for (unsigned int i = start; i < end; i++)
   {
     // Filter out according to if it exists in the list
-    const std::string dataName = (*mSlidingBuffer)[i]->getDataItem()->getName();
+    const string dataName = (*mSlidingBuffer)[i]->getDataItem()->getName();
     if (hasDataItem(dataItems, dataName))
     {
       results.push_back((*mSlidingBuffer)[i]);
@@ -443,30 +449,24 @@ std::string Agent::fetchSampleData(
     firstSeq, results);
 }
 
-std::string Agent::printError(
-    const std::string& errorCode,
-    const std::string& text
-  )
+string Agent::printError(const string& errorCode, const string& text)
 {
   return XmlPrinter::printError(mInstanceId, SLIDING_BUFFER_SIZE, mSequence,
     errorCode, text);
 }
 
-std::string Agent::devicesAndPath(
-    const std::string& path,
-    const std::string& device
-  )
+string Agent::devicesAndPath(const string& path, const string& device)
 {
-  std::string dataPath = "";
+  string dataPath = "";
   
   if (!device.empty())
   {
-    std::string prefix = "//Devices/Device[@name=\"" + device + "\"]";
+    string prefix = "//Devices/Device[@name=\"" + device + "\"]";
     
     if (!path.empty())
     {
-      std::istringstream toParse(path);
-      std::string token;
+      istringstream toParse(path);
+      string token;
       
       // Prefix path (i.e. "path1|path2" => "{prefix}path1|{prefix}path2")
       while (getline(toParse, token, '|'))
@@ -489,27 +489,25 @@ std::string Agent::devicesAndPath(
   return dataPath;
 }
 
-std::list<DataItem *> Agent::getDataItems(
-    const std::string& path,
-    xmlpp::Node * node
-  )
+list<DataItem *> Agent::getDataItems(const string& path, xmlpp::Node * node)
 {
-  std::list<DataItem *> items;
+  list<DataItem *> items;
   
-  node = (node == NULL) ? mConfig->getRootNode() : node;
+  if (node == NULL)
+  {
+    node = mConfig->getRootNode();
+  }
   
-  xmlpp::NodeSet elements;
+  xmlpp::NodeSet elements = node->find(path);
   
-  elements = node->find(path);
-  
-  for (unsigned int i=0; i<elements.size(); i++)
+  for (unsigned int i = 0; i < elements.size(); i++)
   {
     const xmlpp::Element *nodeElement =
       dynamic_cast<const xmlpp::Element *>(elements[i]);
     
     if (nodeElement)
     {
-      const std::string nodename = nodeElement->get_name();
+      const string nodename = nodeElement->get_name();
       if (nodeElement->get_name() == "DataItem")
       {
         DataItem *item =
@@ -524,16 +522,16 @@ std::list<DataItem *> Agent::getDataItems(
           logEvent("Agent", "Data item not found: " + nodename);
         }
       }
-      else if (nodename == "Components" || nodename == "DataItems")
+      else if (nodename == "Components" or nodename == "DataItems")
       {
         // Recursive call
-        std::list<DataItem *> toMerge = getDataItems("*", elements[i]);
+        list<DataItem *> toMerge = getDataItems("*", elements[i]);
         items.merge(toMerge);
       }
       else // Hopefully "Component"
       {
-        std::list<DataItem *> toMerge;
-        toMerge = getDataItems("Components/*|DataItems/*", elements[i]);
+        list<DataItem *> toMerge =
+          getDataItems("Components/*|DataItems/*", elements[i]);
         items.merge(toMerge);
       }
     }
@@ -543,9 +541,9 @@ std::list<DataItem *> Agent::getDataItems(
 }
 
 int Agent::checkAndGetParam(
-    std::string& result,
+    string& result,
     const map_type& queries,
-    const std::string& param,
+    const string& param,
     const int defaultValue,
     const int minValue,
     bool minError,
@@ -559,8 +557,7 @@ int Agent::checkAndGetParam(
   
   if (queries[param].empty())
   {
-    result = printError("QUERY_ERROR",
-      "'" + param + "' cannot be empty.");
+    result = printError("QUERY_ERROR", "'" + param + "' cannot be empty.");
     return PARAM_ERROR;
   }
   
@@ -587,31 +584,26 @@ int Agent::checkAndGetParam(
   if (maxValue != NO_VALUE && value > maxValue)
   {
     result = printError("QUERY_ERROR",
-      "'" + param + "' must be less than "
-      + intToString(maxValue) + ".");
+      "'" + param + "' must be less than " + intToString(maxValue) + ".");
     return PARAM_ERROR;
   }
   
   return value;
 }
 
-DataItem * Agent::getDataItemByName(const std::string& device, const std::string& name)
+DataItem * Agent::getDataItemByName(const string& device, const string& name)
 {
   Device *dev = mDeviceMap[device];
-  if (dev) {
-    return dev->getDeviceDataItem(name);
-  }
-  
-  return NULL;
+  return (dev) ? dev->getDeviceDataItem(name) : NULL;
 }
 
 bool Agent::hasDataItem(
-    std::list<DataItem *>& dataItems,
-    const std::string& name
+    list<DataItem *>& dataItems,
+    const string& name
   )
 {
-  std::list<DataItem *>::iterator dataItem;
-  for (dataItem=dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
+  list<DataItem *>::iterator dataItem;
+  for (dataItem = dataItems.begin(); dataItem != dataItems.end(); dataItem++)
   {
     if ((*dataItem)->hasName(name))
     {
@@ -619,11 +611,5 @@ bool Agent::hasDataItem(
     }
   }
   return false;
-}
-
-bool Agent::hasDevice(const std::string& name)
-{
-  Device *dev = mDeviceMap[name];
-  return dev != 0;
 }
 

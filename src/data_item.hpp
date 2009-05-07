@@ -42,7 +42,6 @@
 #include "component_event.hpp"
 #include "globals.hpp"
 
-//class Component;
 class ComponentEvent;
 
 class DataItem
@@ -59,6 +58,7 @@ public:
   /* Construct a data item with appropriate attributes mapping */
   DataItem(std::map<std::string, std::string> attributes);
   
+  /* Destructor */
   ~DataItem();
   
   /* Get a map of all the attributes of this data item */
@@ -74,15 +74,15 @@ public:
   std::string getNativeUnits() const { return mNativeUnits; }
   float getNativeScale() const { return mNativeScale; }
   
-  /* Returns if data item has this name (or source name) */
-  bool hasName(const std::string name);
-  
-  /* Returns true if data item is */
-  bool isSample() const { return mCategory == SAMPLE; }
+  /* Returns if data item has this attribute */
+  bool hasName(const std::string& name);
   bool hasNativeScale() const { return mHasNativeScale; }
   
   /* Add a source (extra information) to data item */
   void addSource(const std::string& source) { mSource = source; }
+  
+  /* Returns true if data item is a sample */
+  bool isSample() const { return mCategory == SAMPLE; }
   
   /* Set/get component that data item is associated with */
   void setComponent(Component& component) { mComponent = &component; }
@@ -94,8 +94,9 @@ public:
 
   /* Get the name for the adapter feed */
   std::string getSourceOrName() { return mSource.empty() ? mName : mSource; }
-
-  static std::string getCamelType(const std::string &aType);
+  
+  /* Transform a name to camel casing */
+  static std::string getCamelType(const std::string& aType);
   
 protected:
   /* Unique ID for each component */

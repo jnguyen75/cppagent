@@ -104,3 +104,43 @@ void GlobalsTest::testTime()
   CPPUNIT_ASSERT(time7 < time9);
 }
 
+void GlobalsTest::testLogEvent()
+{
+  gLogFile = "test.log";
+  
+  std::string source("GlobalsTest"), message("Just testing");
+  std::string time = getCurrentTime(LOCAL);
+  
+  logEvent(source, message);
+  
+  std::ifstream logFile;
+  logFile.open(gLogFile);
+  
+  std::stringstream stream;
+  stream << ifs.rdbuf();
+  
+  std::string expected;
+  expected += "[" + time << "] ";
+  expected += source + ": ";
+  expected += message + "\n";
+  
+  CPPUNIT_ASSERT(stream.str().find(expected) != std::string::npos);
+}
+
+void GlobalsTest::testGetEnumerations()
+{
+  unsigned int size = 7;
+  const std::string array[size] = {
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  }
+  int getEnumeration(
+    const std::string& name,
+    const std::string *array,
+    unsigned int size
+}

@@ -38,16 +38,11 @@ CPPUNIT_TEST_SUITE_REGISTRATION(AdapterTest);
 
 void AdapterTest::setUp()
 {
-  a = new Adapter("agent.mtconnect.org", 7878);
+  a = new Adapter("LinuxCNC", "agent.mtconnect.org", 7878);
 }
 
 void AdapterTest::tearDown()
 {
   delete a;
-}
-
-void AdapterTest::testGetAttributes()
-{
-    
 }
 

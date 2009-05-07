@@ -1,3 +1,36 @@
+/*
+* Copyright (c) 2008, AMT – The Association For Manufacturing Technology (“AMT”)
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*     * Redistributions of source code must retain the above copyright
+*       notice, this list of conditions and the following disclaimer.
+*     * Redistributions in binary form must reproduce the above copyright
+*       notice, this list of conditions and the following disclaimer in the
+*       documentation and/or other materials provided with the distribution.
+*     * Neither the name of the AMT nor the
+*       names of its contributors may be used to endorse or promote products
+*       derived from this software without specific prior written permission.
+*
+* DISCLAIMER OF WARRANTY. ALL MTCONNECT MATERIALS AND SPECIFICATIONS PROVIDED
+* BY AMT, MTCONNECT OR ANY PARTICIPANT TO YOU OR ANY PARTY ARE PROVIDED "AS IS"
+* AND WITHOUT ANY WARRANTY OF ANY KIND. AMT, MTCONNECT, AND EACH OF THEIR
+* RESPECTIVE MEMBERS, OFFICERS, DIRECTORS, AFFILIATES, SPONSORS, AND AGENTS
+* (COLLECTIVELY, THE "AMT PARTIES") AND PARTICIPANTS MAKE NO REPRESENTATION OR
+* WARRANTY OF ANY KIND WHATSOEVER RELATING TO THESE MATERIALS, INCLUDING, WITHOUT
+* LIMITATION, ANY EXPRESS OR IMPLIED WARRANTY OF NONINFRINGEMENT,
+* MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. 
+
+* LIMITATION OF LIABILITY. IN NO EVENT SHALL AMT, MTCONNECT, ANY OTHER AMT
+* PARTY, OR ANY PARTICIPANT BE LIABLE FOR THE COST OF PROCURING SUBSTITUTE GOODS
+* OR SERVICES, LOST PROFITS, LOSS OF USE, LOSS OF DATA OR ANY INCIDENTAL,
+* CONSEQUENTIAL, INDIRECT, SPECIAL OR PUNITIVE DAMAGES OR OTHER DIRECT DAMAGES,
+* WHETHER UNDER CONTRACT, TORT, WARRANTY OR OTHERWISE, ARISING IN ANY WAY OUT OF
+* THIS AGREEMENT, USE OR INABILITY TO USE MTCONNECT MATERIALS, WHETHER OR NOT
+* SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
+*/
+
 #include <sys/stat.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -15,8 +48,8 @@ using namespace std;
 // For arguments which have no switch char but appear in a special order.
 Option::Option(int aOrder, const char *&aCharPtr, const char *aUsage,
 		 const char *aArgDesc, bool aRequired)
-  : name_(NULL), charPtrPtr_(&aCharPtr), boolPtr_(NULL), intPtr_(NULL), list_(0),
-    type_(eCharacter), order_(aOrder), required_(aRequired),
+  : name_(NULL), charPtrPtr_(&aCharPtr), boolPtr_(NULL), intPtr_(NULL),
+    list_(0), type_(eCharacter), order_(aOrder), required_(aRequired),
     argument_(false), ignoreCase_(false), switch_(false), usage_(aUsage),
     isSet_(false), expand_(false), argDesc_(aArgDesc)
 {
@@ -26,17 +59,17 @@ Option::Option(int aOrder, const char *&aCharPtr, const char *aUsage,
 Option::Option(int aOrder, int &aIntRef, const char *aUsage,
 		 const char *aArgDesc, bool aRequired)
   : name_(NULL), charPtrPtr_(NULL), boolPtr_(NULL), intPtr_(&aIntRef), list_(0),
-    type_(eInteger), order_(aOrder), required_(aRequired),
-    argument_(false), ignoreCase_(false), switch_(false), usage_(aUsage),
-    isSet_(false), expand_(false), argDesc_(aArgDesc)
+    type_(eInteger), order_(aOrder), required_(aRequired), argument_(false),
+    ignoreCase_(false), switch_(false), usage_(aUsage), isSet_(false),
+    expand_(false), argDesc_(aArgDesc)
 {
 }
 
 // For the rest of the argumets as in a file list.
 Option::Option(list<string> &aList, const char *aUsage,
 		 const char *aArgDesc, bool aRequired, bool aExpand)
-  : name_(NULL), charPtrPtr_(NULL), boolPtr_(NULL), intPtr_(NULL), list_(&aList),
-    type_(eList), order_(-1), required_(aRequired),
+  : name_(NULL), charPtrPtr_(NULL), boolPtr_(NULL), intPtr_(NULL),
+    list_(&aList), type_(eList), order_(-1), required_(aRequired),
     argument_(false), ignoreCase_(false), switch_(false), usage_(aUsage),
     isSet_(false), expand_(aExpand), argDesc_(aArgDesc)
 {
@@ -45,8 +78,8 @@ Option::Option(list<string> &aList, const char *aUsage,
 // Given an agument with a switch char ('-') <name> 
 Option::Option(const char *aName, const char *&aCharPtr, const char *aUsage,
 		 const char *aArgDesc, bool aRequired, bool aIgnoreCase)
-  : name_(aName), charPtrPtr_(&aCharPtr), boolPtr_(NULL), intPtr_(NULL), list_(NULL),
-    type_(eCharacter), order_(-1), required_(aRequired),
+  : name_(aName), charPtrPtr_(&aCharPtr), boolPtr_(NULL), intPtr_(NULL),
+    list_(NULL), type_(eCharacter), order_(-1), required_(aRequired),
     argument_(true), ignoreCase_(aIgnoreCase), switch_(true), usage_(aUsage),
     isSet_(false), expand_(false), argDesc_(aArgDesc)
 {
@@ -55,19 +88,20 @@ Option::Option(const char *aName, const char *&aCharPtr, const char *aUsage,
 
 // Given an agument with a switch char ('-') <name> 
 Option::Option(const char *aName, bool &aBoolRef, const char *aUsage,
-		 bool aArgument, const char *aArgDesc, bool aRequired, bool aIgnoreCase)
-  : name_(aName), charPtrPtr_(NULL), boolPtr_(&aBoolRef), intPtr_(NULL), list_(NULL),
-    type_(eBoolean), order_(-1), required_(aRequired),
-    argument_(aArgument), ignoreCase_(aIgnoreCase), switch_(true), usage_(aUsage),
-    isSet_(false), expand_(false), argDesc_(aArgDesc)
+		 bool aArgument, const char *aArgDesc, bool aRequired,
+		 bool aIgnoreCase)
+  : name_(aName), charPtrPtr_(NULL), boolPtr_(&aBoolRef), intPtr_(NULL),
+    list_(NULL), type_(eBoolean), order_(-1), required_(aRequired),
+    argument_(aArgument), ignoreCase_(aIgnoreCase), switch_(true),
+    usage_(aUsage), isSet_(false), expand_(false), argDesc_(aArgDesc)
 {
 }
 
 // Given an agument with a switch char ('-') <name> 
 Option::Option(const char *aName, int &aIntRef, const char *aUsage,
 		 const char *aArgDesc, bool aRequired, bool aIgnoreCase)
-  : name_(aName), charPtrPtr_(NULL), boolPtr_(NULL), intPtr_(&aIntRef), list_(NULL),
-    type_(eInteger), order_(-1), required_(aRequired),
+  : name_(aName), charPtrPtr_(NULL), boolPtr_(NULL), intPtr_(&aIntRef),
+    list_(NULL), type_(eInteger), order_(-1), required_(aRequired),
     argument_(true), ignoreCase_(aIgnoreCase), switch_(true), usage_(aUsage),
     isSet_(false), expand_(false), argDesc_(aArgDesc)
 {
@@ -75,9 +109,10 @@ Option::Option(const char *aName, int &aIntRef, const char *aUsage,
 
 // Given an agument with a switch char ('-') <name> 
 Option::Option(const char *aName, list<string> &aList, const char *aUsage,
-		 const char *aArgDesc, bool aRequired, bool aExpand, bool aIgnoreCase)
-  : name_(aName), charPtrPtr_(NULL), boolPtr_(NULL), intPtr_(NULL), list_(&aList),
-    type_(eList), order_(-1), required_(aRequired),
+		 const char *aArgDesc, bool aRequired, bool aExpand,
+		 bool aIgnoreCase)
+  : name_(aName), charPtrPtr_(NULL), boolPtr_(NULL), intPtr_(NULL),
+    list_(&aList), type_(eList), order_(-1), required_(aRequired),
     argument_(true), ignoreCase_(aIgnoreCase), switch_(true), usage_(aUsage),
     isSet_(false), expand_(aExpand), argDesc_(aArgDesc)
 {
@@ -357,7 +392,9 @@ void OptionsList::usage()
   for (list<Option>::iterator iter = begin(); iter != end(); iter++)
   {
     Option *opt = &(*iter);
-    if (opt->getName() != NULL && !opt->hasArgument() && (len = strlen(opt->getName())) == 1)
+    if (opt->getName() != NULL &&
+        !opt->hasArgument() &&
+        (len = strlen(opt->getName())) == 1)
     {
       hasSimpleFlags = true;
       break;
@@ -372,7 +409,9 @@ void OptionsList::usage()
     for (list<Option>::iterator iter = begin(); iter != end(); iter++)
     {
       Option *opt = &(*iter);
-      if (opt->getName() != NULL && !opt->hasArgument() && (len = strlen(opt->getName())) == 1)
+      if (opt->getName() != NULL &&
+          !opt->hasArgument() &&
+          (len = strlen(opt->getName())) == 1)
       {
 	strcpy(cp, opt->getName());
 	cp += len;
@@ -541,3 +580,4 @@ bool OptionsList::find(int aOrder, Option *&aOption)
 
   return false;
 }
+

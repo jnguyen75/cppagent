@@ -34,6 +34,8 @@
 
 #include "device.hpp"
 
+using namespace std;
+
 /* Device public methods */
 Device::Device(std::map<std::string, std::string> attributes)
   : Component("Device", attributes)
@@ -47,7 +49,7 @@ Device::~Device()
 
 std::map<std::string, std::string> Device::getAttributes() const
 {
-  std::map<std::string, std::string> attributes = Component::getAttributes();
+  std::map<string, string> attributes = Component::getAttributes();
   attributes["iso841Class"] = intToString(mIso841Class);
   return attributes;
 }
