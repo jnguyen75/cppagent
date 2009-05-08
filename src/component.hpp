@@ -74,11 +74,11 @@ public:
   /* Virtual destructor */
   virtual ~Component();
   
-  /* Return what part of the component it is */
-  const std::string& getClass() const { return mClass; }
-  
   /* Return a map of attributes of all the component specs */
   virtual std::map<std::string, std::string> getAttributes() const;
+  
+  /* Return what part of the component it is */
+  const std::string& getClass() const { return mClass; }
   
   /* Getter methods for the component ID/Name */
   std::string getId() const { return mId; }

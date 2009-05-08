@@ -169,6 +169,11 @@ ComponentEvent * DataItem::getLatestEvent() const
 
 string DataItem::getCamelType(const string& aType)
 {
+  if (aType.empty())
+  {
+    return "";
+  }
+  
   string camel = aType;
   string::iterator second = camel.begin();
   second++;

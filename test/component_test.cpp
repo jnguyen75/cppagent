@@ -31,72 +31,68 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#include "device_test.hpp"
+#include "component_test.hpp"
 
 // Registers the fixture into the 'registry'
-CPPUNIT_TEST_SUITE_REGISTRATION(DeviceTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(ComponentTest);
 
 using namespace std;
 
-/* DeviceTest public methods */
-void DeviceTest::setUp()
+/* ComponentTest public methods */
+void ComponentTest::setUp()
 {
   std::map<string, string> attributes1;
   attributes1["id"] = "1";
-  attributes1["name"] = "DeviceTest1";
+  attributes1["name"] = "ComponentTest1";
   attributes1["uuid"] = "UnivUniqId1";
-  attributes1["iso841Class"] = "4";
-  a = new Device(attributes1);
+  a = new Component("Axes", attributes1);
   
   std::map<string, string> attributes2;
   attributes2["id"] = "3";
-  attributes2["name"] = "DeviceTest2";
+  attributes2["name"] = "ComponentTest2";
   attributes2["uuid"] = "UnivUniqId2";
   attributes2["sampleRate"] = "123.4";
-  attributes2["iso841Class"] = "6";
-  b = new Device(attributes2);
+  b = new Component("Controller", attributes2);
 }
 
-void DeviceTest::tearDown()
+void ComponentTest::tearDown()
 {
   delete a;
   delete b;
 }
 
-/* DeviceTest protected methods */
-void DeviceTest::testGetters()
+/* ComponentTest protected methods */
+void ComponentTest::testGetters()
 {
-  CPPUNIT_ASSERT_EQUAL((string) "Device", a->getClass());
+  CPPUNIT_ASSERT_EQUAL((string) "Axes", a->getClass());
   CPPUNIT_ASSERT_EQUAL((string) "1", a->getId());
-  CPPUNIT_ASSERT_EQUAL((string) "DeviceTest1", a->getName());
+  CPPUNIT_ASSERT_EQUAL((string) "ComponentTest1", a->getName());
   CPPUNIT_ASSERT_EQUAL((string) "UnivUniqId1", a->getUuid());
   
-  CPPUNIT_ASSERT_EQUAL((string) "Device", b->getClass());
+  CPPUNIT_ASSERT_EQUAL((string) "Controller", b->getClass());
   CPPUNIT_ASSERT_EQUAL((string) "3", b->getId());
-  CPPUNIT_ASSERT_EQUAL((string) "DeviceTest2", b->getName());
+  CPPUNIT_ASSERT_EQUAL((string) "ComponentTest2", b->getName());
   CPPUNIT_ASSERT_EQUAL((string) "UnivUniqId2", b->getUuid());
 }
 
-void DeviceTest::testGetAttributes()
+void ComponentTest::testGetAttributes()
 {
   map<string, string> attributes1 = a->getAttributes();
   
   CPPUNIT_ASSERT_EQUAL((string) "1",attributes1["id"]);
-  CPPUNIT_ASSERT_EQUAL((string) "DeviceTest1", attributes1["name"]);
+  CPPUNIT_ASSERT_EQUAL((string) "ComponentTest1", attributes1["name"]);
   CPPUNIT_ASSERT_EQUAL((string) "UnivUniqId1", attributes1["uuid"]);
   CPPUNIT_ASSERT(attributes1["sampleRate"].empty());
-  CPPUNIT_ASSERT_EQUAL((string) "4", attributes1["iso841Class"]);
   
   map<string, string> attributes2 = b->getAttributes();
   
   CPPUNIT_ASSERT_EQUAL((string) "3",attributes2["id"]);
-  CPPUNIT_ASSERT_EQUAL((string) "DeviceTest2", attributes2["name"]);
+  CPPUNIT_ASSERT_EQUAL((string) "ComponentTest2", attributes2["name"]);
   CPPUNIT_ASSERT_EQUAL((string) "UnivUniqId2", attributes2["uuid"]);
   CPPUNIT_ASSERT_EQUAL((string) "123.4", attributes2["sampleRate"]);
-  CPPUNIT_ASSERT_EQUAL((string) "6", attributes2["iso841Class"]);
 }
 
-void DeviceTest::testDescription()
+void ComponentTest::testDescription()
 {
   map<string, string> attributes;
   attributes["manufacturer"] = "MANUFACTURER";
@@ -118,26 +114,26 @@ void DeviceTest::testDescription()
   CPPUNIT_ASSERT_EQUAL((string) "STATION", description2["station"]);
 }
 
-void DeviceTest::testRelationships()
+void ComponentTest::testRelationships()
 {
   // Test get/set parents
   map<string, string> dummy;
   Component linear("Linear", dummy);
   
-  Component *devPointer = dynamic_cast<Component *>(a);
-  CPPUNIT_ASSERT(devPointer);
+  a->setParent(linear);
+  CPPUNIT_ASSERT_EQUAL(&linear, a->getParent());
   
-  linear.setParent(*a);
+  Device device(dummy);
+  Component * devPointer = dynamic_cast<Component *>(&device);
+  
+  CPPUNIT_ASSERT(devPointer);  
+  linear.setParent(*devPointer);
   CPPUNIT_ASSERT_EQUAL(devPointer, linear.getParent());
   
-  Component controller("Controller", dummy);
-  controller.setParent(*a);
-  CPPUNIT_ASSERT_EQUAL(devPointer, controller.getParent());
-  
   // Test get device
-  CPPUNIT_ASSERT_EQUAL(a, a->getDevice());
-  CPPUNIT_ASSERT_EQUAL(a, linear.getDevice());
-  CPPUNIT_ASSERT_EQUAL(a, controller.getDevice());
+  CPPUNIT_ASSERT_EQUAL(&device, a->getDevice());
+  CPPUNIT_ASSERT_EQUAL(&device, linear.getDevice());
+  CPPUNIT_ASSERT_EQUAL(&device, device.getDevice());
   
   // Test add/get children
   CPPUNIT_ASSERT(a->getChildren().empty());
@@ -151,7 +147,7 @@ void DeviceTest::testRelationships()
   CPPUNIT_ASSERT_EQUAL(&thermostat, a->getChildren().back());
 }
 
-void DeviceTest::testDataItems()
+void ComponentTest::testDataItems()
 {
   CPPUNIT_ASSERT(a->getDataItems().empty());
 
@@ -164,26 +160,5 @@ void DeviceTest::testDataItems()
   CPPUNIT_ASSERT_EQUAL((size_t) 2, a->getDataItems().size());
   CPPUNIT_ASSERT_EQUAL(&data1, a->getDataItems().front());
   CPPUNIT_ASSERT_EQUAL(&data2, a->getDataItems().back());
-}
-
-void DeviceTest::testDeviceDataItem()
-{
-  CPPUNIT_ASSERT(a->getDeviceDataItems().empty());
-  CPPUNIT_ASSERT(a->getDeviceDataItem("DataItemTest1") == NULL);
-  CPPUNIT_ASSERT(a->getDeviceDataItem("DataItemTest2") == NULL);
-
-  map<string, string> attributes;
-  attributes["name"] = "DataItemTest1";
-  
-  DataItem data1(attributes);
-  a->addDeviceDataItem(data1);
-  
-  attributes["name"] = "DataItemTest2";
-  DataItem data2(attributes);
-  a->addDeviceDataItem(data2);
-  
-  CPPUNIT_ASSERT_EQUAL((size_t) 2, a->getDeviceDataItems().size());
-  CPPUNIT_ASSERT_EQUAL(&data1, a->getDeviceDataItem("DataItemTest1"));
-  CPPUNIT_ASSERT_EQUAL(&data2, a->getDeviceDataItem("DataItemTest2"));
 }
 

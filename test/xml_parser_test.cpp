@@ -36,13 +36,15 @@
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(XmlParserTest);
 
+using namespace std;
+
 void XmlParserTest::setUp()
 {
   try
   {
     a = new XmlParser("../samples/test_config.xml");
   }
-  catch (std::exception & e)
+  catch (exception & e)
   {
     CPPUNIT_FAIL("Could not locate test xml: ../samples/test_config.xml");
   }
@@ -55,19 +57,20 @@ void XmlParserTest::tearDown()
 
 void XmlParserTest::testConstructor()
 {
-  CPPUNIT_ASSERT_THROW(new XmlParser("../samples/badPath.xml"), int);
-  CPPUNIT_ASSERT_NO_THROW(new XmlParser("../samples/test_config.xml"));
+  CPPUNIT_ASSERT_THROW(new XmlParser("../samples/badPath.xml"), string);
+  CPPUNIT_ASSERT_NO_THROW(new
+   XmlParser("../samples/test_config.xml"));
 }
 
-void XmlParserTest::testGetters()
+void XmlParserTest::testGetDevices()
 {
-  std::list<Device *> devices = a->getDevices();
+  list<Device *> devices = a->getDevices();
   CPPUNIT_ASSERT_EQUAL((size_t) 1, devices.size());
 
   Device *device = devices.front();
-  std::list<DataItem*> dataItems;
-  std::map<std::string, DataItem*> dataItemsMap = device->getDeviceDataItems();  
-  std::map<std::string, DataItem*>::iterator iter;
+  list<DataItem*> dataItems;
+  std::map<string, DataItem *> dataItemsMap = device->getDeviceDataItems();  
+  std::map<string, DataItem *>::iterator iter;
   for (iter = dataItemsMap.begin(); iter != dataItemsMap.end(); iter++)
   {
     dataItems.push_back(iter->second);
@@ -78,8 +81,8 @@ void XmlParserTest::testGetters()
   
   bool hasExec = false, hasZcom = false;
   
-  std::list<DataItem *>::iterator dataItem;
-  for (dataItem=dataItems.begin(); dataItem!=dataItems.end(); dataItem++)
+  list<DataItem *>::iterator dataItem;
+  for (dataItem = dataItems.begin(); dataItem != dataItems.end(); dataItem++)
   {
     if ((*dataItem)->getId() == "24" and (*dataItem)->getName() == "execution")
     {
@@ -94,5 +97,34 @@ void XmlParserTest::testGetters()
   
   CPPUNIT_ASSERT(hasExec);
   CPPUNIT_ASSERT(hasZcom);
+}
+
+void XmlParserTest::testGetRootNode()
+{
+  const xmlpp::Element *nodeElement =
+    dynamic_cast<const xmlpp::Element *>(a->getRootNode());
+  
+  CPPUNIT_ASSERT(nodeElement);
+  
+  xmlpp::Node::NodeList children = nodeElement->get_children();
+  
+  bool hasHeader = false, hasDevices = false;
+  
+  xmlpp::Node::NodeList::iterator child;
+  for (child = children.begin(); child != children.end(); child++)
+  {
+    if ((*child)->get_name() == "Header")
+    {
+      hasHeader = true;
+    }
+    
+    if ((*child)->get_name() == "Devices")
+    {
+      hasDevices = true;
+    }
+  }
+  
+  CPPUNIT_ASSERT(hasHeader);
+  CPPUNIT_ASSERT(hasDevices);
 }
 

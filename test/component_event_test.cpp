@@ -33,12 +33,15 @@
 
 #include "component_event_test.hpp"
 
+// Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(ComponentEventTest);
+
+using namespace std;
 
 /* ComponentEventTest public methods */
 void ComponentEventTest::setUp()
 {
-  std::map<std::string, std::string> attributes1, attributes2;
+  std::map<string, string> attributes1, attributes2;
   
   attributes1["id"] = "1";
   attributes1["name"] = "DataItemTest1";
@@ -54,7 +57,7 @@ void ComponentEventTest::setUp()
   attributes2["category"] = "SAMPLE";
   d2 = new DataItem(attributes2);
 
-  std::string time("NOW"), value("CODE|NATIVE|CRITICAL|ACTIVE|DESCRIPTION");
+  string time("NOW"), value("CODE|NATIVE|CRITICAL|ACTIVE|DESCRIPTION");
   a = new ComponentEvent(*d1, 2, time, value);
   
   time = "LATER";
@@ -85,27 +88,27 @@ void ComponentEventTest::testConstructors()
 
 void ComponentEventTest::testGetAttributes()
 {
-  std::map<std::string, std::string> attributes1, attributes2;
+  std::map<string, string> attributes1, attributes2;
   
   attributes1 = a->getAttributes();
-  CPPUNIT_ASSERT_EQUAL((std::string) "1", attributes1["dataItemId"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "NOW", attributes1["timestamp"]);
+  CPPUNIT_ASSERT_EQUAL((string) "1", attributes1["dataItemId"]);
+  CPPUNIT_ASSERT_EQUAL((string) "NOW", attributes1["timestamp"]);
   CPPUNIT_ASSERT(attributes1["subType"].empty());
-  CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest1", attributes1["name"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "2", attributes1["sequence"]);
+  CPPUNIT_ASSERT_EQUAL((string) "DataItemTest1", attributes1["name"]);
+  CPPUNIT_ASSERT_EQUAL((string) "2", attributes1["sequence"]);
   
   // Alarm data
-  CPPUNIT_ASSERT_EQUAL((std::string) "CODE", attributes1["code"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "NATIVE", attributes1["nativeCode"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "CRITICAL", attributes1["severity"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "ACTIVE", attributes1["state"]);
+  CPPUNIT_ASSERT_EQUAL((string) "CODE", attributes1["code"]);
+  CPPUNIT_ASSERT_EQUAL((string) "NATIVE", attributes1["nativeCode"]);
+  CPPUNIT_ASSERT_EQUAL((string) "CRITICAL", attributes1["severity"]);
+  CPPUNIT_ASSERT_EQUAL((string) "ACTIVE", attributes1["state"]);
   
   attributes2 = b->getAttributes();
-  CPPUNIT_ASSERT_EQUAL((std::string) "3", attributes2["dataItemId"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "LATER", attributes2["timestamp"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "ACTUAL", attributes2["subType"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest2", attributes2["name"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "4", attributes2["sequence"]);
+  CPPUNIT_ASSERT_EQUAL((string) "3", attributes2["dataItemId"]);
+  CPPUNIT_ASSERT_EQUAL((string) "LATER", attributes2["timestamp"]);
+  CPPUNIT_ASSERT_EQUAL((string) "ACTUAL", attributes2["subType"]);
+  CPPUNIT_ASSERT_EQUAL((string) "DataItemTest2", attributes2["name"]);
+  CPPUNIT_ASSERT_EQUAL((string) "4", attributes2["sequence"]);
 }
 
 void ComponentEventTest::testGetters()
@@ -113,19 +116,19 @@ void ComponentEventTest::testGetters()
   CPPUNIT_ASSERT_EQUAL(d1, a->getDataItem());
   CPPUNIT_ASSERT_EQUAL(d2, b->getDataItem());
   
-  CPPUNIT_ASSERT_EQUAL((std::string) "DESCRIPTION", a->getSValue());
+  CPPUNIT_ASSERT_EQUAL((string) "DESCRIPTION", a->getSValue());
   CPPUNIT_ASSERT_EQUAL(1.1231f, b->getFValue());
 }
 
 void ComponentEventTest::testConvertValue()
 {
-  std::map<std::string, std::string> attributes;
+  std::map<string, string> attributes;
   attributes["id"] = "1";
   attributes["name"] = "DataItemTest1";
   attributes["type"] = "ACCELERATION";
   attributes["category"] = "SAMPLE";
 
-  std::string time("NOW"), value("2.0");
+  string time("NOW"), value("2.0");
   
   testValueHelper(attributes, "REVOLUTION/MINUTE", 2.0f, value);
   testValueHelper(attributes, "REVOLUTION/SECOND", 2.0f * 60.0f, value);
@@ -140,13 +143,13 @@ void ComponentEventTest::testConvertValue()
 
 void ComponentEventTest::testConvertSimpleUnits()
 {
-  std::map<std::string, std::string> attributes;
+  std::map<string, string> attributes;
   attributes["id"] = "1";
   attributes["name"] = "DataItemTest";
   attributes["type"] = "ACCELERATION";
   attributes["category"] = "SAMPLE";
   
-  std::string value("2.0");
+  string value("2.0");
   
   testValueHelper(attributes, "INCH", 2.0f * 25.4f, value);
   testValueHelper(attributes, "FOOT", 2.0f * 304.8f, value);
@@ -165,13 +168,13 @@ void ComponentEventTest::testConvertSimpleUnits()
 }
 
 void ComponentEventTest::testValueHelper(
-    std::map<std::string, std::string>& attributes,
-    const std::string& nativeUnits,
+    std::map<string, string>& attributes,
+    const string& nativeUnits,
     float expected,
-    const std::string& value
+    const string& value
   )
 {
-  std::string time("NOW");
+  string time("NOW");
   
   attributes["nativeUnits"] = nativeUnits;
   DataItem dataItem(attributes);

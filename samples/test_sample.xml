@@ -22,8 +22,8 @@
       </ComponentStream>
       <ComponentStream component="Controller" name="Controller" componentId="11">
         <Events>
-          <Line dataItemId="22" name="line" sequence="11351720" subType="" timestamp="TIME">229</Line>
-          <Block dataItemId="20" name="block" sequence="11351726" subType="" timestamp="TIME">x-1.149250 y1.048981</Block>
+          <Line dataItemId="22" name="line" sequence="11351720" timestamp="TIME">229</Line>
+          <Block dataItemId="20" name="block" sequence="11351726" timestamp="TIME">x-1.149250 y1.048981</Block>
         </Events>
       </ComponentStream>
     </DeviceStream>

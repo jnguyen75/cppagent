@@ -39,7 +39,8 @@
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include <../src/globals.hpp>
+
+#include "../src/globals.hpp"
 
 class GlobalsTest : public CppUnit::TestFixture
 {
@@ -50,6 +51,7 @@ class GlobalsTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testIsNonNegativeInteger);
   CPPUNIT_TEST(testTime);
   CPPUNIT_TEST(testLogEvent);
+  CPPUNIT_TEST(testGetEnumerations);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
@@ -59,6 +61,7 @@ protected:
   void testIsNonNegativeInteger();
   void testTime();
   void testLogEvent();
+  void testGetEnumerations();
   
 public:
   void setUp();

@@ -36,14 +36,17 @@
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(DataItemTest);
 
+using namespace std;
+
 void DataItemTest::setUp()
 {
-  std::map<std::string, std::string> attributes1, attributes2;
+  std::map<string, string> attributes1, attributes2;
   
   attributes1["id"] = "1";
   attributes1["name"] = "DataItemTest1";
   attributes1["type"] = "ACCELERATION";
   attributes1["category"] = "SAMPLE";
+  attributes1["nativeUnits"] = "PERCENT";
   a = new DataItem(attributes1);
   
   attributes2["id"] = "3";
@@ -51,7 +54,6 @@ void DataItemTest::setUp()
   attributes2["type"] = "ACCELERATION";
   attributes2["subType"] = "ACTUAL";
   attributes2["category"] = "EVENT";
-  attributes2["nativeUnits"] = "REVOLUTION/MINUTE";
   attributes2["units"] = "REVOLUTION/MINUTE";
   attributes2["nativeScale"] = "1.0";
   attributes2["significantDigits"] = "1";
@@ -67,45 +69,44 @@ void DataItemTest::tearDown()
 
 void DataItemTest::testGetters()
 {
-  CPPUNIT_ASSERT_EQUAL((std::string) "1", a->getId());
-  CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest1", a->getName());
-  CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", a->getType());
-  CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", a->getTypeString(true));
-  CPPUNIT_ASSERT_EQUAL((std::string) "Acceleration", a->getTypeString(false));
+  CPPUNIT_ASSERT_EQUAL((string) "1", a->getId());
+  CPPUNIT_ASSERT_EQUAL((string) "DataItemTest1", a->getName());
+  CPPUNIT_ASSERT_EQUAL((string) "ACCELERATION", a->getType());
+  CPPUNIT_ASSERT_EQUAL((string) "ACCELERATION", a->getTypeString(true));
+  CPPUNIT_ASSERT_EQUAL((string) "Acceleration", a->getTypeString(false));
+  CPPUNIT_ASSERT_EQUAL((string) "PERCENT", a->getNativeUnits());
   CPPUNIT_ASSERT(a->getSubType().empty());
-  CPPUNIT_ASSERT(a->getNativeUnits().empty());
-  CPPUNIT_ASSERT_EQUAL(0.0f, a->getNativeScale());
+  CPPUNIT_ASSERT(!a->hasNativeScale());
   
-  CPPUNIT_ASSERT_EQUAL((std::string) "3", b->getId());
-  CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest2", b->getName());
-  CPPUNIT_ASSERT_EQUAL((std::string) "Acceleration", b->getType());
-  CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", b->getTypeString(true));
-  CPPUNIT_ASSERT_EQUAL((std::string) "Acceleration", b->getTypeString(false));
-  CPPUNIT_ASSERT_EQUAL((std::string) "ACTUAL", b->getSubType());
-  CPPUNIT_ASSERT_EQUAL((std::string) "REVOLUTION/MINUTE", b->getNativeUnits());
+  CPPUNIT_ASSERT_EQUAL((string) "3", b->getId());
+  CPPUNIT_ASSERT_EQUAL((string) "DataItemTest2", b->getName());
+  CPPUNIT_ASSERT_EQUAL((string) "ACCELERATION", b->getType());
+  CPPUNIT_ASSERT_EQUAL((string) "ACCELERATION", b->getTypeString(true));
+  CPPUNIT_ASSERT_EQUAL((string) "Acceleration", b->getTypeString(false));
+  CPPUNIT_ASSERT_EQUAL((string) "ACTUAL", b->getSubType());
+  CPPUNIT_ASSERT(b->getNativeUnits().empty());
   CPPUNIT_ASSERT_EQUAL(1.0f, b->getNativeScale());
 }
 
 void DataItemTest::testGetAttributes()
 {
-  std::map<std::string, std::string> attributes1 = a->getAttributes();
-  CPPUNIT_ASSERT_EQUAL((std::string) "1", attributes1["id"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest1", attributes1["name"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", attributes1["type"]);
+  std::map<string, string> attributes1 = a->getAttributes();
+  CPPUNIT_ASSERT_EQUAL((string) "1", attributes1["id"]);
+  CPPUNIT_ASSERT_EQUAL((string) "DataItemTest1", attributes1["name"]);
+  CPPUNIT_ASSERT_EQUAL((string) "ACCELERATION", attributes1["type"]);
   CPPUNIT_ASSERT(attributes1["subType"].empty());
-  CPPUNIT_ASSERT(attributes1["nativeUnits"].empty());
+  CPPUNIT_ASSERT_EQUAL((string) "PERCENT", attributes1["nativeUnits"]);
   CPPUNIT_ASSERT(attributes1["getNativeScale"].empty());
   CPPUNIT_ASSERT(attributes1["coordinateSystem"].empty());
   
-  std::map<std::string, std::string> attributes2 = b->getAttributes();
-  CPPUNIT_ASSERT_EQUAL((std::string) "3", attributes2["id"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest2", attributes2["name"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "ACCELERATION", attributes2["type"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "ACTUAL", attributes2["subType"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "REVOLUTION/MINUTE",
-    attributes2["nativeUnits"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "1", attributes2["nativeScale"]);
-  CPPUNIT_ASSERT_EQUAL((std::string) "testCoordinateSystem",
+  std::map<string, string> attributes2 = b->getAttributes();
+  CPPUNIT_ASSERT_EQUAL((string) "3", attributes2["id"]);
+  CPPUNIT_ASSERT_EQUAL((string) "DataItemTest2", attributes2["name"]);
+  CPPUNIT_ASSERT_EQUAL((string) "ACCELERATION", attributes2["type"]);
+  CPPUNIT_ASSERT_EQUAL((string) "ACTUAL", attributes2["subType"]);
+  CPPUNIT_ASSERT(attributes2["nativeUnits"].empty());
+  CPPUNIT_ASSERT_EQUAL((string) "1", attributes2["nativeScale"]);
+  CPPUNIT_ASSERT_EQUAL((string) "testCoordinateSystem",
     attributes2["coordinateSystem"]);
 }
 
@@ -118,9 +119,12 @@ void DataItemTest::testHasNameAndSource()
   CPPUNIT_ASSERT(b->getSource().empty());
   
   CPPUNIT_ASSERT(!b->hasName("DataItemTest2Source"));
+  CPPUNIT_ASSERT_EQUAL((string) "DataItemTest2", b->getSourceOrName());
+  
   b->addSource("DataItemTest2Source");
   CPPUNIT_ASSERT(b->hasName("DataItemTest2Source"));
-  CPPUNIT_ASSERT_EQUAL((std::string) "DataItemTest2Source", b->getSource());
+  CPPUNIT_ASSERT_EQUAL((string) "DataItemTest2Source", b->getSource());
+  CPPUNIT_ASSERT_EQUAL((string) "DataItemTest2Source", b->getSourceOrName());
 }
 
 void DataItemTest::testIsSample()
@@ -131,30 +135,50 @@ void DataItemTest::testIsSample()
 
 void DataItemTest::testComponent()
 {
-  std::map<std::string, std::string> attributes1;
+  std::map<string, string> attributes1;
   attributes1["id"] = "3";
   attributes1["name"] = "AxesTestA";
   attributes1["uuid"] = "UniversalUniqueIdA";
   attributes1["sampleRate"] = "100.11";
-  Component * axes = new Component("Axes", attributes1);
-  a->setComponent(*axes);
   
-  CPPUNIT_ASSERT_EQUAL(axes, a->getComponent());
-  delete axes;
+  Component axes ("Axes", attributes1);
+  a->setComponent(axes);
+  
+  CPPUNIT_ASSERT_EQUAL(&axes, a->getComponent());
 }
 
 void DataItemTest::testComponentEvent()
 {
   CPPUNIT_ASSERT(a->getLatestEvent() == NULL);
   
-  ComponentEvent event (*a, 1, (std::string) "10:30am Today", (std::string) "1.34");
+  ComponentEvent event1(*a, 1, (string) "10:30am Today", (string) "1.34");
   
-  a->setLatestEvent(event);
+  a->setLatestEvent(event1);
   
-  std::map<std::string, std::string> attributes1 = event.getAttributes();
-  std::map<std::string, std::string> attributes2 =
+  std::map<string, string> attributes =
     a->getLatestEvent()->getAttributes();
   
-  CPPUNIT_ASSERT_EQUAL(attributes1["sequence"], attributes2["sequence"]);
+  CPPUNIT_ASSERT_EQUAL((string) "10:30am Today", attributes["timestamp"]);
+  CPPUNIT_ASSERT_EQUAL((string) "1", attributes["sequence"]);
+  CPPUNIT_ASSERT_EQUAL(1.34f, a->getLatestEvent()->getFValue());
+  
+  ComponentEvent event2(*a, 3, (string) "12:00pm Tomorrow", (string) "4.31");
+  
+  a->setLatestEvent(event2);
+  attributes = a->getLatestEvent()->getAttributes();
+  
+  CPPUNIT_ASSERT_EQUAL((string) "12:00pm Tomorrow", attributes["timestamp"]);
+  CPPUNIT_ASSERT_EQUAL((string) "3", attributes["sequence"]);
+  CPPUNIT_ASSERT_EQUAL(4.31f, a->getLatestEvent()->getFValue());
+}
+
+void DataItemTest::testGetCamel()
+{
+  CPPUNIT_ASSERT(DataItem::getCamelType("").empty());
+  CPPUNIT_ASSERT_EQUAL((string) "Camels", DataItem::getCamelType("CAMELS"));
+  CPPUNIT_ASSERT_EQUAL((string) "CamelCase",
+    DataItem::getCamelType("CAMEL_CASE"));
+  CPPUNIT_ASSERT_EQUAL((string) "ABCc",
+    DataItem::getCamelType("A_B_CC"));
 }
 

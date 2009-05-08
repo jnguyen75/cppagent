@@ -48,7 +48,9 @@
 #include "../src/device.hpp"
 #include "../src/xml_parser.hpp"
 #include "../src/xml_printer.hpp"
-#include <../src/globals.hpp>
+#include "../src/globals.hpp"
+
+#include "test_globals.hpp"
 
 extern void fillAttribute(
   std::string& toFill,
@@ -65,14 +67,14 @@ class XmlPrinterTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testAddAttributes);
   CPPUNIT_TEST(testSearchParentForId);
   CPPUNIT_TEST(testGetDeviceStream);
-  CPPUNIT_TEST(testPrintError);
+  /*CPPUNIT_TEST(testPrintError);
   CPPUNIT_TEST(testPrintProbe);
-  CPPUNIT_TEST(testPrintCurrent);
+  CPPUNIT_TEST(testPrintCurrent);*/
   CPPUNIT_TEST(testPrintSample);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  XmlParser * config;
+  XmlParser *config;
   std::list<Device *> devices;
   
 protected:

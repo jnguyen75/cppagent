@@ -5,9 +5,9 @@
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
 *     * Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
+*       notice, this std::list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
+*       notice, this std::list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
 *     * Neither the name of the AMT nor the
 *       names of its contributors may be used to endorse or promote products
@@ -31,35 +31,22 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef XML_PARSER_TEST_HPP
-#define XML_PARSER_TEST_HPP
+#include <sstream>
+#include <fstream>
+#include <string>
 
-#include <libxml++/libxml++.h>
-#include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include "../src/globals.hpp"
 
-#include "../src/xml_parser.hpp"
+/* Retrieve a sample file, open it, and return it as a string */
+std::string getFile(std::string fileLoc);
 
-class XmlParserTest : public CppUnit::TestFixture
-{
-  CPPUNIT_TEST_SUITE(XmlParserTest);
-  CPPUNIT_TEST(testConstructor);
-  CPPUNIT_TEST(testGetDevices);
-  CPPUNIT_TEST(testGetRootNode);
-  CPPUNIT_TEST_SUITE_END();
-  
-protected:
-  XmlParser * a;
-  
-protected:
-  void testConstructor();
-  void testGetDevices();
-  void testGetRootNode();
-  
-public:
-  void setUp();
-  void tearDown();
-};
+/* Fill the error */
+void fillErrorText(std::string& errorXml, const std::string& text);
 
-#endif
+/* Search the xml and insert a value into an attribute (attribute="") */
+void fillAttribute(
+  std::string& xmlString,
+  const std::string& attribute,
+  const std::string& value
+);
 

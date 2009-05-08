@@ -107,7 +107,6 @@ void AgentTest::testProbe()
   std::string pathError = getFile("../samples/test_probe.xml");
   fillAttribute(pathError, "instanceId", agentId);
   fillAttribute(pathError, "bufferSize", "131072");
-  fillAttribute(pathError, "creationTime", getCurrentTime(GMT));
   
   CPPUNIT_ASSERT(response);
   CPPUNIT_ASSERT_EQUAL(pathError, result);

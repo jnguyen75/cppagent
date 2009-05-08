@@ -31,30 +31,38 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-#ifndef XML_PARSER_TEST_HPP
-#define XML_PARSER_TEST_HPP
+#ifndef COMPONENT_TEST_HPP
+#define COMPONENT_TEST_HPP
 
-#include <libxml++/libxml++.h>
+#include <map>
+#include <string>
+
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../src/xml_parser.hpp"
+#include "../src/component.hpp"
+#include "../src/data_item.hpp"
+#include "../src/device.hpp"
 
-class XmlParserTest : public CppUnit::TestFixture
+class ComponentTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST_SUITE(XmlParserTest);
-  CPPUNIT_TEST(testConstructor);
-  CPPUNIT_TEST(testGetDevices);
-  CPPUNIT_TEST(testGetRootNode);
+  CPPUNIT_TEST_SUITE(ComponentTest);
+  CPPUNIT_TEST(testGetters);
+  CPPUNIT_TEST(testGetAttributes);
+  CPPUNIT_TEST(testDescription);
+  CPPUNIT_TEST(testRelationships);
+  CPPUNIT_TEST(testDataItems);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  XmlParser * a;
+  Component *a, *b;
   
 protected:
-  void testConstructor();
-  void testGetDevices();
-  void testGetRootNode();
+  void testGetters();
+  void testGetAttributes();
+  void testDescription();
+  void testRelationships();
+  void testDataItems();
   
 public:
   void setUp();

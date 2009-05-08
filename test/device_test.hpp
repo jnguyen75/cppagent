@@ -40,30 +40,31 @@
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-#include "../src/device.hpp"
+#include "../src/component.hpp"
 #include "../src/data_item.hpp"
+#include "../src/device.hpp"
 
 class DeviceTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(DeviceTest);
+  CPPUNIT_TEST(testGetters);
   CPPUNIT_TEST(testGetAttributes);
-  CPPUNIT_TEST(testGetClass);
   CPPUNIT_TEST(testDescription);
-  CPPUNIT_TEST(testParents);
-  CPPUNIT_TEST(testChildren);
+  CPPUNIT_TEST(testRelationships);
   CPPUNIT_TEST(testDataItems);
+  CPPUNIT_TEST(testDeviceDataItem);
   CPPUNIT_TEST_SUITE_END();
   
 protected:
-  Device * a, * b;
+  Device *a, *b;
   
 protected:
+  void testGetters();
   void testGetAttributes();
-  void testGetClass();
   void testDescription();
-  void testParents();
-  void testChildren();
+  void testRelationships();
   void testDataItems();
+  void testDeviceDataItem();
   
 public:
   void setUp();

@@ -63,7 +63,7 @@ XmlParser::XmlParser(const string& xmlPath)
   {
     logEvent("XmlParser::XmlParser", e.what());
     delete mParser;
-    throw e.what();
+    throw (string) e.what();
   }
 }
 

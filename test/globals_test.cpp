@@ -36,6 +36,8 @@
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION(GlobalsTest);
 
+using namespace std;
+
 void GlobalsTest::setUp()
 {
 }
@@ -46,25 +48,30 @@ void GlobalsTest::tearDown()
 
 void GlobalsTest::testIntToString()
 {
-  CPPUNIT_ASSERT_EQUAL((std::string) "1234", intToString(1234));
-  CPPUNIT_ASSERT_EQUAL((std::string) "0", intToString(0));
-  CPPUNIT_ASSERT_EQUAL((std::string) "123456789", intToString(123456789));
-  CPPUNIT_ASSERT_EQUAL((std::string) "1", intToString(1));
+  CPPUNIT_ASSERT_EQUAL((string) "1234", intToString(1234));
+  CPPUNIT_ASSERT_EQUAL((string) "0", intToString(0));
+  CPPUNIT_ASSERT_EQUAL((string) "123456789", intToString(123456789));
+  CPPUNIT_ASSERT_EQUAL((string) "1", intToString(1));
 }
 
 void GlobalsTest::testFloatToString()
 {
-  CPPUNIT_ASSERT_EQUAL((std::string) "1.234", floatToString(1.234));
-  CPPUNIT_ASSERT_EQUAL((std::string) "0", floatToString(0.0));
-  CPPUNIT_ASSERT_EQUAL((std::string) "0.123456", floatToString(.123456));
-  CPPUNIT_ASSERT_EQUAL((std::string) "1", floatToString(1.0));
+  CPPUNIT_ASSERT_EQUAL((string) "1.234", floatToString(1.234));
+  CPPUNIT_ASSERT_EQUAL((string) "0", floatToString(0.0));
+  CPPUNIT_ASSERT_EQUAL((string) "0.123456", floatToString(.123456));
+  CPPUNIT_ASSERT_EQUAL((string) "1", floatToString(1.0));
 }
 
 void GlobalsTest::testToUpperCase()
 {
-  CPPUNIT_ASSERT_EQUAL((std::string) "ABCDEF", toUpperCase("abcDef"));
-  CPPUNIT_ASSERT_EQUAL((std::string) "A|B|CC|DDD", toUpperCase("a|b|CC|ddd"));
-  CPPUNIT_ASSERT_EQUAL((std::string) "QWERTY.ASDF|", toUpperCase("qwerty.asdf|"));
+  string lower = "abcDef";
+  CPPUNIT_ASSERT_EQUAL((string) "ABCDEF", toUpperCase(lower));
+  
+  lower = "a|b|CC|ddd";
+  CPPUNIT_ASSERT_EQUAL((string) "A|B|CC|DDD", toUpperCase(lower));
+  
+  lower = "qwerty.asdf|";
+  CPPUNIT_ASSERT_EQUAL((string) "QWERTY.ASDF|", toUpperCase(lower));
 }
 
 void GlobalsTest::testIsNonNegativeInteger()
@@ -79,20 +86,20 @@ void GlobalsTest::testIsNonNegativeInteger()
 
 void GlobalsTest::testTime()
 {
-  std::string time1 = getCurrentTime(GMT);
-  std::string time2 = getCurrentTime(GMT);
+  string time1 = getCurrentTime(GMT);
+  string time2 = getCurrentTime(GMT);
   CPPUNIT_ASSERT_EQUAL(time1, time2);
   
   sleep(1);
-  std::string time3 = getCurrentTime(GMT);
+  string time3 = getCurrentTime(GMT);
   CPPUNIT_ASSERT(time1 != time3);
   
-  std::string time4 = getCurrentTime(GMT);
-  std::string time5 = getCurrentTime(GMT);
+  string time4 = getCurrentTime(GMT);
+  string time5 = getCurrentTime(GMT);
   CPPUNIT_ASSERT_EQUAL(time4, time5);
   
   sleep(1);
-  std::string time6 = getCurrentTime(GMT);
+  string time6 = getCurrentTime(GMT);
   CPPUNIT_ASSERT(time4 != time6);
   
   unsigned int time7 = getCurrentTimeInSec();
@@ -108,29 +115,29 @@ void GlobalsTest::testLogEvent()
 {
   gLogFile = "test.log";
   
-  std::string source("GlobalsTest"), message("Just testing");
-  std::string time = getCurrentTime(LOCAL);
+  string source("GlobalsTest"), message("Just testing");
+  string time = getCurrentTime(LOCAL);
   
   logEvent(source, message);
   
-  std::ifstream logFile;
+  ifstream logFile;
   logFile.open(gLogFile);
   
-  std::stringstream stream;
-  stream << ifs.rdbuf();
+  stringstream stream;
+  stream << logFile.rdbuf();
   
-  std::string expected;
-  expected += "[" + time << "] ";
+  string expected;
+  expected += "[" + time + "] ";
   expected += source + ": ";
   expected += message + "\n";
   
-  CPPUNIT_ASSERT(stream.str().find(expected) != std::string::npos);
+  CPPUNIT_ASSERT(stream.str().find(expected) != string::npos);
 }
 
 void GlobalsTest::testGetEnumerations()
 {
   unsigned int size = 7;
-  const std::string array[size] = {
+  const string week[] = {
     "Sunday",
     "Monday",
     "Tuesday",
@@ -138,9 +145,16 @@ void GlobalsTest::testGetEnumerations()
     "Thursday",
     "Friday",
     "Saturday",
-  }
-  int getEnumeration(
-    const std::string& name,
-    const std::string *array,
-    unsigned int size
+  };
+  
+  CPPUNIT_ASSERT_EQUAL(0, getEnumeration("Sunday", week, size));
+  CPPUNIT_ASSERT_EQUAL(1, getEnumeration("Monday", week, size));
+  CPPUNIT_ASSERT_EQUAL(2, getEnumeration("Tuesday", week, size));
+  CPPUNIT_ASSERT_EQUAL(3, getEnumeration("Wednesday", week, size));
+  CPPUNIT_ASSERT_EQUAL(4, getEnumeration("Thursday", week, size));
+  CPPUNIT_ASSERT_EQUAL(5, getEnumeration("Friday", week, size));
+  CPPUNIT_ASSERT_EQUAL(6, getEnumeration("Saturday", week, size));
+  
+  CPPUNIT_ASSERT_EQUAL(ENUM_MISS, getEnumeration("Notaday", week, size));
+  CPPUNIT_ASSERT_EQUAL(ENUM_MISS, getEnumeration("SUNDAY", week, size));
 }
