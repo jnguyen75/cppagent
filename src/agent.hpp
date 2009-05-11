@@ -105,7 +105,7 @@ public:
   );
   
   /* Add an adapter to the agent */
-  void addAdapter(
+  Adapter * addAdapter(
     const std::string& device,
     const std::string& host,
     const unsigned int port

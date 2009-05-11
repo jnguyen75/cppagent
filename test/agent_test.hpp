@@ -45,14 +45,8 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 #include "../src/adapter.hpp"
-
-extern std::string getFile(std::string fileLoc);
-extern void fillErrorText(std::string& errorXml, const std::string& text);
-extern void fillAttribute(
-  std::string& xmlString,
-  const std::string& attribute,
-  const std::string& value
-);
+#include "../src/agent.hpp"
+#include "test_globals.hpp"
 
 class AgentTest : public CppUnit::TestFixture
 {
@@ -61,16 +55,24 @@ class AgentTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testBadPath);
   CPPUNIT_TEST(testProbe);
   CPPUNIT_TEST(testBadXPath);
+  CPPUNIT_TEST(testBadCount);
+  CPPUNIT_TEST(testBadFreq);
+  CPPUNIT_TEST(testEmptyStream);
+  CPPUNIT_TEST(testBadDevices);
   CPPUNIT_TEST(testAddAdapter);
+  CPPUNIT_TEST(testAddToBuffer);
+  CPPUNIT_TEST(testAdapter);
   CPPUNIT_TEST_SUITE_END();
   
   typedef map<std::string, std::string>::kernel_1a_c map_type;
   typedef queue<std::string>::kernel_1a_c queue_type;
   
 protected:
-  Agent * a;
+  Agent *a;
+  Adapter *adapter;
   std::string agentId;
   
+  bool response;
   std::string path;
   map_type queries;
   std::string result;
@@ -85,11 +87,29 @@ protected:
   std::ostringstream out;
   
 protected:
+  /* Test Basic */
   void testConstructor();
+  /* Test Errors */
   void testBadPath();
-  void testProbe();
   void testBadXPath();
+  void testBadCount();
+  void testBadFreq();
+  /* Test calls */
+  void testProbe();
+  void testEmptyStream();
+  void testBadDevices();
   void testAddAdapter();
+  void testAddToBuffer();
+  
+  /* Test Adapter */
+  void testAdapter();
+  
+  /* Helper method to test expected string, given optional query, & run tests */
+  void responseHelper(
+    const std::string& expected,
+    std::string key = "",
+    std::string value = ""
+  );
   
 public:
   void setUp();

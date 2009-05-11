@@ -37,6 +37,7 @@ device.cpp \
 xml_parser.cpp \
 xml_printer.cpp \
 globals.cpp \
+agent_test.cpp \
 component_test.cpp \
 component_event_test.cpp \
 data_item_test.cpp \
@@ -45,7 +46,6 @@ globals_test.cpp \
 xml_parser_test.cpp \
 test_globals.cpp \
 xml_printer_test.cpp
-#agent_test.cpp \
 
 OBJS=$(SOURCES:%.cpp=%.o)
 LIBS=$(LIBRARIES:%=-l%)

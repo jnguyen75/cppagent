@@ -1,17 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <MTConnectStreams xmlns:m="urn:mtconnect.com:MTConnectStreams:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:mtconnect.com:MTConnectStreams:1.0" xsi:schemaLocation="urn:mtconnect.com:MTConnectStreams:1.0 /schemas/MTConnectStreams.xsd">
   <Header creationTime="" sender="localhost" instanceId="" bufferSize="" version="1.0" nextSequence="10254805" firstSequence="10123733" lastSequence="10254804" />
   <Streams>
     <DeviceStream name="LinuxCNC" uuid="000">
-      <ComponentStream component="Axes" name="Axes" componentId="5">
-        <Samples>
-          <PathFeedrate dataItemId="6" name="path_feedrate" sequence="10254804" subType="ACTUAL" timestamp="TIME">0</PathFeedrate>
-          <PathFeedrate dataItemId="25" name="feed_ovr" sequence="15" subType="OVERRIDE" timestamp="TIME">100</PathFeedrate>
-        </Samples>
-      </ComponentStream>
       <ComponentStream component="Spindle" name="S" componentId="10">
         <Samples>
-          <SpindleSpeed dataItemId="12" name="Sspeed" sequence="10254803" subType="ACTUAL" timestamp="TIME">0</SpindleSpeed>
           <SpindleSpeed dataItemId="13" name="Sovr" sequence="16" subType="OVERRIDE" timestamp="TIME">100</SpindleSpeed>
+          <SpindleSpeed dataItemId="12" name="Sspeed" sequence="10254803" subType="ACTUAL" timestamp="TIME">0</SpindleSpeed>
         </Samples>
       </ComponentStream>
       <ComponentStream component="Linear" name="X" componentId="7">
@@ -34,16 +29,22 @@
       </ComponentStream>
       <ComponentStream component="Controller" name="Controller" componentId="11">
         <Events>
-          <Block dataItemId="20" name="block" sequence="10254789" subType="" timestamp="TIME">x-0.132010 y-0.158143</Block>
-          <ControllerMode dataItemId="21" name="mode" sequence="13" subType="" timestamp="TIME">AUTOMATIC</ControllerMode>
-          <Line dataItemId="22" name="line" sequence="10254796" subType="" timestamp="TIME">0</Line>
-          <Program dataItemId="23" name="program" sequence="12" subType="" timestamp="TIME">/home/mtconnect/simulator/spiral.ngc</Program>
-          <Execution dataItemId="24" name="execution" sequence="10254795" subType="" timestamp="TIME">READY</Execution>
+          <Block dataItemId="20" name="block" sequence="10254789" timestamp="TIME">x-0.132010 y-0.158143</Block>
+          <Execution dataItemId="24" name="execution" sequence="10254795" timestamp="TIME">READY</Execution>
+          <Line dataItemId="22" name="line" sequence="10254796" timestamp="TIME">0</Line>
+          <ControllerMode dataItemId="21" name="mode" sequence="13" timestamp="TIME">AUTOMATIC</ControllerMode>
+          <Program dataItemId="23" name="program" sequence="12" timestamp="TIME">/home/mtconnect/simulator/spiral.ngc</Program>
         </Events>
+      </ComponentStream>
+      <ComponentStream component="Axes" name="Axes" componentId="5">
+        <Samples>
+          <PathFeedrate dataItemId="25" name="feed_ovr" sequence="15" subType="OVERRIDE" timestamp="TIME">100</PathFeedrate>
+          <PathFeedrate dataItemId="6" name="path_feedrate" sequence="10254804" subType="ACTUAL" timestamp="TIME">0</PathFeedrate>
+        </Samples>
       </ComponentStream>
       <ComponentStream component="Power" name="power" componentId="2">
         <Events>
-          <PowerStatus dataItemId="1" name="power" sequence="1" subType="" timestamp="TIME">ON</PowerStatus>
+          <PowerStatus dataItemId="1" name="power" sequence="1" timestamp="TIME">ON</PowerStatus>
         </Events>
       </ComponentStream>
     </DeviceStream>

@@ -52,12 +52,6 @@
 
 #include "test_globals.hpp"
 
-extern void fillAttribute(
-  std::string& toFill,
-  const std::string& attribute,
-  const std::string& value
-);
-
 class XmlPrinterTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE(XmlPrinterTest);
@@ -67,9 +61,9 @@ class XmlPrinterTest : public CppUnit::TestFixture
   CPPUNIT_TEST(testAddAttributes);
   CPPUNIT_TEST(testSearchParentForId);
   CPPUNIT_TEST(testGetDeviceStream);
-  /*CPPUNIT_TEST(testPrintError);
+  CPPUNIT_TEST(testPrintError);
   CPPUNIT_TEST(testPrintProbe);
-  CPPUNIT_TEST(testPrintCurrent);*/
+  CPPUNIT_TEST(testPrintCurrent);
   CPPUNIT_TEST(testPrintSample);
   CPPUNIT_TEST_SUITE_END();
   
@@ -78,18 +72,32 @@ protected:
   std::list<Device *> devices;
   
 protected:
+  /* Helper methods to test */
   void testInitXmlDoc();
   void testPrintNode();
   void testPrintIndentation();
   void testAddAttributes();
   void testSearchParentForId();
   void testGetDeviceStream();
+  
+  /* Main methods to test */
   void testPrintError();
   void testPrintProbe();
   void testPrintCurrent();
   void testPrintSample();
   
+  /* Retrieve a data item by id string */
   DataItem * getDataItemById(const char *);
+  
+  /* Construct a component event and set it as the data item's latest event */
+  ComponentEvent * addEventToDataItem(
+    const char *dataItemId,
+    unsigned int sequence,
+    std::string value
+  );
+  
+  /* Delete all the events on the list from memory */
+  void clearEvents(std::list<ComponentEvent *> events);
   
 public:
   void setUp();

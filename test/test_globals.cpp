@@ -5,9 +5,9 @@
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
 *     * Redistributions of source code must retain the above copyright
-*       notice, this std::list of conditions and the following disclaimer.
+*       notice, this list of conditions and the following disclaimer.
 *     * Redistributions in binary form must reproduce the above copyright
-*       notice, this std::list of conditions and the following disclaimer in the
+*       notice, this list of conditions and the following disclaimer in the
 *       documentation and/or other materials provided with the distribution.
 *     * Neither the name of the AMT nor the
 *       names of its contributors may be used to endorse or promote products
@@ -35,34 +35,45 @@
 
 using namespace std;
 
-std::string getFile(std::string fileLoc)
+string getFile(string fileLoc)
 {
-  std::ifstream ifs(fileLoc.c_str());
-  std::stringstream stream;
+  ifstream ifs(fileLoc.c_str());
+  stringstream stream;
   stream << ifs.rdbuf();
   return stream.str();
 }
 
-void fillErrorText(std::string& errorXml, const std::string& text)
+void fillErrorText(string& errorXml, const string& text)
 {
   size_t pos = errorXml.find("</Error>");
   
-  if (pos == std::string::npos)
+  // Error in case </Error> was not found
+  if (pos == string::npos)
   {
     return;
   }
   
+  // Trim everything between >....</Error>
+  size_t gT = pos;
+  while (errorXml[gT-1] != '>')
+  {
+    gT--;
+  }
+  errorXml.erase(gT, pos-gT);
+  
+  // Insert new text into pos
+  pos = errorXml.find("</Error>");
   errorXml.insert(pos, text);
 }
 
 void fillAttribute(
-    std::string& xmlString,
-    const std::string& attribute,
-    const std::string& value
+    string& xmlString,
+    const string& attribute,
+    const string& value
   )
 {
   size_t pos = xmlString.find(attribute + "=\"\"");
-  if (pos == std::string::npos)
+  if (pos == string::npos)
   {
     return;
   }

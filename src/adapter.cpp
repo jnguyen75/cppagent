@@ -75,29 +75,13 @@ void Adapter::processData(const string& data)
   string value;
   getline(toParse, value, '|');
   
-  // Check for alarm
-  if (type == "Alarm")
+  // Add key->value pairings
+  mAgent->addToBuffer(mDevice, key, value, time);
+  
+  // Look for more key->value pairings in the rest of the data
+  while (getline(toParse, key, '|') && getline(toParse, value, '|'))
   {
-    // Convert the rest of the data into upper case with pipe delimeter
-    string alarmValue = toUpperCase(value);
-    
-    while (getline(toParse, value, '|'))
-    {
-      alarmValue += "|" + toUpperCase(value);
-    }
-    
-    mAgent->addToBuffer(mDevice, time, key, alarmValue);
-  }
-  else
-  {
-    // Add key->value pairings
-    mAgent->addToBuffer(mDevice, key, value, time);
-    
-    // Look for more key->value pairings in the rest of the data
-    while (getline(toParse, key, '|') && getline(toParse, value, '|'))
-    {
-      mAgent->addToBuffer(mDevice, key, value, time);
-    }
+    mAgent->addToBuffer(mDevice, key, toUpperCase(value), time);
   }
 }
 

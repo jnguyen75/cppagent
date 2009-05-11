@@ -79,7 +79,7 @@ void XmlPrinterTest::testInitXmlDoc()
   xmlpp::Node::NodeList rootChildren1 = root1->get_children("Header");
   CPPUNIT_ASSERT_EQUAL((size_t) 1, rootChildren1.size());
   
-  xmlpp::Element * header1 =
+  xmlpp::Element *header1 =
     dynamic_cast<xmlpp::Element *>(rootChildren1.front());
   CPPUNIT_ASSERT(header1);
   
@@ -124,7 +124,7 @@ void XmlPrinterTest::testInitXmlDoc()
   xmlpp::Node::NodeList rootChildren2 = root2->get_children("Header");
   CPPUNIT_ASSERT_EQUAL((size_t) 1, rootChildren2.size());
   
-  xmlpp::Element * header2 =
+  xmlpp::Element *header2 =
     dynamic_cast<xmlpp::Element *>(rootChildren2.front());
   CPPUNIT_ASSERT(header2);
   
@@ -143,6 +143,9 @@ void XmlPrinterTest::testInitXmlDoc()
     header2->get_attribute_value("firstSequence"));
   CPPUNIT_ASSERT_EQUAL((Glib::ustring) "9",
     header2->get_attribute_value("lastSequence"));
+  
+  delete initXml1;
+  delete initXml2;
 }
 
 void XmlPrinterTest::testPrintNode()
@@ -290,29 +293,22 @@ void XmlPrinterTest::testGetDeviceStream()
 
 void XmlPrinterTest::testPrintError()
 {
-  string expected;
+  string errorString = getFile("../samples/test_error.xml");
   
-  expected += "<MTConnectError xmlns:m=\"urn:mtconnect.com:MTConnectError:1.0";
-  expected += "\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ";
-  expected += "xmlns=\"urn:mtconnect.com:MTConnectError:1.0\" ";
-  expected += "xsi:schemaLocation=\"urn:mtconnect.com:MTConnectError:1.0 ";
-  expected += "/schemas/MTConnectError.xsd\">\n";
-  expected += "  <Header creationTime=\"" + getCurrentTime(GMT) + "\" sender=\"";
-  expected += "localhost\" instanceId=\"123\" bufferSize=\"9999\" ";
-  expected += "version=\"1.0\" />\n";
-  expected += "  <Error errorCode=\"ERROR_CODE\">ERROR TEXT!</Error>\n";
-  expected += "</MTConnectError>\n";
+  fillAttribute(errorString, "instanceId", "123");
+  fillAttribute(errorString, "bufferSize", "9999");
+  fillAttribute(errorString, "creationTime", getCurrentTime(GMT));
   
-  CPPUNIT_ASSERT_EQUAL(expected,
+  fillAttribute(errorString, "errorCode", "ERROR_CODE");
+  fillErrorText(errorString, "ERROR TEXT!");
+  
+  CPPUNIT_ASSERT_EQUAL(errorString,
     XmlPrinter::printError(123, 9999, 1, "ERROR_CODE", "ERROR TEXT!"));
 }
 
 void XmlPrinterTest::testPrintProbe()
 {
-  ifstream probeXml("../include/test_probe.xml");
-  stringstream probeStream;
-  probeStream << probeXml.rdbuf();
-  string probeString = probeStream.str();
+  string probeString = getFile("../samples/test_probe.xml");
   
   fillAttribute(probeString, "instanceId", "123");
   fillAttribute(probeString, "bufferSize", "9999");
@@ -323,83 +319,31 @@ void XmlPrinterTest::testPrintProbe()
 }
 
 void XmlPrinterTest::testPrintCurrent()
-{  
+{
   string currentString = getFile("../samples/test_current.xml");
   
-  DataItem *d;
+  list<ComponentEvent *> events;
   
-  d = getDataItemById("6");
-  string time("TIME");
-  ComponentEvent e6 (*d, 10254804, time, (string) "0");
-  d->setLatestEvent(e6);
+  events.push_back(addEventToDataItem("6", 10254804, "0"));
+  events.push_back(addEventToDataItem("25", 15, "100"));
+  events.push_back(addEventToDataItem("12", 10254803, "0"));
+  events.push_back(addEventToDataItem("13", 16, "100"));
+  events.push_back(addEventToDataItem("14", 10254797, "0.00199"));
+  events.push_back(addEventToDataItem("15", 10254800, "0.00199"));
+  events.push_back(addEventToDataItem("16", 10254798, "0.0002"));
+  events.push_back(addEventToDataItem("17", 10254801, "0.0002"));
+  events.push_back(addEventToDataItem("18", 10254799, "1"));
+  events.push_back(addEventToDataItem("19", 10254802, "1"));
+  events.push_back(addEventToDataItem("20", 10254789, "x-0.132010 y-0.158143"));
+  events.push_back(addEventToDataItem("21", 13, "AUTOMATIC"));
+  events.push_back(addEventToDataItem("22", 10254796, "0"));
+  events.push_back(addEventToDataItem("23", 12,
+    "/home/mtconnect/simulator/spiral.ngc"));
+  events.push_back(addEventToDataItem("24", 10254795, "READY"));
+  events.push_back(addEventToDataItem("1", 1, "ON"));
   
-  d = getDataItemById("25");
-  ComponentEvent e25 (*d, 15, time, (string)  "100");
-  d->setLatestEvent(e25);
-  
-  d = getDataItemById("12");
-  ComponentEvent e12 (*d, 10254803, time, (string) "0");
-  d->setLatestEvent(e12);
-  
-  d = getDataItemById("13");
-  ComponentEvent e13 (*d, 16, time, (string) "100");
-  d->setLatestEvent(e13);
-  
-  d = getDataItemById("14");
-  ComponentEvent e14 (*d, 10254797, time, (string) "0.00199");
-  d->setLatestEvent(e14);
-  
-  d = getDataItemById("15");
-  ComponentEvent e15 (*d, 10254800, time, (string) "0.00199");
-  d->setLatestEvent(e15);
-  
-  d = getDataItemById("16");
-  ComponentEvent e16 (*d, 10254798, time, (string) "0.0002");
-  d->setLatestEvent(e16);
-  
-  d = getDataItemById("17");
-  ComponentEvent e17 (*d, 10254801, time, (string) "0.0002");
-  d->setLatestEvent(e17);
-  
-  d = getDataItemById("18");
-  ComponentEvent e18 (*d, 10254799, time, (string) "1");
-  d->setLatestEvent(e18);
-  
-  d = getDataItemById("19");
-  ComponentEvent e19 (*d, 10254802, time, (string) "1");
-  d->setLatestEvent(e19);
-  
-  d = getDataItemById("20");
-  ComponentEvent e20 (*d, 10254789, time, (string) "x-0.132010 y-0.158143");
-  d->setLatestEvent(e20);
-  
-  d = getDataItemById("21");
-  ComponentEvent e21 (*d, 13, time, (string) "AUTOMATIC");
-  d->setLatestEvent(e21);
-  
-  d = getDataItemById("22");
-  ComponentEvent e22 (*d, 10254796, time, (string) "0");
-  d->setLatestEvent(e22);
-  
-  d = getDataItemById("23");
-  ComponentEvent e23 (*d, 12, time,
-    (string) "/home/mtconnect/simulator/spiral.ngc");
-  d->setLatestEvent(e23);
-  
-  d = getDataItemById("24");
-  ComponentEvent e24 (*d, 10254795, time, (string)  "READY");
-  d->setLatestEvent(e24);
-  
-  d = getDataItemById("1");
-  ComponentEvent e1 (*d, 1, time, (string) "ON");
-  d->setLatestEvent(e1);
-  
-  fillAttribute(currentString, "instanceId", "123");
-  fillAttribute(currentString, "bufferSize", "9999");
-  fillAttribute(currentString, "creationTime", getCurrentTime(GMT));
-
-  list<DataItem*> dataItems;
-  map<string, DataItem*> dataItemsMap = devices.front()->getDeviceDataItems();
+  list<DataItem *> dataItems;
+  map<string, DataItem *> dataItemsMap = devices.front()->getDeviceDataItems();
   
   map<string, DataItem*>::iterator data;
   for (data = dataItemsMap.begin(); data != dataItemsMap.end(); data++)
@@ -407,78 +351,43 @@ void XmlPrinterTest::testPrintCurrent()
     dataItems.push_back(data->second);
   }
   
+  fillAttribute(currentString, "instanceId", "123");
+  fillAttribute(currentString, "bufferSize", "9999");
+  fillAttribute(currentString, "creationTime", getCurrentTime(GMT));
+  
   CPPUNIT_ASSERT_EQUAL(currentString,
     XmlPrinter::printCurrent(123, 9999, 10254805, 10123733, dataItems));
+  
+  clearEvents(events);
 }
 
 void XmlPrinterTest::testPrintSample()
 {
   string sampleString = getFile("../samples/test_sample.xml");
   
-  list<ComponentEvent *> results;
-  DataItem *d;
-  string time("TIME");
+  list<ComponentEvent *> events;
   
-  d = getDataItemById("17");
-  CPPUNIT_ASSERT(d);
-  ComponentEvent e1(*d, 10843512, time, (string) "0.553472");
-  results.push_back(&e1);
-  
-  d = getDataItemById("16");
-  CPPUNIT_ASSERT(d);
-  ComponentEvent e2 (*d, 10843514, time,  (string) "0.551123");
-  results.push_back(&e2);
-  
-  d = getDataItemById("17");
-  CPPUNIT_ASSERT(d);
-  ComponentEvent e3 (*d, 10843516, time,  (string) "0.556826");
-  results.push_back(&e3);
-  
-  d = getDataItemById("16");
-  CPPUNIT_ASSERT(d);
-  ComponentEvent e4(*d, 10843518, "TIME",  (string) "0.55582");
-  results.push_back(&e4);
-  
-  d = getDataItemById("17");
-  CPPUNIT_ASSERT(d);
-  ComponentEvent e5(*d, 10843520, "TIME",  (string) "0.560181");
-  results.push_back(&e5);
-  
-  d = getDataItemById("14");
-  CPPUNIT_ASSERT(d);
-  ComponentEvent e6(*d, 10843513, "TIME",  (string) "-0.900624");
-  results.push_back(&e6);
-  
-  d = getDataItemById("15");
-  ComponentEvent e7 (*d, 10843515, "TIME",  (string) "-0.89692");
-  results.push_back(&e7);
-  
-  d = getDataItemById("14");
-  ComponentEvent e8 (*d, 10843517, "TIME",  (string) "-0.897574");
-  results.push_back(&e8);
-  
-  d = getDataItemById("15");
-  ComponentEvent e9 (*d, 10843519, "TIME",  (string) "-0.894742");
-  results.push_back(&e9);
-  
-  d = getDataItemById("14");
-  ComponentEvent e10 (*d, 10843521, time,  (string) "-0.895613");
-  results.push_back(&e10);
-  
-  d = getDataItemById("22");
-  ComponentEvent e11 (*d, 11351720, time,  (string) "229");
-  results.push_back(&e11);
-  
-  d = getDataItemById("20");
-  ComponentEvent e12 (*d, 11351726, time,  (string) "x-1.149250 y1.048981");
-  results.push_back(&e12);
+  events.push_back(addEventToDataItem("17", 10843512, "0.553472"));
+  events.push_back(addEventToDataItem("16", 10843514, "0.551123"));
+  events.push_back(addEventToDataItem("17", 10843516, "0.556826"));
+  events.push_back(addEventToDataItem("16", 10843518, "0.55582"));
+  events.push_back(addEventToDataItem("17", 10843520, "0.560181"));
+  events.push_back(addEventToDataItem("14", 10843513, "-0.900624"));
+  events.push_back(addEventToDataItem("15", 10843515, "-0.89692"));
+  events.push_back(addEventToDataItem("14", 10843517, "-0.897574"));
+  events.push_back(addEventToDataItem("15", 10843519, "-0.894742"));
+  events.push_back(addEventToDataItem("14", 10843521, "-0.895613"));
+  events.push_back(addEventToDataItem("22", 11351720, "229"));
+  events.push_back(addEventToDataItem("20", 11351726, "x-1.149250 y1.048981"));
   
   fillAttribute(sampleString, "instanceId", "123");
   fillAttribute(sampleString, "bufferSize", "9999");
   fillAttribute(sampleString, "creationTime", getCurrentTime(GMT));
   
-  CPPUNIT_ASSERT_EQUAL(XmlPrinter::appendXmlEncode(sampleString),
-    XmlPrinter::printSample(123, 9999, 10974584, 10843512, results));
+  CPPUNIT_ASSERT_EQUAL(sampleString,
+    XmlPrinter::printSample(123, 9999, 10974584, 10843512, events));
+  
+  clearEvents(events);
 }
 
 DataItem * XmlPrinterTest::getDataItemById(const char *id)
@@ -494,5 +403,31 @@ DataItem * XmlPrinterTest::getDataItemById(const char *id)
     }
   }
   return NULL;
+}
+
+ComponentEvent * XmlPrinterTest::addEventToDataItem(
+    const char *dataItemId,
+    unsigned int sequence,
+    string value
+  )
+{
+  string time("TIME");
+  
+  // Make sure the data item is there
+  DataItem *d = getDataItemById(dataItemId);
+  CPPUNIT_ASSERT(d);
+  
+  ComponentEvent *event = new ComponentEvent(*d, sequence, time, value);
+  d->setLatestEvent(*event);
+  return event;
+}
+
+void XmlPrinterTest::clearEvents(list<ComponentEvent *> events)
+{
+  list<ComponentEvent *>::iterator event;
+  for (event = events.begin(); event != events.end(); event++)
+  {
+    delete (*event);
+  }
 }
 

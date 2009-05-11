@@ -48,7 +48,7 @@ Agent::Agent(const string& configXmlPath)
     logEvent("Agent::Agent",
       "Error loading xml configuration: " + configXmlPath);
     delete mConfig;
-    throw e.what();
+    throw (string) e.what();
   }
   
   // Grab data from configuration
@@ -151,7 +151,7 @@ bool Agent::on_request(
   return true;
 }
 
-void Agent::addAdapter(
+Adapter * Agent::addAdapter(
     const string& device,
     const string& host,
     const unsigned int port
@@ -159,6 +159,7 @@ void Agent::addAdapter(
 {
   Adapter *adapter = new Adapter(device, host, port);
   adapter->setAgent(*this);
+  return adapter;
 }
 
 unsigned int Agent::addToBuffer(
@@ -249,7 +250,7 @@ bool Agent::handleCall(
       queries["path"] : "";
     
     int count = checkAndGetParam(result, queries, "count", DEFAULT_COUNT,
-      1, true);
+      1, true, SLIDING_BUFFER_SIZE);
     int freq = checkAndGetParam(result, queries, "frequency", NO_FREQ,
       FASTEST_FREQ, false, SLOWEST_FREQ);
     
@@ -328,7 +329,7 @@ bool Agent::handleStream(
     logEvent("Agent::handleStream", e.what());
     return true;
   }
-    
+  
   if (dataItems.empty())
   {
     result = printError("INVALID_XPATH",
