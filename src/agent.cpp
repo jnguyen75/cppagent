@@ -163,45 +163,34 @@ Adapter * Agent::addAdapter(
 }
 
 unsigned int Agent::addToBuffer(
-    const string& device,
-    const string& dataItemName,
+    DataItem *dataItem,
     const string& value,
     string time
   )
 {
-  DataItem *dataItem = getDataItemByName(device, dataItemName);
+  mSequenceLock->lock();
   
-  if (dataItem == NULL)
+  if ((*mSlidingBuffer)[mSequence] != NULL)
   {
-    logEvent("Agent", "Could not find data item: " + dataItemName);
-    return 0;
+    delete (*mSlidingBuffer)[mSequence];
   }
-  else
+  
+  // If this function is being used as an API, add the current time in
+  if (time.empty())
   {
-    mSequenceLock->lock();
-    
-    if ((*mSlidingBuffer)[mSequence] != NULL)
-    {
-      delete (*mSlidingBuffer)[mSequence];
-    }
-    
-    // If this function is being used as an API, add the current time in
-    if (time.empty())
-    {
-      time = getCurrentTime(GMT_UV_SEC);
-    }
-    
-    ComponentEvent *event =
-      new ComponentEvent(*dataItem, mSequence, time, value);
-    
-    unsigned int seqNum = mSequence++;
-    
-    (*mSlidingBuffer)[seqNum] = event;
-    dataItem->setLatestEvent(*event);
-    
-    mSequenceLock->unlock();
-    return seqNum;
+    time = getCurrentTime(GMT_UV_SEC);
   }
+  
+  ComponentEvent *event =
+    new ComponentEvent(*dataItem, mSequence, time, value);
+  
+  unsigned int seqNum = mSequence++;
+  
+  (*mSlidingBuffer)[seqNum] = event;
+  dataItem->setLatestEvent(*event);
+  
+  mSequenceLock->unlock();
+  return seqNum;
 }
 
 /* Agent protected methods */
@@ -352,8 +341,10 @@ bool Agent::handleStream(
   }
   else
   {
+    unsigned int items;
     result = (current) ?
-      fetchCurrentData(dataItems) : fetchSampleData(dataItems, start, count);
+	     fetchCurrentData(dataItems) : fetchSampleData(dataItems, start,
+							   count, items);
     return true;
   }
 }
@@ -380,20 +371,27 @@ void Agent::streamData(
   out << "boundary=" << boundary << endl << endl;
   
   // Loop until the user closes the connection
+  time_t t;
+  int heartbeat = 0;
   while (out.good())
   {
-    out << "--" + boundary << endl;
-    out << "Content-type: text/xml" << endl;
-    
+    unsigned int items;
     string content = (current) ?
-      fetchCurrentData(dataItems) : fetchSampleData(dataItems, start, count);
+	   fetchCurrentData(dataItems) : fetchSampleData(dataItems, start, count, items);
     
-    start = (start + count < mSequence) ? (start + count) : mSequence - 1;
+    start = (start + count < mSequence) ? (start + count) : mSequence;
+
+    if (items > 0 || (time(&t) - heartbeat) >= 10) 
+    {
+      heartbeat = t;
+      out << "--" + boundary << endl;
+      out << "Content-type: text/xml" << endl;
+      out << "Content-length: " << content.length() << endl;
+      out << endl << content;
+      
+      out.flush();
+    }
     
-    out << "Content-length: " << content.length() << endl;
-    out << endl << content;
-    
-    out.flush();
     dlib::sleep(frequency);
   }
 }
@@ -414,7 +412,8 @@ string Agent::fetchCurrentData(list<DataItem *>& dataItems)
 string Agent::fetchSampleData(
     list<DataItem *>& dataItems,
     unsigned int start,
-    unsigned int count
+    unsigned int count,
+    unsigned int &items
   )
 {
   list<ComponentEvent *> results;
@@ -428,6 +427,7 @@ string Agent::fetchSampleData(
   // START SHOULD BE BETWEEN 0 AND SEQUENCE NUMBER
   start = (start <= firstSeq) ? firstSeq : start;
   unsigned int end = (count + start >= mSequence) ? mSequence : count + start;
+  items = 0;
   
   for (unsigned int i = start; i < end; i++)
   {
@@ -435,6 +435,7 @@ string Agent::fetchSampleData(
     const string dataName = (*mSlidingBuffer)[i]->getDataItem()->getName();
     if (hasDataItem(dataItems, dataName))
     {
+      items++;
       results.push_back((*mSlidingBuffer)[i]);
     }
     else if (end < mSequence)

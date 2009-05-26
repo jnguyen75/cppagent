@@ -63,9 +63,17 @@ void addToBufferThread(Agent *server)
     
     std::cout << "Value: ";
     std::cin >> value;
-    
-    unsigned int seqNum = server->addToBuffer(device, dataItem, value);
-    std::cout << "Sequence Number: " << seqNum << std::endl;
+
+    DataItem *di = server->getDataItemByName(device, dataItem);
+    if (di == NULL)
+    {
+      unsigned int seqNum = server->addToBuffer(di, value);
+      std::cout << "Sequence Number: " << seqNum << std::endl;
+    }
+    else
+    {
+      std::cout << "Could not find data item: " << dataItem << endl;
+    }
   }
 }
 

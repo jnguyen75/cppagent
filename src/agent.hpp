@@ -116,10 +116,14 @@ public:
   
   /* Add component events to the sliding buffer */
   unsigned int addToBuffer(
-    const std::string& device,
-    const std::string& dataItemName,
+    DataItem *dataItem,
     const std::string& value,
     std::string time = ""
+  );
+  
+  DataItem * getDataItemByName(
+    const std::string& device,
+    const std::string& name
   );
   
 protected:
@@ -162,7 +166,8 @@ protected:
   std::string fetchSampleData(
     std::list<DataItem *>& dataItems,
     unsigned int start,
-    unsigned int count
+    unsigned int count,
+    unsigned int &items
   );
   
   /* Output an XML Error */
@@ -193,11 +198,7 @@ protected:
   
   /* Find data items by name/id */
   DataItem * getDataItemById(const std::string& id) { return mDataItemMap[id]; }
-  DataItem * getDataItemByName(
-    const std::string& device,
-    const std::string& name
-  );
-  
+
   /* Find if there's data item with that name/source name */
   bool hasDataItem(std::list<DataItem *>& dataItems, const std::string& name);
   

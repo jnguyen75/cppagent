@@ -145,7 +145,7 @@ void ComponentEvent::convertValue(const string& value)
     
     // Alarm data = CODE|NATIVECODE|SEVERITY|STATE
     mAlarmData = value.substr(0, lastPipe);
-    
+
     // sValue = DESCRIPTION
     sValue = value.substr(lastPipe+1);
     return;

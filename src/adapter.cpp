@@ -74,14 +74,37 @@ void Adapter::processData(const string& data)
   
   string value;
   getline(toParse, value, '|');
-  
-  // Add key->value pairings
-  mAgent->addToBuffer(mDevice, key, value, time);
+
+  DataItem *dataItem = mAgent->getDataItemByName(mDevice, key);
+  if (dataItem == NULL)
+  {
+    logEvent("Agent", "Could not find data item: " + key);
+  }
+  else
+  {
+    string rest;
+    if (dataItem->getType() == "ALARM")
+    {
+      getline(toParse, rest);
+      value = value + "|" + rest;
+    }
+
+    // Add key->value pairings
+    mAgent->addToBuffer(dataItem, value, time);
+  }
   
   // Look for more key->value pairings in the rest of the data
   while (getline(toParse, key, '|') && getline(toParse, value, '|'))
   {
-    mAgent->addToBuffer(mDevice, key, toUpperCase(value), time);
+    dataItem = mAgent->getDataItemByName(mDevice, key);
+    if (dataItem == NULL)
+    {
+      logEvent("Agent", "Could not find data item: " + key);
+    }
+    else
+    {
+      mAgent->addToBuffer(dataItem, toUpperCase(value), time);
+    }
   }
 }
 
