@@ -455,7 +455,7 @@ xmlpp::Element * XmlPrinter::getDeviceStream(
   {
     xmlpp::Element * nodeElement = dynamic_cast<xmlpp::Element *>(*child);
     
-    if (nodeElement and
+    if (nodeElement &&
       nodeElement->get_attribute_value("name") == device->getName())
     {
       return nodeElement;

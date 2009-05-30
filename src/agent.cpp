@@ -524,7 +524,7 @@ list<DataItem *> Agent::getDataItems(const string& path, xmlpp::Node * node)
           logEvent("Agent", "Data item not found: " + nodename);
         }
       }
-      else if (nodename == "Components" or nodename == "DataItems")
+      else if (nodename == "Components" || nodename == "DataItems")
       {
         // Recursive call
         list<DataItem *> toMerge = getDataItems("*", elements[i]);
