@@ -111,6 +111,21 @@ void GlobalsTest::testTime()
   CPPUNIT_ASSERT(time7 < time9);
 }
 
+void GlobalsTest::testIllegalCharacters()
+{
+  string before1("Don't Change Me"), after1("Don't Change Me");
+  replaceIllegalCharacters(before1);
+  CPPUNIT_ASSERT_EQUAL(before1, after1);
+  
+  string before2("(Foo & Bar)"), after2("(Foo &amp; Bar)");
+  replaceIllegalCharacters(before2);
+  CPPUNIT_ASSERT_EQUAL(before2, after2);
+  
+  string before3("Crazy<<&>>"), after3("Crazy&lt;&lt;&amp;&gt;&gt;");
+  replaceIllegalCharacters(before3);
+  CPPUNIT_ASSERT_EQUAL(before3, after3);
+}
+
 void GlobalsTest::testLogEvent()
 {
   gLogFile = "test.log";

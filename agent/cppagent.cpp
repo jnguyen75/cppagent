@@ -65,7 +65,7 @@ void addToBufferThread(Agent *server)
     std::cin >> value;
 
     DataItem *di = server->getDataItemByName(device, dataItem);
-    if (di == NULL)
+    if (di != NULL)
     {
       unsigned int seqNum = server->addToBuffer(di, value);
       std::cout << "Sequence Number: " << seqNum << std::endl;

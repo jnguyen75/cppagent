@@ -235,7 +235,8 @@ void AgentTest::testAddToBuffer()
   string device("LinuxCNC"), key("badKey"), value("ON");
   int seqNum;
   
-  seqNum = a->addToBuffer(device, key, value);
+  DataItem *di1 = a->getDataItemByName(device, key);
+  seqNum = a->addToBuffer(di1, key, value);
   CPPUNIT_ASSERT_EQUAL(0, seqNum);
   
   string emptyStr = getFile("../samples/test_empty_stream.xml");
@@ -251,8 +252,9 @@ void AgentTest::testAddToBuffer()
   responseHelper(emptyStr);
   
   key = "power";
-  
-  seqNum = a->addToBuffer(device, key, value);
+
+  DataItem *di2 = a->getDataItemByName(device, key);
+  seqNum = a->addToBuffer(di2, key, value);
   CPPUNIT_ASSERT_EQUAL(1, seqNum);
   
   // Streams are no longer empty

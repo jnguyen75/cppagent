@@ -102,7 +102,7 @@ void Adapter::processData(const string& data)
       logEvent("Agent", "Could not find data item: " + key);
     }
     else
-    {
+    { 
       mAgent->addToBuffer(dataItem, toUpperCase(value), time);
     }
   }
