@@ -36,6 +36,7 @@
 
 #include <ctime>
 #include <string>
+#include <map>
 #include <sstream>
 #include <fstream>
 
@@ -66,7 +67,6 @@ enum TimeFormat
 };
 
 /***** METHODS *****/
-
 /* Convert an unsigned integer to string */
 std::string intToString(int i);
 
@@ -85,8 +85,13 @@ std::string getCurrentTime(TimeFormat format);
 /* Get the current time in number of seconds as an integer */
 unsigned int getCurrentTimeInSec();
 
+/* Replace illegal XML characters with the correct corresponding characters */
+void replaceIllegalCharacters(std::string& data);
+
+/* Log events in a log file for error logging */
 void logEvent(const std::string& source, const std::string& message);
 
+/* Return enumeration values according to a string name and array */
 int getEnumeration(
   const std::string& name,
   const std::string *array,

@@ -157,6 +157,8 @@ int main(int aArgc, char *aArgv[])
   const char *adapters_file = 0;
   gLogFile = "agent.log";
   
+  //void initializeGlobals();
+  
   OptionsList option_list;
   option_list.append(new Option("p", listenPort, "HTTP Server Port\nDefault: 5000", "port"));
   option_list.append(new Option("f", config_file, "Configuration file\nDefault: probe.xml", "file"));
@@ -180,19 +182,19 @@ int main(int aArgc, char *aArgv[])
       ifstream ad_file(adapters_file);
       if (ad_file)
       {
-	while (ad_file.good())
-	{
-	  char line[256];
-	  ad_file.getline(line, 255);
-	  line[255] = '\0';
-	  if (strchr(line, ':')) 
-	    adapters.push_back(line);
-	}
+        while (ad_file.good())
+        {
+          char line[256];
+          ad_file.getline(line, 255);
+          line[255] = '\0';
+          if (strchr(line, ':')) 
+            adapters.push_back(line);
+        }
       }
       else
       {
-	cerr << "Cannot open file for adapters: " << adapters_file << endl;
-	option_list.usage();
+        cerr << "Cannot open file for adapters: " << adapters_file << endl;
+        option_list.usage();
       }
     }
 

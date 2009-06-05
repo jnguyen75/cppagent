@@ -31,14 +31,13 @@
 * SUCH PARTY HAD ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
 */
 
-// Dlib library
+/* Dlib library */
 #include "../lib/dlib/all/source.cpp"
 
 #include "globals.hpp"
 
 using namespace std;
 
-/* Convert an unsigned integer to string */
 string intToString(int i)
 {
   ostringstream stm;
@@ -46,7 +45,6 @@ string intToString(int i)
   return stm.str();
 }
 
-/* Convert a float to string */
 string floatToString(float f)
 {
   ostringstream stm;
@@ -54,7 +52,6 @@ string floatToString(float f)
   return stm.str();
 }
 
-/* Convert a string to the same string with all upper case letters */
 string toUpperCase(string& text)
 {
   for (unsigned int i = 0; i < text.length(); i++)
@@ -65,7 +62,6 @@ string toUpperCase(string& text)
   return text;
 }
 
-/* Check if each char in a string is a positive integer */
 bool isNonNegativeInteger(const string& s)
 {
   for (unsigned int i = 0; i < s.length(); i++)
@@ -144,6 +140,24 @@ string getCurrentTime(TimeFormat format)
 unsigned int getCurrentTimeInSec()
 {
   return time(NULL);
+}
+
+void replaceIllegalCharacters(string& data)
+{
+  map<char, string> illegalCharacters;
+  illegalCharacters['&'] = "&amp;";
+  illegalCharacters['<'] = "&lt;";
+  illegalCharacters['>'] = "&gt;";
+  
+  for (unsigned int i=0; i<data.length(); i++)
+  {
+    string toReplace = illegalCharacters[data[i]];
+    if (!toReplace.empty())
+    {
+      data.erase(i, 1);
+      data.insert(i, toReplace);
+    }
+  }
 }
 
 const char *gLogFile;

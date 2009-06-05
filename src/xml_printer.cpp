@@ -322,7 +322,9 @@ string XmlPrinter::printNode(
   
   if (nodeText)
   {
-    toReturn += nodeText->get_content();
+    string text = nodeText->get_content();
+    replaceIllegalCharacters(text);
+    toReturn += text;
   }
   else if (nodeElement)
   {
